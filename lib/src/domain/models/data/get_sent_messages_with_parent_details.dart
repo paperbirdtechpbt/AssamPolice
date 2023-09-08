@@ -12,6 +12,7 @@ class GetSentMessagesWithParentDetails {
   String? creationDate;
   bool? isSeen;
   bool isVisible = false;
+  String? longMessage;
 
   GetSentMessagesWithParentDetails(
       {this.parentMessagesIds,
@@ -26,6 +27,7 @@ class GetSentMessagesWithParentDetails {
         this.messageBody,
         this.creationDate,
         this.isSeen,
+        this.longMessage,
       required this.isVisible});
 
   GetSentMessagesWithParentDetails.fromMap(Map<String, dynamic> json) {

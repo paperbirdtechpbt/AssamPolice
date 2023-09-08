@@ -199,6 +199,30 @@ class _$AppRouter extends RootStackRouter {
         child: const VdpMemberDetailView(),
       );
     },
+    ReplyMessageScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<ReplyMessageScreenRouteArgs>(
+          orElse: () => const ReplyMessageScreenRouteArgs());
+      return AdaptivePage<dynamic>(
+        routeData: routeData,
+        child: ReplyMessageScreen(
+          key: args.key,
+          messageId: args.messageId,
+          messageBody: args.messageBody,
+        ),
+      );
+    },
+    ReceivedReplyMessageScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<ReceivedReplyMessageScreenRouteArgs>(
+          orElse: () => const ReceivedReplyMessageScreenRouteArgs());
+      return AdaptivePage<dynamic>(
+        routeData: routeData,
+        child: ReceivedReplyMessageScreen(
+          key: args.key,
+          messageId: args.messageId,
+          messageBody: args.messageBody,
+        ),
+      );
+    },
   };
 
   @override
@@ -294,6 +318,14 @@ class _$AppRouter extends RootStackRouter {
         RouteConfig(
           VdpMemberDetailViewRoute.name,
           path: '/vdp-member-detail-view',
+        ),
+        RouteConfig(
+          ReplyMessageScreenRoute.name,
+          path: '/reply-message-screen',
+        ),
+        RouteConfig(
+          ReceivedReplyMessageScreenRoute.name,
+          path: '/received-reply-message-screen',
         ),
       ];
 }
@@ -797,4 +829,84 @@ class VdpMemberDetailViewRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'VdpMemberDetailViewRoute';
+}
+
+/// generated route for
+/// [ReplyMessageScreen]
+class ReplyMessageScreenRoute
+    extends PageRouteInfo<ReplyMessageScreenRouteArgs> {
+  ReplyMessageScreenRoute({
+    Key? key,
+    int? messageId,
+    GetReceivedMessagesWithParentDetails? messageBody,
+  }) : super(
+          ReplyMessageScreenRoute.name,
+          path: '/reply-message-screen',
+          args: ReplyMessageScreenRouteArgs(
+            key: key,
+            messageId: messageId,
+            messageBody: messageBody,
+          ),
+        );
+
+  static const String name = 'ReplyMessageScreenRoute';
+}
+
+class ReplyMessageScreenRouteArgs {
+  const ReplyMessageScreenRouteArgs({
+    this.key,
+    this.messageId,
+    this.messageBody,
+  });
+
+  final Key? key;
+
+  final int? messageId;
+
+  final GetReceivedMessagesWithParentDetails? messageBody;
+
+  @override
+  String toString() {
+    return 'ReplyMessageScreenRouteArgs{key: $key, messageId: $messageId, messageBody: $messageBody}';
+  }
+}
+
+/// generated route for
+/// [ReceivedReplyMessageScreen]
+class ReceivedReplyMessageScreenRoute
+    extends PageRouteInfo<ReceivedReplyMessageScreenRouteArgs> {
+  ReceivedReplyMessageScreenRoute({
+    Key? key,
+    int? messageId,
+    GetSentMessagesWithParentDetails? messageBody,
+  }) : super(
+          ReceivedReplyMessageScreenRoute.name,
+          path: '/received-reply-message-screen',
+          args: ReceivedReplyMessageScreenRouteArgs(
+            key: key,
+            messageId: messageId,
+            messageBody: messageBody,
+          ),
+        );
+
+  static const String name = 'ReceivedReplyMessageScreenRoute';
+}
+
+class ReceivedReplyMessageScreenRouteArgs {
+  const ReceivedReplyMessageScreenRouteArgs({
+    this.key,
+    this.messageId,
+    this.messageBody,
+  });
+
+  final Key? key;
+
+  final int? messageId;
+
+  final GetSentMessagesWithParentDetails? messageBody;
+
+  @override
+  String toString() {
+    return 'ReceivedReplyMessageScreenRouteArgs{key: $key, messageId: $messageId, messageBody: $messageBody}';
+  }
 }

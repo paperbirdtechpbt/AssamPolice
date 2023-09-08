@@ -1,3 +1,4 @@
+import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,6 +17,7 @@ import '../../../utils/reference/my_shared_reference.dart';
 import '../../cubits/message/message_cubit.dart';
 import '../../cubits/message/message_state.dart';
 import '../../widgets/common_widgets.dart';
+import '../vdp/reply_message/reply_message_screen.dart';
 
 class MessageScreen extends StatefulWidget {
   MessageScreen(
@@ -46,11 +48,13 @@ class _MessageScreenState extends State<MessageScreen> {
   bool isShowMessage = true;
   bool isShowMessage2 = false;
   String bodyMessage = '';
+  bool isFirstTime = true;
   List<String> msgBodyList = [];
   List<GetMessageBody> getMsgBody = [];
   late User? user = User();
-  List<GetReceivedMessagesWithParentDetails>
-      getReceivedMessagesWithParentDetails = [];
+  List<GetReceivedMessagesWithParentDetails> getReceivedMessagesWithParentDetails = [];
+
+  var currentMessageIndex = -1;
 
   GetReceivedMessagesWithParentDetails? getReceivedMessagesWithParentDetails2;
 
@@ -139,81 +143,141 @@ class _MessageScreenState extends State<MessageScreen> {
             children: [
               messageBox(),
               isSentMessage == true
-                  ? BlocConsumer<MessageCubit, MessageState>(
-                      listener: (context, state) {
-                        if (state
-                            is GetSentMessagesWithParentDetailsSuccessState) {
-                          if (state.getSentMessagesWithParentDetailsResponse
-                                  ?.code ==
-                              "Success") {
-                            getSentMessagesWithParentDetails = state
-                                    .getSentMessagesWithParentDetailsResponse
-                                    ?.data ??
-                                [];
-                          }
-                        }
-                      },
-                      builder: (context, state) {
-                        switch (state.runtimeType) {
-                          case GetSentMessagesWithParentDetailsInitialState:
-                            return Column(
-                              children: List.generate(
-                                  getSentMessagesWithParentDetails.length,
-                                  (index) {
-                                // context.read<MessageCubit>().getMessageBody(
-                                //     user?.email,
-                                //     GetSentMessagesWithParentDetails[index].messageId
-                                //         );
+                  ?
 
-                                return sentReplyMessageBox(getSentMessages
-                                            ?.parentMessagesId ==
-                                        getSentMessagesWithParentDetails[index]
-                                            .parentMessagesId
-                                    ? getSentMessagesWithParentDetails[index]
-                                    : getSentMessagesWithParentDetails2);
-                              }),
-                            );
-                          case GetSentMessagesWithParentDetailsLoadingState:
-                            return Center(
-                              child: CircularProgressIndicator(
-                                color: primaryColor,
-                              ),
-                            );
-                          case GetSentMessagesWithParentDetailsSuccessState:
-                            return Column(
-                              children: List.generate(
-                                  getSentMessagesWithParentDetails.length,
-                                  (index) {
-                                // context.read<MessageCubit>().getMessageBody(
-                                //     user?.email,
-                                //     GetSentMessagesWithParentDetails[index].messageId
-                                // );
-                                return sentReplyMessageBox(
-                                  getSentMessages?.parentMessagesId ==
-                                          getSentMessagesWithParentDetails[
-                                                  index]
-                                              .parentMessagesId
-                                      ? getSentMessagesWithParentDetails[index]
-                                      : getSentMessagesWithParentDetails2,
-                                );
-                              }),
-                            );
-                          default:
-                            return Container();
-                        }
-                      },
-                    )
-                  : BlocConsumer<MessageCubit, MessageState>(
+                  Container(padding:EdgeInsets.only(left: 30), child: Column(
+                children: List.generate(
+                    getSentMessagesWithParentDetails.length,
+                        (index) {
+                      // context.read<MessageCubit>().getMessageBody(
+                      //     user?.email,
+                      //     GetSentMessagesWithParentDetails[index].messageId
+                      // );
+                      return InkWell(
+                          onTap: () {
+
+                            currentMessageIndex = index;
+                            setState(() {
+                              getSentMessagesWithParentDetails[index].isVisible =
+                              !getSentMessagesWithParentDetails[index].isVisible;
+                            });
+                            context.read<MessageCubit>().getMessageBody(user?.email, getSentMessagesWithParentDetails[index].messageId);
+
+                            // appRouter.push(ReceivedReplyMessageScreenRoute(
+                            //     messageId: getSentMessagesWithParentDetails[index].messageId,
+                            //     messageBody:  getSentMessagesWithParentDetails[index]));
+                          },
+                          child :
+                          sentReplyMessageBox(
+                            getSentMessages?.parentMessagesId ==
+                                getSentMessagesWithParentDetails[
+                                index]
+                                    .parentMessagesId
+                                ? getSentMessagesWithParentDetails[index]
+                                : getSentMessagesWithParentDetails2,
+                          )
+                      );
+
+
+
+                    }),
+              ), ) :
+
+                  Container(
+                padding:EdgeInsets.only(left: 30),
+                child: Column(
+                children: List.generate(
+                    getReceivedMessagesWithParentDetails.length,
+                        (index) {
+                      // context.read<MessageCubit>().getMessageBody(
+                      //     user?.email,
+                      //     getReceivedMessagesWithParentDetails[index].messageId
+                      // );
+                      return InkWell(
+                        onTap: (){
+                          currentMessageIndex = index;
+                          setState(() {
+                            getReceivedMessagesWithParentDetails[index].isVisible =
+                            !getReceivedMessagesWithParentDetails[index].isVisible;
+                          });
+                          context.read<MessageCubit>().getMessageBody(user?.email, getReceivedMessagesWithParentDetails[index].messageId);
+                        },
+                        child:  receviedReplyMessageBox(
+                          getReceivedMessages?.parentMessagesId ==
+                              getReceivedMessagesWithParentDetails[
+                              index]
+                                  .parentMessagesId
+                              ? getReceivedMessagesWithParentDetails[
+                          index]
+                              : getReceivedMessagesWithParentDetails2,
+                        ),);
+                    }),
+              ),),
+
+                  BlocConsumer<MessageCubit, MessageState>(
+                listener: (context, state) {
+                  if (state
+                  is GetSentMessagesWithParentDetailsSuccessState) {
+                    if (state.getSentMessagesWithParentDetailsResponse
+                        ?.code ==
+                        "Success") {
+                      setState(() {
+                        getSentMessagesWithParentDetails = state
+                            .getSentMessagesWithParentDetailsResponse
+                            ?.data ??
+                            [];
+                      });
+
+                    }
+                  }
+                },
+                builder: (context, state) {
+                  switch (state.runtimeType) {
+                    case GetSentMessagesWithParentDetailsInitialState:
+                      return Column(
+                        children: List.generate(
+                            getSentMessagesWithParentDetails.length,
+                                (index) {
+                              // context.read<MessageCubit>().getMessageBody(
+                              //     user?.email,
+                              //     GetSentMessagesWithParentDetails[index].messageId
+                              //         );
+
+                              return sentReplyMessageBox(getSentMessages
+                                  ?.parentMessagesId ==
+                                  getSentMessagesWithParentDetails[index]
+                                      .parentMessagesId
+                                  ? getSentMessagesWithParentDetails[index]
+                                  : getSentMessagesWithParentDetails2);
+                            }),
+                      );
+                    case GetSentMessagesWithParentDetailsLoadingState:
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: primaryColor,
+                        ),
+                      );
+                    case GetSentMessagesWithParentDetailsSuccessState:
+                      return SizedBox();
+                    default:
+                      return Container();
+                  }
+                },
+              ),
+
+                  BlocConsumer<MessageCubit, MessageState>(
                       listener: (context, state) {
                         if (state
                             is GetReceivedMessagesWithParentDetailsSuccessState) {
                           if (state.getReceivedMessagesWithParentDetailsResponse
                                   ?.code ==
                               "Success") {
-                            getReceivedMessagesWithParentDetails = state
-                                    .getReceivedMessagesWithParentDetailsResponse
-                                    ?.data ??
-                                [];
+                            setState(() {
+                              getReceivedMessagesWithParentDetails = state
+                                  .getReceivedMessagesWithParentDetailsResponse
+                                  ?.data ??
+                                  [];
+                            });
                           }
                         }
                       },
@@ -228,42 +292,26 @@ class _MessageScreenState extends State<MessageScreen> {
                                 //     user?.email,
                                 //     getReceivedMessagesWithParentDetails[index].messageId
                                 //         );
-                                return receviedReplyMessageBox(
+                                return InkWell(
+                                  onTap: (){
+
+                                  },
+                                  child: receviedReplyMessageBox(
                                   getReceivedMessages?.parentMessagesId ==
-                                          getReceivedMessagesWithParentDetails[
-                                                  index]
-                                              .parentMessagesId
+                                      getReceivedMessagesWithParentDetails[
+                                      index]
+                                          .parentMessagesId
                                       ? getReceivedMessagesWithParentDetails[
-                                          index]
+                                  index]
                                       : getReceivedMessagesWithParentDetails2,
-                                );
+                                ),);
                               }),
                             );
                           case GetReceivedMessagesWithParentDetailsLoadingState:
-                            return Center(
+                            return const Center(
                               child: CircularProgressIndicator(
                                 color: primaryColor,
                               ),
-                            );
-                          case GetReceivedMessagesWithParentDetailsSuccessState:
-                            return Column(
-                              children: List.generate(
-                                  getReceivedMessagesWithParentDetails.length,
-                                  (index) {
-                                // context.read<MessageCubit>().getMessageBody(
-                                //     user?.email,
-                                //     getReceivedMessagesWithParentDetails[index].messageId
-                                // );
-                                return receviedReplyMessageBox(
-                                  getReceivedMessages?.parentMessagesId ==
-                                          getReceivedMessagesWithParentDetails[
-                                                  index]
-                                              .parentMessagesId
-                                      ? getReceivedMessagesWithParentDetails[
-                                          index]
-                                      : getReceivedMessagesWithParentDetails2,
-                                );
-                              }),
                             );
                           default:
                             return Container();
@@ -304,7 +352,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
   messageBox() {
     return Padding(
-      padding: const EdgeInsets.only(left: 20.0, right: 10, top: 20),
+      padding: const EdgeInsets.only(left: 15.0, right: 10, top: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -411,8 +459,17 @@ class _MessageScreenState extends State<MessageScreen> {
             listener: (context, state) {
               if (state is GetMessageBodySuccessState) {
                 setState(() {
-                  bodyMessage =
-                      state.getMessageBodyResponse?.data?.messageBody ?? '';
+
+                  if(isFirstTime){
+                    bodyMessage = state.getMessageBodyResponse?.data?.messageBody ?? '';
+                    isFirstTime = false;
+                  }
+
+                  if(isFirstTime == false  && currentMessageIndex != -1)
+                    if(state.getMessageBodyResponse?.code == "Success"){
+                      getSentMessagesWithParentDetails[currentMessageIndex].longMessage = state.getMessageBodyResponse?.data?.messageBody;
+                      getReceivedMessagesWithParentDetails[currentMessageIndex].longMessage =  state.getMessageBodyResponse?.data?.messageBody;
+                    }
                 });
               }
             },
@@ -420,19 +477,16 @@ class _MessageScreenState extends State<MessageScreen> {
               return Visibility(
                 visible: isShowMessage,
                 child: Padding(
-                  padding: const EdgeInsets.all(10.0),
+                  padding: const EdgeInsets.all(0.0),
                   child: Column(
                     children: [
                       Container(
-                        decoration: const BoxDecoration(
-                            borderRadius: const BorderRadius.all(
-                                const Radius.circular(10.0)),
-                            color: skyBlue),
+
                         padding:
-                            const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                            const EdgeInsets.fromLTRB(0.0, 10.0, 10.0, 10.0),
                         child: Container(
                             width: double.infinity,
-                            height: MediaQuery.of(context).size.height * 0.25,
+
                             child: Text(
                               bodyMessage ?? '',
                               style: styleIbmPlexSansRegular(
@@ -457,11 +511,7 @@ class _MessageScreenState extends State<MessageScreen> {
               );
             },
           ),
-          const Divider(
-            height: 12,
-            color: Color(0xFF928AD3),
-            thickness: .5,
-          ),
+
           // Container(child: Text(subject[widget.memberIndex ?? 0],style: styleIbmPlexSansRegular(size: 20, color: grey),),),
           // Padding(
           //   padding: const EdgeInsets.only(top:30.0),
@@ -576,140 +626,139 @@ class _MessageScreenState extends State<MessageScreen> {
 
   ) {
     if (getReceivedMessagesWithParentDetails != null)
-      return Padding(
-        padding: const EdgeInsets.only(left: 20.0, right: 10, top: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              child: Text(
-                isSentMessage == true
-                    ? "${getSentMessages?.subject ?? ''} "
-                    : "${getReceivedMessagesWithParentDetails.subject ?? ''}",
-                style: styleIbmPlexSansBold(size: 20, color: grey),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 30.0),
-              child: Container(
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: defaultColor,
-                      child: Text(
-                        isSentMessage == true
-                            ? "${getSentMessages?.toRecipientUserNameList?.join(", ")?.substring(0, 1) ?? ''} "
-                            : "${getReceivedMessagesWithParentDetails?.senderUserName?.substring(0, 1) ?? ''}",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Colors.white),
-                      ),
-                      maxRadius: 20,
-                      // foregroundImage: NetworkImage("enterImageUrl"),
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Container(
-                        width: MediaQuery.of(context).size.width * 0.40,
+      return Container(
+        decoration: const BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: primaryColor, width: 0.2, style: BorderStyle.solid),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(left: 5.0, right: 10, top: 0,bottom: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+
+            children: [
+
+              Padding(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: Container(
+                  child: Row(
+
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: defaultColor,
                         child: Text(
                           isSentMessage == true
-                              ? "${getSentMessages?.toRecipientUserNameList?.join(", ")} "
-                              : "${getReceivedMessagesWithParentDetails?.senderUserName}",
-                          overflow: TextOverflow.ellipsis,
-                          style: styleIbmPlexSansRegular(size: 16, color: grey),
-                        )),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 10.0),
-                      child: Container(
-                        child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                getReceivedMessagesWithParentDetails.isVisible =
-                                    !getReceivedMessagesWithParentDetails
-                                        .isVisible;
-                              });
-                            },
-                            child: getReceivedMessagesWithParentDetails
-                                    .isVisible
-                                ? const Icon(Icons.arrow_drop_up)
-                                : const Icon(Icons.arrow_drop_down_outlined)),
+                              ? "${getSentMessages?.toRecipientUserNameList?.join(", ")?.substring(0, 1) ?? ''} "
+                              : "${getReceivedMessagesWithParentDetails?.senderUserName?.substring(0, 1) ?? ''}",
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Colors.white),
+                        ),
+                        maxRadius: 20,
+                        // foregroundImage: NetworkImage("enterImageUrl"),
                       ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              '${formattedDate}' ?? '',
-                              style: styleIbmPlexSansRegular(
-                                  size: 12, color: grey),
-                            ),
-                            InkWell(
-                                onTap: () {
-                                  if (isSentMessage == true) {
-                                    appRouter.push(ComposeMessageScreenRoute(
-                                        isReply: true,
-                                        isSentMessage: true,
-                                        getSentMessages: getSentMessages));
-                                  } else {
-                                    appRouter.push(ComposeMessageScreenRoute(
-                                      getReceivedMessages: getReceivedMessages,
-                                      isReply: true,
-                                      isSentMessage: false,
-                                    ));
-                                  }
-                                },
-                                child: const Icon(
-                                  Icons.reply,
-                                )),
-                            Container()
-                          ],
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Container(
+                          width: MediaQuery.of(context).size.width * 0.40,
+                          child: Text(
+                            isSentMessage == true
+                                ? "${getSentMessages?.toRecipientUserNameList?.join(", ")} "
+                                : "${getReceivedMessagesWithParentDetails?.senderUserName}",
+                            overflow: TextOverflow.ellipsis,
+                            style: styleIbmPlexSansRegular(size: 16, color: grey),
+                          )),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10.0),
+                        child: Container(
+                          child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  getReceivedMessagesWithParentDetails.isVisible =
+                                      !getReceivedMessagesWithParentDetails
+                                          .isVisible;
+                                });
+                              },
+                              child: getReceivedMessagesWithParentDetails
+                                      .isVisible
+                                  ? const Icon(Icons.arrow_drop_up)
+                                  : const Icon(Icons.arrow_drop_down_outlined)),
                         ),
                       ),
-                    ),
-                  ],
+                      Expanded(
+                        child: Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                '${formattedDate}' ?? '',
+                                style: styleIbmPlexSansRegular(
+                                    size: 12, color: grey),
+                              ),
+                              InkWell(
+                                  onTap: () {
+                                    if (isSentMessage == true) {
+                                      appRouter.push(ReplyMessageScreenRoute(
+                                           messageId: getReceivedMessagesWithParentDetails.messageId,
+                                          messageBody: getReceivedMessagesWithParentDetails));
+                                    } else {
+                                      appRouter.push(ReplyMessageScreenRoute(
+                                          messageId: getReceivedMessagesWithParentDetails.messageId,
+                                          messageBody: getReceivedMessagesWithParentDetails));
+                                    }
+                                  },
+                                  child: const Icon(
+                                    Icons.reply,
+                                  )),
+                              Container()
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            BlocConsumer<MessageCubit, MessageState>(
-              listener: (context, state) {
-                if (state is GetMessageBodySuccessState) {
-                  setState(() {
-                    msgBodyList.add(
-                        state.getMessageBodyResponse?.data?.messageBody ?? '');
-                    getMsgBody = state.getMessageBodyResponse.data ?? [];
-                  });
-                }
-              },
-              builder: (context, state) {
-                if (getReceivedMessagesWithParentDetails.isVisible)
-                  return Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Column(
+              const SizedBox(
+                height: 10,
+              ),
+              BlocConsumer<MessageCubit, MessageState>(
+                listener: (context, state) {
+                  if (state is GetMessageBodySuccessState) {
+                    // setState(() {
+                    //   // msgBodyList.add(
+                    //   //     state.getMessageBodyResponse?.data?.messageBody ?? '');
+                    //   // getMsgBody = state.getMessageBodyResponse.data ?? [];
+                    // });
+                  }
+                },
+                builder: (context, state) {
+
+                    return Column(
                       children: [
                         Container(
-                          decoration: const BoxDecoration(
-                              borderRadius: const BorderRadius.all(
-                                  const Radius.circular(10.0)),
-                              color: skyBlue),
+
                           padding:
-                              const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                              const EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
                           child: Container(
                               width: double.infinity,
-                              height: MediaQuery.of(context).size.height * 0.25,
-                              child: Text(
+                              child: getReceivedMessagesWithParentDetails.isVisible == false ? Text(
                                 getReceivedMessagesWithParentDetails
-                                        .messageBody ??
+                                    .messageBody ??
                                     '',
                                 style: styleIbmPlexSansRegular(
                                     size: 13, color: Colors.black),
-                              )),
+                              ) : Text(
+                                getReceivedMessagesWithParentDetails
+                                    .longMessage ??
+                                    '',
+                                style: styleIbmPlexSansRegular(
+                                    size: 13, color: Colors.black),
+                              )
+                          ),
                         ),
                         //                         Padding(
                         //                           padding: const EdgeInsets.only(top:20.0),
@@ -724,122 +773,117 @@ class _MessageScreenState extends State<MessageScreen> {
                         //                           ),
                         //                         )
                       ],
-                    ),
-                  );
-                else
-                  return Container();
-              },
-            ),
-            const Divider(
-              height: 12,
-              color: Color(0xFF928AD3),
-              thickness: .5,
-            ),
-            // Container(child: Text(subject[widget.memberIndex ?? 0],style: styleIbmPlexSansRegular(size: 20, color: grey),),),
-            // Padding(
-            //   padding: const EdgeInsets.only(top:30.0),
-            //   child: Container(
-            //     child: Row(
-            //       children: [
-            //         CircleAvatar(
-            //           backgroundColor: defaultColor,
-            //           child: Text(
-            //             getReceivedMessages[widget.memberIndex ?? 0].substring(0, 1),
-            //             style: const TextStyle(
-            //                 fontWeight: FontWeight.bold,
-            //                 fontSize: 20,
-            //                 color: Colors.white),
-            //           ),
-            //           maxRadius: 20,
-            //           // foregroundImage: NetworkImage("enterImageUrl"),
-            //         ),
-            //         const SizedBox(width: 20,),
-            //         Container(
-            //             width: MediaQuery.of(context).size.width * 0.40,
-            //             child: Text(
-            //               "${getReceivedMessages[widget.memberIndex ?? 0]}",
-            //               overflow: TextOverflow.ellipsis,
-            //
-            //               style: styleIbmPlexSansRegular(size: 16, color: grey),)),
-            //         Padding(
-            //           padding: const EdgeInsets.only(right: 10.0),
-            //           child: Container(child: isShowMessage2 == false ? InkWell(onTap: (){setState(() {
-            //             isShowMessage2 = true;
-            //           });},child: Icon(Icons.arrow_drop_down_outlined)) :  InkWell(onTap: (){setState(() {
-            //             isShowMessage2 = false;
-            //           });},child: Icon(Icons.arrow_drop_up)),),
-            //         ),
-            //         Expanded(
-            //           child: Container(
-            //             child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //               children: [
-            //                 Text(
-            //                   'july 28' ?? '',
-            //                   style: styleIbmPlexSansRegular(size: 12, color: grey),
-            //                 ),
-            //                 InkWell(onTap: (){
-            //                   appRouter.push(ComposeMessageScreenRoute(subject: subject[widget.memberIndex ?? 0],to: getReceivedMessages[widget.memberIndex ?? 0],
-            //                     isReply: 0,
-            //                     from: "AsamPolice@gmail.com",
-            //
-            //                   ));
-            //                 },
-            //                     child: const Icon(Icons.reply,)),
-            //                 const Icon(
-            //                   Icons.more_vert_outlined,
-            //                   color: Colors.black,
-            //                 ),
-            //               ],
-            //             ),
-            //           ),
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
-            // const SizedBox(height: 10,),
-            // Visibility(
-            //   visible: isShowMessage2,
-            //   child: Padding(
-            //     padding: const EdgeInsets.all(10.0),
-            //     child: Column(
-            //       children: [
-            //         Container(
-            //           decoration: const BoxDecoration(
-            //               borderRadius: const BorderRadius.all(
-            //                   const Radius.circular(10.0)),
-            //               color: skyBlue),
-            //           padding:
-            //           const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-            //           child: Container(
-            //               width: double.infinity,
-            //               height: MediaQuery.of(context).size.height * 0.25,
-            //               child: Text(message[widget.memberIndex ?? 0],style: styleIbmPlexSansRegular(size: 13, color: Colors.black),)),
-            //         ),
-            //         Padding(
-            //           padding: const EdgeInsets.only(top:20.0),
-            //           child: Row(
-            //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //             children: [
-            //               buttomButton(const Icon(Icons.reply), "Reply",(){
-            //                 appRouter.push(ComposeMessageScreenRoute(subject: subject[widget.memberIndex ?? 0],to: getReceivedMessages[widget.memberIndex ?? 0],
-            //
-            //                   isReply: 0,
-            //                   from: "AsamPolice@gmail.com",
-            //
-            //                 ));
-            //
-            //               }),
-            //               buttomButton(const Icon(Icons.reply_all), "Reply all",(){}),
-            //
-            //             ],
-            //           ),
-            //         )
-            //       ],
-            //     ),
-            //   ),
-            // ),
-          ],
+                    );
+
+                },
+              ),
+
+              // Container(child: Text(subject[widget.memberIndex ?? 0],style: styleIbmPlexSansRegular(size: 20, color: grey),),),
+              // Padding(
+              //   padding: const EdgeInsets.only(top:30.0),
+              //   child: Container(
+              //     child: Row(
+              //       children: [
+              //         CircleAvatar(
+              //           backgroundColor: defaultColor,
+              //           child: Text(
+              //             getReceivedMessages[widget.memberIndex ?? 0].substring(0, 1),
+              //             style: const TextStyle(
+              //                 fontWeight: FontWeight.bold,
+              //                 fontSize: 20,
+              //                 color: Colors.white),
+              //           ),
+              //           maxRadius: 20,
+              //           // foregroundImage: NetworkImage("enterImageUrl"),
+              //         ),
+              //         const SizedBox(width: 20,),
+              //         Container(
+              //             width: MediaQuery.of(context).size.width * 0.40,
+              //             child: Text(
+              //               "${getReceivedMessages[widget.memberIndex ?? 0]}",
+              //               overflow: TextOverflow.ellipsis,
+              //
+              //               style: styleIbmPlexSansRegular(size: 16, color: grey),)),
+              //         Padding(
+              //           padding: const EdgeInsets.only(right: 10.0),
+              //           child: Container(child: isShowMessage2 == false ? InkWell(onTap: (){setState(() {
+              //             isShowMessage2 = true;
+              //           });},child: Icon(Icons.arrow_drop_down_outlined)) :  InkWell(onTap: (){setState(() {
+              //             isShowMessage2 = false;
+              //           });},child: Icon(Icons.arrow_drop_up)),),
+              //         ),
+              //         Expanded(
+              //           child: Container(
+              //             child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //               children: [
+              //                 Text(
+              //                   'july 28' ?? '',
+              //                   style: styleIbmPlexSansRegular(size: 12, color: grey),
+              //                 ),
+              //                 InkWell(onTap: (){
+              //                   appRouter.push(ComposeMessageScreenRoute(subject: subject[widget.memberIndex ?? 0],to: getReceivedMessages[widget.memberIndex ?? 0],
+              //                     isReply: 0,
+              //                     from: "AsamPolice@gmail.com",
+              //
+              //                   ));
+              //                 },
+              //                     child: const Icon(Icons.reply,)),
+              //                 const Icon(
+              //                   Icons.more_vert_outlined,
+              //                   color: Colors.black,
+              //                 ),
+              //               ],
+              //             ),
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
+              // const SizedBox(height: 10,),
+              // Visibility(
+              //   visible: isShowMessage2,
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(10.0),
+              //     child: Column(
+              //       children: [
+              //         Container(
+              //           decoration: const BoxDecoration(
+              //               borderRadius: const BorderRadius.all(
+              //                   const Radius.circular(10.0)),
+              //               color: skyBlue),
+              //           padding:
+              //           const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+              //           child: Container(
+              //               width: double.infinity,
+              //               height: MediaQuery.of(context).size.height * 0.25,
+              //               child: Text(message[widget.memberIndex ?? 0],style: styleIbmPlexSansRegular(size: 13, color: Colors.black),)),
+              //         ),
+              //         Padding(
+              //           padding: const EdgeInsets.only(top:20.0),
+              //           child: Row(
+              //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //             children: [
+              //               buttomButton(const Icon(Icons.reply), "Reply",(){
+              //                 appRouter.push(ComposeMessageScreenRoute(subject: subject[widget.memberIndex ?? 0],to: getReceivedMessages[widget.memberIndex ?? 0],
+              //
+              //                   isReply: 0,
+              //                   from: "AsamPolice@gmail.com",
+              //
+              //                 ));
+              //
+              //               }),
+              //               buttomButton(const Icon(Icons.reply_all), "Reply all",(){}),
+              //
+              //             ],
+              //           ),
+              //         )
+              //       ],
+              //     ),
+              //   ),
+              // ),
+            ],
+          ),
         ),
       );
     else
@@ -850,21 +894,20 @@ class _MessageScreenState extends State<MessageScreen> {
     GetSentMessagesWithParentDetails? getSentMessagesWithParentDetails,
   ) {
     if (getSentMessagesWithParentDetails != null)
-      return Padding(
-        padding: const EdgeInsets.only(left: 20.0, right: 10, top: 20),
+      return Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: primaryColor, width: 0.2, style: BorderStyle.solid),
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 5.0, right: 10, top: 0,bottom: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              child: Text(
-                isSentMessage == true
-                    ? "${getSentMessages?.subject ?? ''} "
-                    : "${getSentMessagesWithParentDetails?.subject ?? ''}",
-                style: styleIbmPlexSansBold(size: 20, color: grey),
-              ),
-            ),
+
             Padding(
-              padding: const EdgeInsets.only(top: 30.0),
+              padding: const EdgeInsets.only(top: 10.0),
               child: Container(
                 child: Row(
                   children: [
@@ -924,18 +967,22 @@ class _MessageScreenState extends State<MessageScreen> {
                             ),
                             InkWell(
                                 onTap: () {
-                                  if (isSentMessage == true) {
-                                    appRouter.push(ComposeMessageScreenRoute(
-                                        isReply: true,
-                                        isSentMessage: true,
-                                        getSentMessages: getSentMessages));
-                                  } else if (isSentMessage == false) {
-                                    appRouter.push(ComposeMessageScreenRoute(
-                                      getReceivedMessages: getReceivedMessages,
-                                      isReply: true,
-                                      isSentMessage: false,
-                                    ));
-                                  }
+                                  // if (isSentMessage == true) {
+                                  //   appRouter.push(ComposeMessageScreenRoute(
+                                  //       isReply: true,
+                                  //       isSentMessage: true,
+                                  //       getSentMessages: getSentMessages));
+                                  // } else if (isSentMessage == false) {
+                                  //   appRouter.push(ComposeMessageScreenRoute(
+                                  //     getReceivedMessages: getReceivedMessages,
+                                  //     isReply: true,
+                                  //     isSentMessage: false,
+                                  //   ));
+                                  // }
+
+                                  appRouter.push(ReceivedReplyMessageScreenRoute(
+                                      messageId: getSentMessagesWithParentDetails.messageId,
+                                      messageBody: getSentMessagesWithParentDetails));
                                 },
                                 child: const Icon(
                                   Icons.reply,
@@ -956,36 +1003,53 @@ class _MessageScreenState extends State<MessageScreen> {
               listener: (context, state) {
                 if (state is GetMessageBodySuccessState) {
                   setState(() {
-                    msgBodyList.add(
-                        state.getMessageBodyResponse?.data?.messageBody ?? '');
-                    bodyMessage =
-                        state.getMessageBodyResponse?.data?.messageBody ?? '';
+                    // msgBodyList.add(
+                    //     state.getMessageBodyResponse?.data?.messageBody ?? '');
+                    bodyMessage = state.getMessageBodyResponse?.data?.messageBody ?? '';
                   });
                 }
               },
               builder: (context, state) {
-                if (getSentMessagesWithParentDetails.isVisible == true)
                   return Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Column(
                       children: [
+
                         Container(
-                          decoration: const BoxDecoration(
-                              borderRadius: const BorderRadius.all(
-                                  const Radius.circular(10.0)),
-                              color: skyBlue),
-                          padding:
-                              const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                          child: Container(
-                              width: double.infinity,
-                              height: MediaQuery.of(context).size.height * 0.25,
-                              child: Text(
-                                getSentMessagesWithParentDetails?.messageBody ??
-                                    '',
-                                style: styleIbmPlexSansRegular(
-                                    size: 13, color: Colors.black),
-                              )),
-                        ),
+                            width: double.infinity,
+                            child: getSentMessagesWithParentDetails?.isVisible == false ? Text(
+                              getSentMessagesWithParentDetails?.messageBody ??
+                                  '',
+                              style: styleIbmPlexSansRegular(
+                                  size: 13, color: Colors.black),
+                            ) : Text(
+                              getSentMessagesWithParentDetails
+                                  .longMessage ??
+                                  '',
+                              style: styleIbmPlexSansRegular(
+                                  size: 13, color: Colors.black),
+                            )
+                        )
+
+                        // Container(
+                        //   decoration: const BoxDecoration(
+                        //       borderRadius: const BorderRadius.all(
+                        //           const Radius.circular(10.0)),
+                        //       color: skyBlue),
+                        //   padding:
+                        //       const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                        //   child: Container(
+                        //       width: double.infinity,
+                        //       height: MediaQuery.of(context).size.height * 0.25,
+                        //       child: Text(
+                        //         getSentMessagesWithParentDetails?.messageBody ??
+                        //             '',
+                        //         style: styleIbmPlexSansRegular(
+                        //             size: 13, color: Colors.black),
+                        //       )),
+                        // ),
+
+
                         //                         Padding(
                         //                           padding: const EdgeInsets.only(top:20.0),
                         //                           child: Row(
@@ -1001,16 +1065,10 @@ class _MessageScreenState extends State<MessageScreen> {
                       ],
                     ),
                   );
-                else {
-                  return Container();
-                }
+
               },
             ),
-            const Divider(
-              height: 12,
-              color: Color(0xFF928AD3),
-              thickness: .5,
-            ),
+
             // Container(child: Text(subject[widget.memberIndex ?? 0],style: styleIbmPlexSansRegular(size: 20, color: grey),),),
             // Padding(
             //   padding: const EdgeInsets.only(top:30.0),
@@ -1116,7 +1174,7 @@ class _MessageScreenState extends State<MessageScreen> {
             //   ),
             // ),
           ],
-        ),
+        )),
       );
     else
       return Container();

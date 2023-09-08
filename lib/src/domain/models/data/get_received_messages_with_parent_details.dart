@@ -12,6 +12,7 @@ class GetReceivedMessagesWithParentDetails {
   String? creationDate;
   bool? isSeen;
   bool isVisible = false;
+  String? longMessage;
 
 
   GetReceivedMessagesWithParentDetails(
@@ -27,6 +28,7 @@ class GetReceivedMessagesWithParentDetails {
         this.messageBody,
         this.creationDate,
         this.isSeen,
+        this.longMessage,
        required this.isVisible,
 
       });

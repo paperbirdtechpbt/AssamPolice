@@ -16,12 +16,14 @@ class MessageCubit extends BaseCubit<MessageState, LoginResponse> {
   MessageCubit(this._apiRepository)
       : super(const SendMessageInitialState(), LoginResponse());
 
-  Future<void> sendMessage(String? senderUserName,
+  Future<void> sendMessage(
+      String? senderUserName,
       List<String>? toRecipients,
       List<String>? cCRecipients,
       String? messagSubject,
       String? messagBody,
-      int? parentMessagesId,) async {
+      int? parentMessagesId,
+      ) async {
     if (isBusy) return;
 
     await run(() async {

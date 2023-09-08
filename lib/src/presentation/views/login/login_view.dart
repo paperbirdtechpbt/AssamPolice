@@ -56,7 +56,7 @@ class _LoginViewState extends State<LoginView> {
 
                         Center(
                           child: ClipRRect(
-                            child: Image.asset(ic_logo_png,height: 120.h,),
+                            child: Image.asset(ic_logo_png,height: 120),
                           ),
                         ),
                         const SizedBox(

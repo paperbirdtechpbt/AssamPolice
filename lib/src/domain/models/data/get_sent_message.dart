@@ -6,6 +6,7 @@ class GetSentMessages {
   dynamic ccRecipientUserNameList;
   String? subject;
   String? messageBody;
+  String ? longMessageBody = "";
   String? creationDate;
 
   GetSentMessages(
@@ -16,6 +17,7 @@ class GetSentMessages {
         this.ccRecipientUserNameList,
         this.subject,
         this.messageBody,
+        this.longMessageBody,
         this.creationDate});
 
   GetSentMessages.fromMap(Map<String, dynamic> json) {

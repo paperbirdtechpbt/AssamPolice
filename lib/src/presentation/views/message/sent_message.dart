@@ -54,12 +54,9 @@ class _SentMessageViewState extends State<SentMessageView> {
           child: RefreshIndicator(
             color: defaultColor,
             onRefresh: (){
-              return Future.delayed( Duration(seconds: 1),(){
-
+              return Future.delayed( const Duration(seconds: 1),(){
                 setState(() {
                   context.read<MessageCubit>().getSentMessages("${user?.email}", 0, 1);
-
-                  print("Refreshed Page ============================>");
                 });
               });
             },
@@ -82,11 +79,11 @@ class _SentMessageViewState extends State<SentMessageView> {
                     builder: (context, state) {
                       switch (state.runtimeType) {
                         case GetSentMessagesLoadingState:
-                          return const Column(
+                          return  Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             mainAxisSize: MainAxisSize.max,
                             children: [
-                              Center(
+                              const Center(
                                 child: CircularProgressIndicator(
                                   color: defaultColor,
                                 ),
