@@ -153,28 +153,24 @@ return Future.delayed( Duration(seconds: 1),(){
                           padding: const EdgeInsets.only(top: 10.0),
                           child: Column(
                             children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.all(0.0),
-                                child: Column(
-                                  children: List.generate(members.length, (index) {
-                                    final parsedDate = DateTime.parse(members[index].creationDate.toString());
-                                    final formattedDate = DateFormat('dd MMM').format(parsedDate);
-                                    return sendReceivedMessageBox(
-                                      isSeenMessage: members[index].isSeen,
-                                      icon: '',
-                                        subject: members[index].subject,
-                                        firstChar: members[index].senderUserName?.substring(0, 1),
-                                        name: members[index].senderUserName,
-                                        date: formattedDate,
-                                        onTap: () {
-                                          appRouter
-                                              .push(MessageScreenRoute(getReceivedMessages: members[index]));
-                                        },
-                                        subTitle: members[index].messageBody,
-                                    );
-
-                                  }),
-                                ),
+                              Column(
+                                children: List.generate(members.length, (index) {
+                                  final parsedDate = DateTime.parse(members[index].creationDate.toString());
+                                  final formattedDate = DateFormat('dd MMM').format(parsedDate);
+                                  return sendReceivedMessageBox(
+                                    isSeenMessage: members[index].isSeen,
+                                    icon: '',
+                                      subject: members[index].subject,
+                                      firstChar: members[index].senderUserName?.substring(0, 1),
+                                      name: members[index].senderUserName,
+                                      date: formattedDate,
+                                      onTap: () {
+                                        appRouter
+                                            .push(MessageScreenRoute(getReceivedMessages: members[index]));
+                                      },
+                                      subTitle: members[index].messageBody,
+                                  );
+                                }),
                               )
                             ],
                           ),

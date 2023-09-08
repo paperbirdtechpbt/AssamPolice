@@ -47,7 +47,7 @@ class _MessageScreenState extends State<MessageScreen> {
   bool isShowMessage2 = false;
   String bodyMessage = '';
   List<String> msgBodyList = [];
-  List<GetMessageBody> getMsgBody = [];
+  GetMessageBody? getMsgBody;
   late User? user = User();
   List<GetReceivedMessagesWithParentDetails>
       getReceivedMessagesWithParentDetails = [];
@@ -174,7 +174,7 @@ class _MessageScreenState extends State<MessageScreen> {
                               }),
                             );
                           case GetSentMessagesWithParentDetailsLoadingState:
-                            return Center(
+                            return const Center(
                               child: CircularProgressIndicator(
                                 color: primaryColor,
                               ),
@@ -228,7 +228,7 @@ class _MessageScreenState extends State<MessageScreen> {
                                 //     user?.email,
                                 //     getReceivedMessagesWithParentDetails[index].messageId
                                 //         );
-                                return receviedReplyMessageBox(
+                                return receivedReplyMessageBox(
                                   getReceivedMessages?.parentMessagesId ==
                                           getReceivedMessagesWithParentDetails[
                                                   index]
@@ -240,7 +240,7 @@ class _MessageScreenState extends State<MessageScreen> {
                               }),
                             );
                           case GetReceivedMessagesWithParentDetailsLoadingState:
-                            return Center(
+                            return const Center(
                               child: CircularProgressIndicator(
                                 color: primaryColor,
                               ),
@@ -254,7 +254,7 @@ class _MessageScreenState extends State<MessageScreen> {
                                 //     user?.email,
                                 //     getReceivedMessagesWithParentDetails[index].messageId
                                 // );
-                                return receviedReplyMessageBox(
+                                return receivedReplyMessageBox(
                                   getReceivedMessages?.parentMessagesId ==
                                           getReceivedMessagesWithParentDetails[
                                                   index]
@@ -284,12 +284,11 @@ class _MessageScreenState extends State<MessageScreen> {
         width: 120,
         height: 40,
         decoration: BoxDecoration(
-            border: Border.all(color: Colors.black),
+            border: Border.all(),
             borderRadius: const BorderRadius.horizontal(
                 left: Radius.circular(20), right: Radius.circular(20))),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             icon,
             Text(
@@ -325,7 +324,7 @@ class _MessageScreenState extends State<MessageScreen> {
                     backgroundColor: defaultColor,
                     child: Text(
                       isSentMessage == true
-                          ? "${getSentMessages?.toRecipientUserNameList?.join(", ")?.substring(0, 1) ?? ''} "
+                          ? "${getSentMessages?.toRecipientUserNameList?.join(", ").substring(0, 1) ?? ''} "
                           : "${getReceivedMessages?.toRecipientUserNameList?.join(", ").substring(0, 1) ?? ''}",
                       style: const TextStyle(
                           fontWeight: FontWeight.bold,
@@ -373,7 +372,7 @@ class _MessageScreenState extends State<MessageScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '${formattedDate}' ?? '',
+                            '${formattedDate}',
                             style:
                                 styleIbmPlexSansRegular(size: 12, color: grey),
                           ),
@@ -434,7 +433,7 @@ class _MessageScreenState extends State<MessageScreen> {
                             width: double.infinity,
                             height: MediaQuery.of(context).size.height * 0.25,
                             child: Text(
-                              bodyMessage ?? '',
+                              bodyMessage,
                               style: styleIbmPlexSansRegular(
                                   size: 13, color: Colors.black),
                             )),
@@ -571,7 +570,7 @@ class _MessageScreenState extends State<MessageScreen> {
     );
   }
 
-  receviedReplyMessageBox(
+  receivedReplyMessageBox(
     GetReceivedMessagesWithParentDetails? getReceivedMessagesWithParentDetails,
 
   ) {
@@ -581,25 +580,15 @@ class _MessageScreenState extends State<MessageScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              child: Text(
-                isSentMessage == true
-                    ? "${getSentMessages?.subject ?? ''} "
-                    : "${getReceivedMessagesWithParentDetails.subject ?? ''}",
-                style: styleIbmPlexSansBold(size: 20, color: grey),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 30.0),
+                    Padding(
+              padding: const EdgeInsets.only(top: 20.0),
               child: Container(
                 child: Row(
                   children: [
                     CircleAvatar(
                       backgroundColor: defaultColor,
                       child: Text(
-                        isSentMessage == true
-                            ? "${getSentMessages?.toRecipientUserNameList?.join(", ")?.substring(0, 1) ?? ''} "
-                            : "${getReceivedMessagesWithParentDetails?.senderUserName?.substring(0, 1) ?? ''}",
+                         "${getReceivedMessagesWithParentDetails.senderUserName?.substring(0, 1) ?? ''}",
                         style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
@@ -614,9 +603,7 @@ class _MessageScreenState extends State<MessageScreen> {
                     Container(
                         width: MediaQuery.of(context).size.width * 0.40,
                         child: Text(
-                          isSentMessage == true
-                              ? "${getSentMessages?.toRecipientUserNameList?.join(", ")} "
-                              : "${getReceivedMessagesWithParentDetails?.senderUserName}",
+                          "${getReceivedMessagesWithParentDetails.senderUserName}",
                           overflow: TextOverflow.ellipsis,
                           style: styleIbmPlexSansRegular(size: 16, color: grey),
                         )),
@@ -643,24 +630,21 @@ class _MessageScreenState extends State<MessageScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '${formattedDate}' ?? '',
+                              '${formattedDate}',
                               style: styleIbmPlexSansRegular(
                                   size: 12, color: grey),
                             ),
                             InkWell(
                                 onTap: () {
-                                  if (isSentMessage == true) {
+
                                     appRouter.push(ComposeMessageScreenRoute(
-                                        isReply: true,
-                                        isSentMessage: true,
-                                        getSentMessages: getSentMessages));
-                                  } else {
-                                    appRouter.push(ComposeMessageScreenRoute(
+
                                       getReceivedMessages: getReceivedMessages,
                                       isReply: true,
                                       isSentMessage: false,
+                                      getMessageBody: getMsgBody
                                     ));
-                                  }
+
                                 },
                                 child: const Icon(
                                   Icons.reply,
@@ -683,7 +667,7 @@ class _MessageScreenState extends State<MessageScreen> {
                   setState(() {
                     msgBodyList.add(
                         state.getMessageBodyResponse?.data?.messageBody ?? '');
-                    getMsgBody = state.getMessageBodyResponse.data ?? [];
+                    getMsgBody = state.getMessageBodyResponse?.data ?? null;
                   });
                 }
               },
@@ -855,14 +839,7 @@ class _MessageScreenState extends State<MessageScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              child: Text(
-                isSentMessage == true
-                    ? "${getSentMessages?.subject ?? ''} "
-                    : "${getSentMessagesWithParentDetails?.subject ?? ''}",
-                style: styleIbmPlexSansBold(size: 20, color: grey),
-              ),
-            ),
+            const SizedBox(height: 10,),
             Padding(
               padding: const EdgeInsets.only(top: 30.0),
               child: Container(
@@ -872,8 +849,8 @@ class _MessageScreenState extends State<MessageScreen> {
                       backgroundColor: defaultColor,
                       child: Text(
                         isSentMessage == true
-                            ? "${getSentMessages?.toRecipientUserNameList?.join(", ")?.substring(0, 1) ?? ''} "
-                            : "${getSentMessagesWithParentDetails?.toRecipientUserNameList?.join(", ").substring(0, 1) ?? ''}",
+                            ? "${getSentMessages?.toRecipientUserNameList?.join(", ").substring(0, 1) ?? ''} "
+                            : "${getSentMessagesWithParentDetails.toRecipientUserNameList?.join(", ").substring(0, 1) ?? ''}",
                         style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
@@ -890,7 +867,7 @@ class _MessageScreenState extends State<MessageScreen> {
                         child: Text(
                           isSentMessage == true
                               ? "${getSentMessages?.toRecipientUserNameList?.join(", ")} "
-                              : "${getSentMessagesWithParentDetails?.toRecipientUserNameList?.join(", ")}",
+                              : "${getSentMessagesWithParentDetails.toRecipientUserNameList?.join(", ")}",
                           overflow: TextOverflow.ellipsis,
                           style: styleIbmPlexSansRegular(size: 16, color: grey),
                         )),
@@ -918,7 +895,7 @@ class _MessageScreenState extends State<MessageScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '${formattedDate}' ?? '',
+                              '${formattedDate}',
                               style: styleIbmPlexSansRegular(
                                   size: 12, color: grey),
                             ),
@@ -980,7 +957,7 @@ class _MessageScreenState extends State<MessageScreen> {
                               width: double.infinity,
                               height: MediaQuery.of(context).size.height * 0.25,
                               child: Text(
-                                getSentMessagesWithParentDetails?.messageBody ??
+                                getSentMessagesWithParentDetails.messageBody ??
                                     '',
                                 style: styleIbmPlexSansRegular(
                                     size: 13, color: Colors.black),

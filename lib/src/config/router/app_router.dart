@@ -4,8 +4,12 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import '../../domain/models/data/arguments.dart';
 import '../../domain/models/data/get_all_vdp_committee.dart';
+import '../../domain/models/data/get_all_vdp_member.dart';
+import '../../domain/models/data/get_message_body.dart';
 import '../../domain/models/data/get_received_message.dart';
+import '../../domain/models/data/get_received_messages_with_parent_details.dart';
 import '../../domain/models/data/get_sent_message.dart';
+import '../../domain/models/data/get_sent_messages_with_parent_details.dart';
 import '../../domain/models/responses/get_all_vdp_committee_response.dart';
 import '../../presentation/cubits/vdp_member/vdp_member_detail.dart';
 import '../../presentation/views/add_member_location/add_member.dart';
@@ -28,6 +32,8 @@ import '../../presentation/views/splash/splash_screen.dart';
 import '../../presentation/views/vdp_committee/add_vdp_committee.dart';
 import '../../presentation/views/vdp_committee/update_vdp_committee.dart';
 import '../../presentation/views/vdp_committee/vpd_committe_view.dart';
+import '../../presentation/views/vdp_members/add_vdp_member.dart';
+import '../../presentation/views/vdp_members/edit_vdp_member.dart';
 import '../../presentation/views/vdp_members/vdp_members.dart';
 import '../../presentation/views/view_image/photo_view.dart';
 
@@ -59,6 +65,8 @@ part 'app_router.gr.dart';
     AutoRoute(page: UpdateVdpCommitteeView),
     AutoRoute(page: VdpMembersListView),
     AutoRoute(page: VdpMemberDetailView),
+    AutoRoute(page: AddVdpMember),
+    AutoRoute(page: EditVdpMember),
   ],
 )
 class AppRouter extends _$AppRouter {}

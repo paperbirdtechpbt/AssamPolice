@@ -127,6 +127,10 @@ class _$AppRouter extends RootStackRouter {
           getReceivedMessages: args.getReceivedMessages,
           getSentMessages: args.getSentMessages,
           isSentMessage: args.isSentMessage,
+          getReceivedMessagesWithParentDetails:
+              args.getReceivedMessagesWithParentDetails,
+          getSentMessagesWithParentDetails:
+              args.getSentMessagesWithParentDetails,
           isReply: args.isReply,
           getMessageBody: args.getMessageBody,
         ),
@@ -188,15 +192,37 @@ class _$AppRouter extends RootStackRouter {
       );
     },
     VdpMembersListViewRoute.name: (routeData) {
+      final args = routeData.argsAs<VdpMembersListViewRouteArgs>(
+          orElse: () => const VdpMembersListViewRouteArgs());
       return AdaptivePage<dynamic>(
         routeData: routeData,
-        child: const VdpMembersListView(),
+        child: VdpMembersListView(
+          key: args.key,
+          getAllVDPCommittee: args.getAllVDPCommittee,
+        ),
       );
     },
     VdpMemberDetailViewRoute.name: (routeData) {
       return AdaptivePage<dynamic>(
         routeData: routeData,
         child: const VdpMemberDetailView(),
+      );
+    },
+    AddVdpMemberRoute.name: (routeData) {
+      return AdaptivePage<dynamic>(
+        routeData: routeData,
+        child: const AddVdpMember(),
+      );
+    },
+    EditVdpMemberRoute.name: (routeData) {
+      final args = routeData.argsAs<EditVdpMemberRouteArgs>(
+          orElse: () => const EditVdpMemberRouteArgs());
+      return AdaptivePage<dynamic>(
+        routeData: routeData,
+        child: EditVdpMember(
+          key: args.key,
+          getAllVdpMember: args.getAllVdpMember,
+        ),
       );
     },
   };
@@ -294,6 +320,14 @@ class _$AppRouter extends RootStackRouter {
         RouteConfig(
           VdpMemberDetailViewRoute.name,
           path: '/vdp-member-detail-view',
+        ),
+        RouteConfig(
+          AddVdpMemberRoute.name,
+          path: '/add-vdp-member',
+        ),
+        RouteConfig(
+          EditVdpMemberRoute.name,
+          path: '/edit-vdp-member',
         ),
       ];
 }
@@ -585,6 +619,8 @@ class ComposeMessageScreenRoute
     GetReceivedMessages? getReceivedMessages,
     GetSentMessages? getSentMessages,
     bool? isSentMessage,
+    GetReceivedMessagesWithParentDetails? getReceivedMessagesWithParentDetails,
+    GetSentMessagesWithParentDetails? getSentMessagesWithParentDetails,
     bool? isReply,
     GetMessageBody? getMessageBody,
   }) : super(
@@ -595,6 +631,9 @@ class ComposeMessageScreenRoute
             getReceivedMessages: getReceivedMessages,
             getSentMessages: getSentMessages,
             isSentMessage: isSentMessage,
+            getReceivedMessagesWithParentDetails:
+                getReceivedMessagesWithParentDetails,
+            getSentMessagesWithParentDetails: getSentMessagesWithParentDetails,
             isReply: isReply,
             getMessageBody: getMessageBody,
           ),
@@ -609,6 +648,8 @@ class ComposeMessageScreenRouteArgs {
     this.getReceivedMessages,
     this.getSentMessages,
     this.isSentMessage,
+    this.getReceivedMessagesWithParentDetails,
+    this.getSentMessagesWithParentDetails,
     this.isReply,
     this.getMessageBody,
   });
@@ -621,13 +662,18 @@ class ComposeMessageScreenRouteArgs {
 
   final bool? isSentMessage;
 
+  final GetReceivedMessagesWithParentDetails?
+      getReceivedMessagesWithParentDetails;
+
+  final GetSentMessagesWithParentDetails? getSentMessagesWithParentDetails;
+
   final bool? isReply;
 
   final GetMessageBody? getMessageBody;
 
   @override
   String toString() {
-    return 'ComposeMessageScreenRouteArgs{key: $key, getReceivedMessages: $getReceivedMessages, getSentMessages: $getSentMessages, isSentMessage: $isSentMessage, isReply: $isReply, getMessageBody: $getMessageBody}';
+    return 'ComposeMessageScreenRouteArgs{key: $key, getReceivedMessages: $getReceivedMessages, getSentMessages: $getSentMessages, isSentMessage: $isSentMessage, getReceivedMessagesWithParentDetails: $getReceivedMessagesWithParentDetails, getSentMessagesWithParentDetails: $getSentMessagesWithParentDetails, isReply: $isReply, getMessageBody: $getMessageBody}';
   }
 }
 
@@ -777,14 +823,37 @@ class UpdateVdpCommitteeViewRouteArgs {
 
 /// generated route for
 /// [VdpMembersListView]
-class VdpMembersListViewRoute extends PageRouteInfo<void> {
-  const VdpMembersListViewRoute()
-      : super(
+class VdpMembersListViewRoute
+    extends PageRouteInfo<VdpMembersListViewRouteArgs> {
+  VdpMembersListViewRoute({
+    Key? key,
+    GetAllVDPCommittee? getAllVDPCommittee,
+  }) : super(
           VdpMembersListViewRoute.name,
           path: '/vdp-members-list-view',
+          args: VdpMembersListViewRouteArgs(
+            key: key,
+            getAllVDPCommittee: getAllVDPCommittee,
+          ),
         );
 
   static const String name = 'VdpMembersListViewRoute';
+}
+
+class VdpMembersListViewRouteArgs {
+  const VdpMembersListViewRouteArgs({
+    this.key,
+    this.getAllVDPCommittee,
+  });
+
+  final Key? key;
+
+  final GetAllVDPCommittee? getAllVDPCommittee;
+
+  @override
+  String toString() {
+    return 'VdpMembersListViewRouteArgs{key: $key, getAllVDPCommittee: $getAllVDPCommittee}';
+  }
 }
 
 /// generated route for
@@ -797,4 +866,50 @@ class VdpMemberDetailViewRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'VdpMemberDetailViewRoute';
+}
+
+/// generated route for
+/// [AddVdpMember]
+class AddVdpMemberRoute extends PageRouteInfo<void> {
+  const AddVdpMemberRoute()
+      : super(
+          AddVdpMemberRoute.name,
+          path: '/add-vdp-member',
+        );
+
+  static const String name = 'AddVdpMemberRoute';
+}
+
+/// generated route for
+/// [EditVdpMember]
+class EditVdpMemberRoute extends PageRouteInfo<EditVdpMemberRouteArgs> {
+  EditVdpMemberRoute({
+    Key? key,
+    GetAllVdpMember? getAllVdpMember,
+  }) : super(
+          EditVdpMemberRoute.name,
+          path: '/edit-vdp-member',
+          args: EditVdpMemberRouteArgs(
+            key: key,
+            getAllVdpMember: getAllVdpMember,
+          ),
+        );
+
+  static const String name = 'EditVdpMemberRoute';
+}
+
+class EditVdpMemberRouteArgs {
+  const EditVdpMemberRouteArgs({
+    this.key,
+    this.getAllVdpMember,
+  });
+
+  final Key? key;
+
+  final GetAllVdpMember? getAllVdpMember;
+
+  @override
+  String toString() {
+    return 'EditVdpMemberRouteArgs{key: $key, getAllVdpMember: $getAllVdpMember}';
+  }
 }

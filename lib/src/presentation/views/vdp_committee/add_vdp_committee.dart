@@ -339,9 +339,9 @@ class _AddVdpCommitteeViewState extends State<AddVdpCommitteeView> {
                           height: 25,
                         ),
                         Container(
-                          decoration: BoxDecoration(
-                              borderRadius: const BorderRadius.all(
-                                  const Radius.circular(10.0)),
+                          decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(10.0)),
                               color: skyBlue),
                           child: Row(
                             children: [
@@ -384,40 +384,83 @@ class _AddVdpCommitteeViewState extends State<AddVdpCommitteeView> {
                         const SizedBox(
                           height: 25,
                         ),
-                        ButtonThemeLarge(
-                            context: context,
-                            color: defaultColor,
-                            label: add,
-                            onClick: () {
-                              if (validateName(_nameController.text)) {
-                                setState(() {
-                                  isNameValidate = true;
-                                });
-                              } else if (selectedDistrict.isEmpty == true) {
-                                snackBar(context, "Select District");
-                              } else if (selectedPoliceStation.isEmpty == true) {
-                                snackBar(context, "Select Police station");
-                              } else {
-                                context.read<VdpCommitteeCubit>().addVdpCommittee(
-                                    vdpName: _nameController.text,
-                                    longitude:
-                                        long,latitude: lat,policeStation: selectedPoliceStation,district: selectedDistrict,status: "true");
-                              }
-                            }),
+
                         BlocConsumer<VdpCommitteeCubit, VdpCommitteeState>(
   listener: (context, state) {
   if(state is AddVdpCommitteeSuccessState){
       if(state.addVdpCommitteeResponse?.code == "Success"){
 
-        snackBar(context, "Added");
-
+        snackBar(context, "${state.addVdpCommitteeResponse?.message}");
+appRouter.pop();
       }else {
         snackBar(context, "something went wrong !");
       }
   }
   },
   builder: (context, state) {
-      return Container();
+      switch(state.runtimeType){
+        case  AddVdpCommitteeInitialState : return ButtonThemeLarge(
+      context: context,
+      color: defaultColor,
+      label: add,
+      onClick: () {
+      if (validateName(_nameController.text)) {
+      setState(() {
+      isNameValidate = true;
+      });
+      } else if (selectedDistrict.isEmpty == true) {
+      snackBar(context, "Select District");
+      } else if (selectedPoliceStation.isEmpty == true) {
+      snackBar(context, "Select Police station");
+      } else {
+      context.read<VdpCommitteeCubit>().addVdpCommittee(
+      vdpName: _nameController.text,
+      longitude:
+      long,latitude: lat,policeStation: selectedPoliceStation,district: selectedDistrict,status: "true");
+      }
+      });
+        case AddVdpCommitteeLoadingState : return const Center(child: CircularProgressIndicator(color: defaultColor,),);
+        case AddVdpCommitteeSuccessState : return  ButtonThemeLarge(
+            context: context,
+            color: defaultColor,
+            label: add,
+            onClick: () {
+              if (validateName(_nameController.text)) {
+                setState(() {
+                  isNameValidate = true;
+                });
+              } else if (selectedDistrict.isEmpty == true) {
+                snackBar(context, "Select District");
+              } else if (selectedPoliceStation.isEmpty == true) {
+                snackBar(context, "Select Police station");
+              } else {
+                context.read<VdpCommitteeCubit>().addVdpCommittee(
+                    vdpName: _nameController.text,
+                    longitude:
+                    long,latitude: lat,policeStation: selectedPoliceStation,district: selectedDistrict,status: "true");
+              }
+            });
+        default :  return ButtonThemeLarge(
+            context: context,
+            color: defaultColor,
+            label: add,
+            onClick: () {
+              if (validateName(_nameController.text)) {
+                setState(() {
+                  isNameValidate = true;
+                });
+              } else if (selectedDistrict.isEmpty == true) {
+                snackBar(context, "Select District");
+              } else if (selectedPoliceStation.isEmpty == true) {
+                snackBar(context, "Select Police station");
+              } else {
+                context.read<VdpCommitteeCubit>().addVdpCommittee(
+                    vdpName: _nameController.text,
+                    longitude:
+                    long,latitude: lat,policeStation: selectedPoliceStation,district: selectedDistrict,status: "true");
+              }
+            });
+      }
   },
 )
                       ],

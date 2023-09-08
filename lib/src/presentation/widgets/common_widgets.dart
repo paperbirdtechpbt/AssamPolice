@@ -49,16 +49,19 @@ CoustomTextFieldEditBox({
                   ? flutterIcon
                   : SvgPicture.asset(icon, height: 25.0, color: defaultColor)),
         ),
-      const SizedBox(width: 15),
+        const SizedBox(width: 15),
         Flexible(
             child: TextFormField(
+keyboardType: textInputType,
           controller: controller,
           decoration: InputDecoration(
+
               border: inputBorder,
               enabledBorder: InputBorder.none,
               focusedBorder: InputBorder.none,
               hintText: hint,
               focusedErrorBorder: const OutlineInputBorder(
+
                 borderRadius: BorderRadius.all(Radius.circular(0)),
                 borderSide: BorderSide(
                   width: 0,
@@ -67,6 +70,8 @@ CoustomTextFieldEditBox({
               )),
           onChanged: onChanged,
           validator: validator,
+          textInputAction: textInputAction,
+
           autovalidateMode: autovalidateMode,
           inputFormatters:
               length != null ? [LengthLimitingTextInputFormatter(10)] : [],
@@ -110,6 +115,7 @@ TextFieldEditBox({
         sizeWidthBox(),
         Flexible(
             child: TextFormField(
+keyboardType: textInputType,
           controller: controller,
           decoration: InputDecoration(
               border: inputBorder,
@@ -493,18 +499,34 @@ sendReceivedMessageBox({
               child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                overflow: TextOverflow.ellipsis,
-                subject ?? '',
-                style: isSeenMessage == false
-                    ?
-styleIbmPlexSansBold(
-size: 17,
-color: black,
-)
-                    :styleIbmPlexSansRegular(size: 16, color: grey)
+              const SizedBox(height: 3,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width: SizeConfig.screenWidth * 0.60,
+                    child: Text(
+                        overflow: TextOverflow.ellipsis,
+                        subject ?? '',
+                        style: isSeenMessage == false
+                            ? styleIbmPlexSansBold(
+                                size: 14,
+                                color: black,
+                              )
+                            : styleIbmPlexSansRegular(size: 14, color: grey)),
+                  ),
+                  isSeenMessage == false
+                      ? const Icon(
+                          Icons.mail_rounded,
+                          color: Colors.black,
+                          size: 20,
+                        )
+                      : Container(),
+                ],
               ),
-              Text(
+              const SizedBox(height: 3,),
+
+Text(
                 overflow: TextOverflow.ellipsis,
                 subTitle ?? '',
                 style: styleIbmPlexSansRegular(size: 16, color: grey),
@@ -542,12 +564,12 @@ color: black,
                   child: Text(
                     name ?? '',
                     overflow: TextOverflow.ellipsis,
-                    style: isSeenMessage == false ?styleIbmPlexSansBold(
-size: 17,
-color: black,
-)
+                    style: isSeenMessage == false
+                        ? styleIbmPlexSansBold(
+                            size: 17,
+                            color: black,
+                          )
                         : styleIbmPlexSansRegular(size: 16, color: black),
-
                   ),
                 ),
                 Text(

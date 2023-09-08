@@ -4,8 +4,11 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import '../../../config/router/app_router.dart';
 import '../../../domain/models/data/get_message_body.dart';
 import '../../../domain/models/data/get_received_message.dart';
+import '../../../domain/models/data/get_received_messages_with_parent_details.dart';
 import '../../../domain/models/data/get_sent_message.dart';
+import '../../../domain/models/data/get_sent_messages_with_parent_details.dart';
 import '../../../domain/models/data/user.dart';
+import '../../../domain/models/responses/get_sent_messages_with_parent_details_response.dart';
 import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/strings.dart';
 import '../../../utils/reference/my_shared_reference.dart';
@@ -17,6 +20,8 @@ class ComposeMessageScreen extends StatefulWidget {
   GetReceivedMessages? getReceivedMessages;
   GetSentMessages? getSentMessages;
   GetMessageBody? getMessageBody;
+  GetReceivedMessagesWithParentDetails? getReceivedMessagesWithParentDetails;
+  GetSentMessagesWithParentDetails? getSentMessagesWithParentDetails;
   bool? isSentMessage;
   bool? isReply;
   ComposeMessageScreen({
@@ -24,19 +29,22 @@ class ComposeMessageScreen extends StatefulWidget {
     this.getReceivedMessages,
     this.getSentMessages,
     this.isSentMessage,
+    this.getReceivedMessagesWithParentDetails,
+    this.getSentMessagesWithParentDetails,
     this.isReply,
     this.getMessageBody,
   });
 
   @override
   State<ComposeMessageScreen> createState() =>
-      _ComposeMessageScreenState(getReceivedMessages, isReply,getSentMessages,isSentMessage,getMessageBody);
+      _ComposeMessageScreenState(getReceivedMessages, isReply,getSentMessages,isSentMessage,getMessageBody,getSentMessagesWithParentDetails,getReceivedMessagesWithParentDetails);
 }
 
 class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
   GetMessageBody? getMessageBody;
-
-  _ComposeMessageScreenState(this.getReceivedMessages, this.isReply,this.getSentMessages,this.isSentMessage,this.getMessageBody);
+  GetReceivedMessagesWithParentDetails? getReceivedMessagesWithParentDetails;
+  GetSentMessagesWithParentDetails? getSentMessagesWithParentDetails;
+  _ComposeMessageScreenState(this.getReceivedMessages, this.isReply,this.getSentMessages,this.isSentMessage,this.getMessageBody,this.getSentMessagesWithParentDetails,this.getReceivedMessagesWithParentDetails);
 
   List<String> members = [
     "vdp@assampolice.org",
@@ -100,6 +108,13 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
 
   Future<bool> onWillPop() {
     context.read<MessageCubit>().getReceivedMessages(user?.email, 0, 1);
+      context
+          .read<MessageCubit>()
+          .getSentMessagesWithParentDetails(user?.email, 0, 1);
+      context
+          .read<MessageCubit>()
+          .getReceivedMessagesWithParentDetails(user?.email, 0, 1);
+
     return Future.value(true);
   }
 
@@ -117,7 +132,7 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
                 Icons.arrow_back_ios_new_outlined,
                 size: 20,
               )),
-          title: Text(
+          title: const Text(
             "Message",
           ),
           actions: [
@@ -127,14 +142,14 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
                 Icons.send,
               ),
               onTap: () {
-                if (isReply != null && isReply == true) {
+                if (isReply != null && isReply == true && isSentMessage == true) {
                   context.read<MessageCubit>().sendMessage(
                       "${user?.email}",
                       selectedMembers,
                       selectedCcMembers,
                       _subjectController.text,
                       _bodyController.text,
-                      getReceivedMessages?.parentMessagesId ?? 0);
+                      getSentMessages?.messageId ?? 0);
                 } else {
                   context.read<MessageCubit>().sendMessage(
                       "${user?.email}",
@@ -142,7 +157,7 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
                       selectedCcMembers,
                       _subjectController.text,
                       _bodyController.text,
-                      getReceivedMessages?.parentMessagesId ?? 0);
+                      getReceivedMessages?.messageId ?? 0);
                 }
               },
             ),
