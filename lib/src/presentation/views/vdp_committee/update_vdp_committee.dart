@@ -432,7 +432,7 @@ class _UpdateVdpCommitteeViewState extends State<UpdateVdpCommitteeView> {
                             if (state is UpdateVdpCommitteeSuccessState) {
                               if (state.updateVdpCommitteeResponse?.code ==
                                   "Success") {
-                                snackBar(context, "Updated");
+                                snackBar(context, "${state.updateVdpCommitteeResponse?.message}");
                                 appRouter.pop();
                               } else {
                                 snackBar(context, "something went wrong !");

@@ -30,7 +30,7 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
   TextEditingController mobileController = TextEditingController();
 
 
-  late List<GetAllVDPCommittee>? getAllVdpCommittee = [];
+  late List<GetAllVDPCommittee> getAllVdpCommittee = [];
   late List<String> listDistrict = [];
   late List<String> listPoliceStation = [];
   late List<District>? listDistrictResponse = [];
@@ -59,6 +59,7 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
       setState(() {
         user = data?.user;
        cubit.getAllVdpCommittee();
+       context.read<HomeCubit>().getDistrict(user?.email);
       })
     });
   }
@@ -76,7 +77,7 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                 Icons.arrow_back_ios_new,
                 size: 15,
               )),
-          title: const Text("VdP Committee"),
+          title: const Text("VDP Committee"),
         ),
         body: SingleChildScrollView(
           child: Stack(
@@ -85,7 +86,7 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
               Column(
                 children: [
                   sizeHeightBox(),
-                  BlocConsumer<HomeCubit, HomeState>(
+                    BlocConsumer<HomeCubit, HomeState>(
                     listener: (context, state) {
                       if (state is HomeLoadingState) {
                         onLoading(context, "Loading..");
@@ -93,19 +94,17 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                       if (state is HomeCategoryErrorState) {
                         appRouter.pop();
                         snackBar(context, "${state.error?.message}");
-
                       }
                       if (state is GetCategorySuccessState) {
                         appRouter.pop();
                         if (state.response?.status == "201") {
-
                         } else {
                           var response = state.categoryResponse?.data;
-
                         }
                       } else if (state is GetDistrictSuccessState) {
                         var response = state.response;
-                        listDistrictResponse = state.response?.data?.listDistrict;
+                        listDistrictResponse =
+                            state.response?.data?.listDistrict;
                         mapDistrict.clear();
                         listDistrict.clear();
                         setState(() {
@@ -116,7 +115,8 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                         });
                       } else if (state is GetPoliceStationSuccessState) {
                         var response = state.response;
-                        listPoliceStationResponse = state.response?.data?.listDistrict;
+                        listPoliceStationResponse =
+                            state.response?.data?.listDistrict;
                         mapPolice.clear();
                         listPoliceStation.clear();
                         setState(() {
@@ -153,7 +153,7 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                               selectedDistrictId = mapDistrict[value];
                               var myInt = int.parse(selectedDistrictId!);
                               if(value != null){
-                                cubit.getPoliceStation(myInt, user?.email);
+                                context.read<HomeCubit>().getPoliceStation(myInt, user?.email ?? '');
                               }
 
                               setState(() {
@@ -180,8 +180,10 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                             onChanged: (value) {
                               selectedPoliceStationId = mapPolice[value];
                               var myInt = int.parse(selectedPoliceStationId!);
-                              cubit.getCategory(myInt);
-                              selectedPoliceStation = value!;
+                              // cubit.getCategory(myInt);
+                             setState(() {
+                               selectedPoliceStation = value!;
+                             });
                             },
                           ),
                         )
@@ -203,7 +205,7 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                                 snackBar(context, "${state.error?.message}");
                               }
                               if (state is  VdpCommitteeSuccessState) {
-                                getAllVdpCommittee = state.getAllVDPCommitteeResponse?.data;
+                                getAllVdpCommittee = state.getAllVDPCommitteeResponse?.data ?? [];
 
                               }
                             },
@@ -217,10 +219,10 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                                      subTitle: "VDP",
                                      firstChar: getAllVdpCommittee![index].vdpName?.substring(0, 1),
                                      name: getAllVdpCommittee![index].vdpName,
-                                     onTap: () {
-                                       appRouter
-                                           .push(EditMembersAddressRoute());
-                                     },
+                                       onTap: (){
+                                         appRouter
+                                             .push(VdpMembersListViewRoute(getAllVDPCommittee: getAllVdpCommittee[index]));
+                                       }
                                    );
                                  }),),
                                ),
@@ -237,7 +239,7 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                                      policeStation: getAllVdpCommittee![index].policeStation,
                                    onTap: (){
                                      appRouter
-                                         .push(VdpMembersListViewRoute());
+                                         .push(VdpMembersListViewRoute(getAllVDPCommittee: getAllVdpCommittee[index]));
                                    }
                                  );
                                }),),
@@ -292,7 +294,7 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                 Row(
                   children: [
                     icon!.isEmpty
-                        ? CircleAvatar(
+                        ? const CircleAvatar(
                       backgroundColor: defaultColor,
                       child: Icon(Icons.people_alt_rounded,color: Colors.white,),
                       // child: Text(
@@ -326,7 +328,42 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                   height: 25,
 
                   shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
-                  onPressed: (){},child: Text("Delete",style: styleIbmPlexSansRegular(size: 16, color: defaultColor),),)
+                  onPressed: () async {
+
+                      final shouldPop = await showDialog<bool>(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text('Delete'),
+                            content: const Text('Are you sure ?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context, false);
+                                },
+                                child: const Text(
+                                  'No',
+
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  appRouter.pop();
+                                },
+                                child: const Text('Yes',style: TextStyle(color: Colors.red),),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+
+
+                  },child: Row(
+                    children: [
+                      const Icon(Icons.delete,color: defaultColor,size:20 ,),
+                      Text("Delete",style: styleIbmPlexSansRegular(size: 13, color: defaultColor),),
+                    ],
+                  ),)
               ],
             ),
           )
@@ -334,4 +371,5 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
 
     );
   }
+
 }

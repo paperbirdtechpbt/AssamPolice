@@ -42,6 +42,7 @@ const memberHintMobile = "Mobile no";
 const memberHintRemark = "Remark";
 const memberHintAddress = "Address";
 const memberName = "Name";
+const memberEmail= "Email";
 const memberMobile = "Mobile NO.";
 const memberAge = "Age";
 const memberAddress = "Address";
