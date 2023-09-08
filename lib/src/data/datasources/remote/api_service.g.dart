@@ -558,7 +558,7 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<HttpResponse<AddVdpCommitteeResponse>> deleteVdpCommittee(
+  Future<HttpResponse<DeleteVdpCommitteeResponse>> deleteVdpCommittee(
       {VdpId}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'id': VdpId};
@@ -566,7 +566,7 @@ class _ApiService implements ApiService {
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<HttpResponse<AddVdpCommitteeResponse>>(Options(
+        _setStreamType<HttpResponse<DeleteVdpCommitteeResponse>>(Options(
       method: 'DELETE',
       headers: _headers,
       extra: _extra,
@@ -578,7 +578,7 @@ class _ApiService implements ApiService {
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = AddVdpCommitteeResponse.fromMap(_result.data!);
+    final value = DeleteVdpCommitteeResponse.fromMap(_result.data!);
     final httpResponse = HttpResponse(value, _result);
     return httpResponse;
   }
@@ -753,7 +753,7 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<HttpResponse<AddVdpCommitteeResponse>> deleteVdpMember(
+  Future<HttpResponse<DeleteVdpMemberResponse>> deleteVdpMember(
       {VdpMemberId}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'id': VdpMemberId};
@@ -761,7 +761,7 @@ class _ApiService implements ApiService {
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<HttpResponse<AddVdpCommitteeResponse>>(Options(
+        _setStreamType<HttpResponse<DeleteVdpMemberResponse>>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -773,7 +773,7 @@ class _ApiService implements ApiService {
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = AddVdpCommitteeResponse.fromMap(_result.data!);
+    final value = DeleteVdpMemberResponse.fromMap(_result.data!);
     final httpResponse = HttpResponse(value, _result);
     return httpResponse;
   }

@@ -17,7 +17,6 @@ import '../../../utils/reference/my_shared_reference.dart';
 import '../../cubits/message/message_cubit.dart';
 import '../../cubits/message/message_state.dart';
 import '../../widgets/common_widgets.dart';
-import '../vdp/reply_message/reply_message_screen.dart';
 
 class MessageScreen extends StatefulWidget {
   MessageScreen(

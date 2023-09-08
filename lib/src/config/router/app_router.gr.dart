@@ -102,7 +102,11 @@ class _$AppRouter extends RootStackRouter {
           orElse: () => const AddLocationScreenRouteArgs());
       return AdaptivePage<dynamic>(
         routeData: routeData,
-        child: AddLocationScreen(key: args.key),
+        child: AddLocationScreen(
+          key: args.key,
+          isUpdateLocation: args.isUpdateLocation,
+          getAllVDPCommittee: args.getAllVDPCommittee,
+        ),
       );
     },
     AddMemberScreenRoute.name: (routeData) {
@@ -597,24 +601,39 @@ class AddMemberLocationRoute extends PageRouteInfo<void> {
 /// generated route for
 /// [AddLocationScreen]
 class AddLocationScreenRoute extends PageRouteInfo<AddLocationScreenRouteArgs> {
-  AddLocationScreenRoute({Key? key})
-      : super(
+  AddLocationScreenRoute({
+    Key? key,
+    bool? isUpdateLocation,
+    GetAllVDPCommittee? getAllVDPCommittee,
+  }) : super(
           AddLocationScreenRoute.name,
           path: '/add-location-screen',
-          args: AddLocationScreenRouteArgs(key: key),
+          args: AddLocationScreenRouteArgs(
+            key: key,
+            isUpdateLocation: isUpdateLocation,
+            getAllVDPCommittee: getAllVDPCommittee,
+          ),
         );
 
   static const String name = 'AddLocationScreenRoute';
 }
 
 class AddLocationScreenRouteArgs {
-  const AddLocationScreenRouteArgs({this.key});
+  const AddLocationScreenRouteArgs({
+    this.key,
+    this.isUpdateLocation,
+    this.getAllVDPCommittee,
+  });
 
   final Key? key;
 
+  final bool? isUpdateLocation;
+
+  final GetAllVDPCommittee? getAllVDPCommittee;
+
   @override
   String toString() {
-    return 'AddLocationScreenRouteArgs{key: $key}';
+    return 'AddLocationScreenRouteArgs{key: $key, isUpdateLocation: $isUpdateLocation, getAllVDPCommittee: $getAllVDPCommittee}';
   }
 }
 

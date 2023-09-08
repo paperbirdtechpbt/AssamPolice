@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 
 import '../../../domain/models/responses/add_vdp_committee_response.dart';
 import '../../../domain/models/responses/add_vdp_member.dart';
+import '../../../domain/models/responses/delete_vdp_member_response.dart';
 import '../../../domain/models/responses/get_all_vdp_committee_response.dart';
 import '../../../domain/models/responses/get_all_vdp_member_response.dart';
 import '../../../domain/models/responses/get_all_vdp_roles_response.dart';
@@ -14,6 +15,8 @@ abstract class VdpMemberState {
   final AddVdpMemberResponse? addVdpMemberResponse;
   final UpdateVdpMemberResponse? updateVdpMemberResponse;
   final GetAllVdpRolesResponse? getAllVdpRolesResponse;
+  final DeleteVdpMemberResponse? deleteVdpMemberResponse;
+
   final DioError? error;
 
   const VdpMemberState({
@@ -21,6 +24,7 @@ abstract class VdpMemberState {
     this.updateVdpMemberResponse,
     this.addVdpMemberResponse,
     this.getAllVdpRolesResponse,
+    this.deleteVdpMemberResponse,
     this.error,
   });
 
@@ -30,6 +34,7 @@ abstract class VdpMemberState {
    updateVdpMemberResponse,
 addVdpMemberResponse,
    getAllVdpRolesResponse,
+    deleteVdpMemberResponse,
 
   ];
 }
@@ -89,7 +94,25 @@ class UpdateVdpMemberSuccessState extends VdpMemberState {
 class UpdateVdpMemberErrorState extends VdpMemberState {
   const UpdateVdpMemberErrorState({super.error});
 }
+// deleteVdpMember
 
+
+class DeleteVdpMemberInitialState extends VdpMemberState {
+  const DeleteVdpMemberInitialState();
+}
+
+
+class DeleteVdpMemberLoadingState extends VdpMemberState {
+  const DeleteVdpMemberLoadingState();
+}
+
+class DeleteVdpMemberSuccessState extends VdpMemberState {
+  const DeleteVdpMemberSuccessState({super.deleteVdpMemberResponse});
+}
+
+class DeleteVdpMemberErrorState extends VdpMemberState {
+  const DeleteVdpMemberErrorState({super.error});
+}
 //getAllVdpMemberRoles
 
 

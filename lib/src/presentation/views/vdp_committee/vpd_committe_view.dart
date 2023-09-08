@@ -18,6 +18,8 @@ import '../../cubits/vdp_committee/vdp_committee_cubit.dart';
 import '../../cubits/vdp_committee/vdp_committee_state.dart';
 import '../../widgets/common_widgets.dart';
 import '../../widgets/custom_dropdown.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 class VdpCommitteeView extends StatefulWidget {
   const VdpCommitteeView({Key? key}) : super(key: key);
@@ -215,6 +217,9 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                                child: SingleChildScrollView(
                                  child: Column(children: List.generate(getAllVdpCommittee?.length ?? 0, (index) {
                                    return VdpCommitteeView(
+                                     lat: double.parse(getAllVdpCommittee[index].latitude ?? ''),
+                                     long: double.parse(getAllVdpCommittee[index].longitude ?? ''),
+                                     policeStation: getAllVdpCommittee[index].policeStation,
                                      icon: '',
                                      subTitle: "VDP",
                                      firstChar: getAllVdpCommittee![index].vdpName?.substring(0, 1),
@@ -232,16 +237,19 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                              case VdpCommitteeSuccessState :    return   SingleChildScrollView(
                                child: Column(children: List.generate(getAllVdpCommittee?.length ?? 0, (index) {
                                  return VdpCommitteeView(
-                                   icon: '',
-                                   subTitle: "VDP",
-                                   firstChar: getAllVdpCommittee[index].vdpName?.substring(0, 1).toUpperCase(),
-                                   name: getAllVdpCommittee[index].vdpName,
-                                     id: getAllVdpCommittee[index].vdpId,
+                                     lat: double.parse(getAllVdpCommittee[index].latitude ?? ''),
+                                     long: double.parse(getAllVdpCommittee[index].longitude ?? ''),
                                      policeStation: getAllVdpCommittee[index].policeStation,
-                                   onTap: (){
-                                     appRouter
-                                         .push(VdpMembersListViewRoute(getAllVDPCommittee: getAllVdpCommittee[index]));
-                                   }
+
+                                     icon: '',
+                                     subTitle: "VDP",
+                                     firstChar: getAllVdpCommittee![index].vdpName?.substring(0, 1),
+                                     id : getAllVdpCommittee[index].vdpId,
+                                     name: getAllVdpCommittee![index].vdpName,
+                                     onTap: (){
+                                       appRouter.push(VdpMembersListViewRoute(getAllVDPCommittee: getAllVdpCommittee[index]));
+                                     }
+
                                  );
                                }),),
                              );
@@ -283,6 +291,8 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
     String? firstChar,
     String? subject,
     String? policeStation,
+    double? lat,
+    double? long,
   }) {
     return InkWell(
       onTap: onTap,
@@ -319,6 +329,8 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(child: Text(name ?? '',style: styleIbmPlexSansBold(size: 16, color: Colors.black),),),
+                          const SizedBox(height: 5,),
+                          Container(child: Text( '(Registered)',style: styleIbmPlexSansRegular(size: 16, color: grey),),),
                           const SizedBox(height: 5,),
                           Container(child: Text(policeStation ?? '',style: styleIbmPlexSansRegular(size: 14, color: grey),),),
                         ],),
@@ -366,12 +378,26 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                 //       Text("Registered",style: styleIbmPlexSansRegular(size: 13, color: Colors.black),),
                 //     ],
                 //   ),)
+                InkWell(
+                    onTap: (){
+                      openGoogleMaps(lat ?? 0.0,long ?? 0);
+                    },
+                    child: SvgPicture.asset(ic_map,height: 35,)),
+
               ],
             ),
           )
       ),
 
     );
+  }
+  void openGoogleMaps(double latitude, double longitude) async {
+    final url = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      snackBar(context, "Try again");
+    }
   }
 
 }

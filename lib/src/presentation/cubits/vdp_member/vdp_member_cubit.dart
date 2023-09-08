@@ -4,6 +4,7 @@ import 'package:flutter_clean_architecture/src/presentation/cubits/vdp_member/vd
 import '../../../domain/models/requests/add_vdp_committee_request.dart';
 import '../../../domain/models/requests/add_vdp_member_request.dart';
 import '../../../domain/models/requests/auth_request.dart';
+import '../../../domain/models/requests/delete_vdp_member_request.dart';
 import '../../../domain/models/requests/update_vdp_committee_request.dart';
 import '../../../domain/models/requests/update_vdp_member_request.dart';
 import '../../../domain/models/responses/login_response.dart';
@@ -98,6 +99,31 @@ class VdpMemberCubit extends BaseCubit<VdpMemberState, LoginResponse> {
       }
     });
   }
+//deleteVdpMember
+
+  Future<void> deleteVdpMember(
+      {
+        int? memberId,
+      }
+      ) async {
+    if (isBusy) return;
+
+    await run(() async {
+      emit(const DeleteVdpMemberLoadingState());
+      final request = DeleteVdpMemberRequest(
+        memberId: memberId,
+
+      );
+      final response = await _apiRepository.deleteVdpMember(request: request);
+      if (response is DataSuccess) {
+        emit(DeleteVdpMemberSuccessState(deleteVdpMemberResponse: response.data));
+      } else if (response is DataFailed) {
+        emit(DeleteVdpMemberErrorState(error: response.error));
+      }
+    });
+  }
+
+
 
 
   Future<void> getVdpMemberRoles() async {

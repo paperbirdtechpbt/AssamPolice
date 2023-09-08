@@ -1,4 +1,4 @@
-class DeleteVdpRequest {
+class DeleteVdpCommitteeRequest {
   int? id;
-  DeleteVdpRequest({this.id});
+  DeleteVdpCommitteeRequest({this.id});
 }

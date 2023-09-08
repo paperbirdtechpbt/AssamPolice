@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 
 import '../../../domain/models/responses/add_vdp_committee_response.dart';
+import '../../../domain/models/responses/delete_vdp_committee_response.dart';
+import '../../../domain/models/responses/delete_vdp_member_response.dart';
 import '../../../domain/models/responses/get_all_vdp_committee_response.dart';
 import '../../../domain/models/responses/login_response.dart';
 import '../../../domain/models/responses/update_vdp_committee_response.dart';
@@ -9,18 +11,18 @@ abstract class VdpCommitteeState {
   final GetAllVDPCommitteeResponse? getAllVDPCommitteeResponse;
   final AddVdpCommitteeResponse? addVdpCommitteeResponse;
   final UpdateVdpCommitteeResponse? updateVdpCommitteeResponse;
-  final AddVdpCommitteeResponse? deleteResponse;
+  final DeleteVdpCommitteeResponse? deleteVdpCommitteeResponse;
   final DioError? error;
 
   const VdpCommitteeState({
     this.getAllVDPCommitteeResponse,
     this.addVdpCommitteeResponse,
     this.updateVdpCommitteeResponse,
-    this.deleteResponse,
+    this.deleteVdpCommitteeResponse,
     this.error,
   });
 
-  List<Object?> get props => [getAllVDPCommitteeResponse, error,addVdpCommitteeResponse,updateVdpCommitteeResponse];
+  List<Object?> get props => [getAllVDPCommitteeResponse, error,addVdpCommitteeResponse,updateVdpCommitteeResponse,deleteVdpCommitteeResponse];
 }
 
 class VdpCommitteeInitialState extends VdpCommitteeState {
@@ -84,7 +86,7 @@ class DeleteVdpLoadingState extends VdpCommitteeState {
 }
 
 class DeleteVdpSuccessState extends VdpCommitteeState {
-  const DeleteVdpSuccessState({super.deleteResponse});
+  const DeleteVdpSuccessState({super.deleteVdpCommitteeResponse});
 }
 
 class DeleteVdpErrorState extends VdpCommitteeState {

@@ -5,6 +5,8 @@ import 'package:retrofit/retrofit.dart' as rf;
 import '../../../domain/models/data/send_message.dart';
 import '../../../domain/models/responses/add_vdp_committee_response.dart';
 import '../../../domain/models/responses/add_vdp_member.dart';
+import '../../../domain/models/responses/delete_vdp_committee_response.dart';
+import '../../../domain/models/responses/delete_vdp_member_response.dart';
 import '../../../domain/models/responses/geo_address_response.dart';
 import '../../../domain/models/responses/get_all_vdp_committee_response.dart';
 import '../../../domain/models/responses/get_all_vdp_member_response.dart';
@@ -150,7 +152,7 @@ abstract class ApiService {
   });
 
   @DELETE('VDPCommittee/DeleteVDPCommittee')
-  Future<HttpResponse<AddVdpCommitteeResponse>> deleteVdpCommittee({
+  Future<HttpResponse<DeleteVdpCommitteeResponse>> deleteVdpCommittee({
     @Query("id") int? VdpId,
   });
   @POST('VDPCommittee/UpdateVDPCommittee')
@@ -195,8 +197,8 @@ abstract class ApiService {
   });
 
   @POST('VDPMember/DeleteVDPMember')
-  Future<HttpResponse<AddVdpCommitteeResponse>> deleteVdpMember({
-    @Query("id") String? VdpMemberId,
+  Future<HttpResponse<DeleteVdpMemberResponse>> deleteVdpMember({
+    @Query("id") int? VdpMemberId,
   });
 
 }

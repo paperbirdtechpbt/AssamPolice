@@ -4,6 +4,7 @@ import '../models/requests/add_geo_location_request.dart';
 import '../models/requests/add_vdp_committee_request.dart';
 import '../models/requests/add_vdp_member_request.dart';
 import '../models/requests/auth_request.dart';
+import '../models/requests/delete_vdp_member_request.dart';
 import '../models/requests/delete_vdp_request.dart';
 import '../models/requests/get_body_message.dart';
 import '../models/requests/get_district_police_station_request.dart';
@@ -18,6 +19,8 @@ import '../models/requests/update_vdp_committee_request.dart';
 import '../models/requests/update_vdp_member_request.dart';
 import '../models/responses/add_vdp_committee_response.dart';
 import '../models/responses/add_vdp_member.dart';
+import '../models/responses/delete_vdp_committee_response.dart';
+import '../models/responses/delete_vdp_member_response.dart';
 import '../models/responses/geo_address_response.dart';
 import '../models/responses/get_all_vdp_committee_response.dart';
 import '../models/responses/get_all_vdp_member_response.dart';
@@ -99,6 +102,11 @@ abstract class ApiRepository {
     required UpdateVdpCommitteeRequest request,
   });
 
+  Future<DataState<DeleteVdpCommitteeResponse>> deleteVdpCommittee({
+    required DeleteVdpCommitteeRequest request,
+  });
+
+
   //vdpMember
   //response set pending
 
@@ -116,8 +124,8 @@ abstract class ApiRepository {
     required UpdateVdpMemberRequest request,
   });
 
-    Future<DataState<AddVdpCommitteeResponse>> deleteVdp({
-    required DeleteVdpRequest request,
+    Future<DataState<DeleteVdpMemberResponse>> deleteVdpMember({
+    required DeleteVdpMemberRequest request,
   });
 
 

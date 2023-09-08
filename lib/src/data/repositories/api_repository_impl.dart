@@ -3,6 +3,7 @@ import '../../domain/models/requests/add_geo_location_request.dart';
 import '../../domain/models/requests/add_vdp_committee_request.dart';
 import '../../domain/models/requests/add_vdp_member_request.dart';
 import '../../domain/models/requests/auth_request.dart';
+import '../../domain/models/requests/delete_vdp_member_request.dart';
 import '../../domain/models/requests/delete_vdp_request.dart';
 import '../../domain/models/requests/get_body_message.dart';
 import '../../domain/models/requests/get_district_police_station_request.dart';
@@ -17,6 +18,8 @@ import '../../domain/models/requests/update_vdp_committee_request.dart';
 import '../../domain/models/requests/update_vdp_member_request.dart';
 import '../../domain/models/responses/add_vdp_committee_response.dart';
 import '../../domain/models/responses/add_vdp_member.dart';
+import '../../domain/models/responses/delete_vdp_committee_response.dart';
+import '../../domain/models/responses/delete_vdp_member_response.dart';
 import '../../domain/models/responses/geo_address_response.dart';
 import '../../domain/models/responses/get_all_vdp_committee_response.dart';
 import '../../domain/models/responses/get_all_vdp_member_response.dart';
@@ -276,13 +279,24 @@ vdpId: request.vdpId,
 
   }
 
+
+
   @override
-  Future<DataState<AddVdpCommitteeResponse>> deleteVdp({required DeleteVdpRequest request}) {
-      return getStateOf<AddVdpCommitteeResponse>(
-        request: () => _ApiService.deleteVdpCommittee(
+  Future<DataState<DeleteVdpCommitteeResponse>> deleteVdpCommittee({required DeleteVdpCommitteeRequest request}) {
+    return getStateOf<DeleteVdpCommitteeResponse>(
+      request: () => _ApiService.deleteVdpCommittee(
           VdpId: request.id
-        ),
-      );
+      ),
+    );
+  }
+
+  @override
+  Future<DataState<DeleteVdpMemberResponse>> deleteVdpMember({required DeleteVdpMemberRequest request}) {
+    return getStateOf<DeleteVdpMemberResponse>(
+      request: () => _ApiService.deleteVdpMember(
+          VdpMemberId: request.memberId
+      ),
+    );
   }
 
   // @override

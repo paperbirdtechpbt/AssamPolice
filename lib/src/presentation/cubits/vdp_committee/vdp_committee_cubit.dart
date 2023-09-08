@@ -103,10 +103,10 @@ final request = AddVdpCommitteeRequest(
 
     await run(() async {
       emit(const DeleteVdpLoadingState());
-      var request = DeleteVdpRequest(id: id);
-      final response = await _apiRepository.deleteVdp(request: request);
+      var request = DeleteVdpCommitteeRequest(id: id);
+      final response = await _apiRepository.deleteVdpCommittee(request: request);
       if (response is DataSuccess) {
-        emit(DeleteVdpSuccessState(deleteResponse: response.data));
+        emit(DeleteVdpSuccessState(deleteVdpCommitteeResponse: response.data));
       } else if (response is DataFailed) {
         emit(DeleteVdpErrorState(error: response.error));
       }
