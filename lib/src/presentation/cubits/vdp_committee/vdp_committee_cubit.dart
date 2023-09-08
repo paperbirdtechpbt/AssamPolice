@@ -2,6 +2,7 @@ import 'package:flutter_clean_architecture/src/presentation/cubits/vdp_committee
 
 import '../../../domain/models/requests/add_vdp_committee_request.dart';
 import '../../../domain/models/requests/auth_request.dart';
+import '../../../domain/models/requests/delete_vdp_request.dart';
 import '../../../domain/models/requests/update_vdp_committee_request.dart';
 import '../../../domain/models/responses/login_response.dart';
 import '../../../domain/repositories/api_repository.dart';
@@ -96,5 +97,20 @@ final request = AddVdpCommitteeRequest(
     });
   }
 
+
+  Future<void> deleteVdp(int? id) async {
+    if (isBusy) return;
+
+    await run(() async {
+      emit(const DeleteVdpLoadingState());
+      var request = DeleteVdpRequest(id: id);
+      final response = await _apiRepository.deleteVdp(request: request);
+      if (response is DataSuccess) {
+        emit(DeleteVdpSuccessState(deleteResponse: response.data));
+      } else if (response is DataFailed) {
+        emit(DeleteVdpErrorState(error: response.error));
+      }
+    });
+  }
 
 }

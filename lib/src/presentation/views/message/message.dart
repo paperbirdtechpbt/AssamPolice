@@ -143,10 +143,8 @@ class _MessageScreenState extends State<MessageScreen> {
             children: [
               messageBox(),
               isSentMessage == true
-                  ?
-
-                  Container(padding:EdgeInsets.only(left: 30), child: Column(
-                children: List.generate(
+                  ? Container(padding:const EdgeInsets.only(left: 30), child: Column(
+                      children: List.generate(
                     getSentMessagesWithParentDetails.length,
                         (index) {
                       // context.read<MessageCubit>().getMessageBody(
@@ -155,7 +153,6 @@ class _MessageScreenState extends State<MessageScreen> {
                       // );
                       return InkWell(
                           onTap: () {
-
                             currentMessageIndex = index;
                             setState(() {
                               getSentMessagesWithParentDetails[index].isVisible =
@@ -465,6 +462,21 @@ class _MessageScreenState extends State<MessageScreen> {
                     isFirstTime = false;
                   }
 
+
+                  if(isSentMessage == true){
+                    if(isFirstTime == false  && currentMessageIndex != -1)
+                      if(state.getMessageBodyResponse?.code == "Success"){
+                        getSentMessagesWithParentDetails[currentMessageIndex].longMessage = state.getMessageBodyResponse?.data?.messageBody;
+                        getReceivedMessagesWithParentDetails[currentMessageIndex].longMessage =  state.getMessageBodyResponse?.data?.messageBody;
+                      }
+                  }else{
+                    if(isFirstTime == false  && currentMessageIndex != -1)
+                      if(state.getMessageBodyResponse?.code == "Success"){
+                        getReceivedMessagesWithParentDetails[currentMessageIndex].longMessage = state.getMessageBodyResponse?.data?.messageBody;
+                        getReceivedMessagesWithParentDetails[currentMessageIndex].longMessage =  state.getMessageBodyResponse?.data?.messageBody;
+                      }
+                  }
+
                   if(isFirstTime == false  && currentMessageIndex != -1)
                     if(state.getMessageBodyResponse?.code == "Success"){
                       getSentMessagesWithParentDetails[currentMessageIndex].longMessage = state.getMessageBodyResponse?.data?.messageBody;
@@ -481,7 +493,6 @@ class _MessageScreenState extends State<MessageScreen> {
                   child: Column(
                     children: [
                       Container(
-
                         padding:
                             const EdgeInsets.fromLTRB(0.0, 10.0, 10.0, 10.0),
                         child: Container(
@@ -1005,7 +1016,7 @@ class _MessageScreenState extends State<MessageScreen> {
                   setState(() {
                     // msgBodyList.add(
                     //     state.getMessageBodyResponse?.data?.messageBody ?? '');
-                    bodyMessage = state.getMessageBodyResponse?.data?.messageBody ?? '';
+
                   });
                 }
               },
@@ -1024,8 +1035,7 @@ class _MessageScreenState extends State<MessageScreen> {
                                   size: 13, color: Colors.black),
                             ) : Text(
                               getSentMessagesWithParentDetails
-                                  .longMessage ??
-                                  '',
+                                  .longMessage ?? (getSentMessagesWithParentDetails?.messageBody ??""),
                               style: styleIbmPlexSansRegular(
                                   size: 13, color: Colors.black),
                             )

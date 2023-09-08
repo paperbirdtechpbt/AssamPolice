@@ -3,6 +3,7 @@ import '../../domain/models/requests/add_geo_location_request.dart';
 import '../../domain/models/requests/add_vdp_committee_request.dart';
 import '../../domain/models/requests/add_vdp_member_request.dart';
 import '../../domain/models/requests/auth_request.dart';
+import '../../domain/models/requests/delete_vdp_request.dart';
 import '../../domain/models/requests/get_body_message.dart';
 import '../../domain/models/requests/get_district_police_station_request.dart';
 import '../../domain/models/requests/get_receive_message_request.dart';
@@ -274,6 +275,22 @@ vdpId: request.vdpId,
     );
 
   }
+
+  @override
+  Future<DataState<AddVdpCommitteeResponse>> deleteVdp({required DeleteVdpRequest request}) {
+      return getStateOf<AddVdpCommitteeResponse>(
+        request: () => _ApiService.deleteVdpCommittee(
+          VdpId: request.id
+        ),
+      );
+  }
+
+  // @override
+  // Future<DataState<AddVdpCommitteeResponse>> deleteVdp({required DeleteVdpRequest request}) {
+  //   return getStateOf<AddVdpCommitteeResponse>(
+  //     request: () => _ApiService.deleteVdpCommittee(),
+  //   );
+  // }
 
 
 

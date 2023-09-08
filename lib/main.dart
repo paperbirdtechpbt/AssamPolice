@@ -33,8 +33,9 @@ import 'src/utils/constants/strings.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await initializeDependencies();
+  await ScreenUtil.ensureScreenSize();
+
   // initGeoLocation();
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -281,58 +282,76 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context);
-    initializeSize(context);
 
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => AuthCubit(
-            locator<ApiRepository>(),
+    ScreenUtil.init(context);
+
+    return ScreenUtilInit(
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+
+
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) =>
+                  AuthCubit(
+                    locator<ApiRepository>(),
+                  ),
+            ),
+            BlocProvider(
+              create: (context) =>
+                  HomeCubit(
+                    locator<ApiRepository>(),
+                  ),
+            ),
+            BlocProvider(
+              create: (context) =>
+                  GetGeoAddressCubit(
+                    locator<ApiRepository>(),
+                  ),
+            ),
+            BlocProvider(
+              create: (context) =>
+                  AddGeoLocationCubit(
+                    locator<ApiRepository>(),
+                  ),
+            ),
+            BlocProvider(
+              create: (context) =>
+                  IncedenceCubit(
+                    locator<ApiRepository>(),
+                  ),
+            ), BlocProvider(
+              create: (context) =>
+                  MessageCubit(
+                    locator<ApiRepository>(),
+                  ),
+            ), BlocProvider(
+              create: (context) =>
+                  VdpCommitteeCubit(
+                    locator<ApiRepository>(),
+                  ),
+            ), BlocProvider(
+              create: (context) =>
+                  VdpMemberCubit(
+                    locator<ApiRepository>(),
+                  ),
+            ),
+          ],
+          child: OKToast(
+            child: MaterialApp.router(
+              debugShowCheckedModeBanner: false,
+              routerDelegate: appRouter.delegate(),
+              routeInformationParser: appRouter.defaultRouteParser(),
+              title: appTitle,
+              theme: AppTheme.light,
+            ),
           ),
-        ),
-        BlocProvider(
-          create: (context) => HomeCubit(
-            locator<ApiRepository>(),
-          ),
-        ),
-        BlocProvider(
-          create: (context) => GetGeoAddressCubit(
-            locator<ApiRepository>(),
-          ),
-        ),
-        BlocProvider(
-          create: (context) => AddGeoLocationCubit(
-            locator<ApiRepository>(),
-          ),
-        ),
-        BlocProvider(
-          create: (context) => IncedenceCubit(
-            locator<ApiRepository>(),
-          ),
-        ),   BlocProvider(
-          create: (context) => MessageCubit(
-            locator<ApiRepository>(),
-          ),
-        ),   BlocProvider(
-          create: (context) => VdpCommitteeCubit(
-            locator<ApiRepository>(),
-          ),
-        ),  BlocProvider(
-          create: (context) => VdpMemberCubit(
-            locator<ApiRepository>(),
-          ),
-        ),
-      ],
-      child: OKToast(
-        child: MaterialApp.router(
-          debugShowCheckedModeBanner: false,
-          routerDelegate: appRouter.delegate(),
-          routeInformationParser: appRouter.defaultRouteParser(),
-          title: appTitle,
-          theme: AppTheme.light,
-        ),
-      ),
+        );
+      },
     );
   }
 }
+
+

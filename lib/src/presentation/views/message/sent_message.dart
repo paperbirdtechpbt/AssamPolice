@@ -50,96 +50,94 @@ class _SentMessageViewState extends State<SentMessageView> {
         appBar: AppBar(
           title: const Text("Sent messages"),
         ),
-        body: Center(
-          child: RefreshIndicator(
-            color: defaultColor,
-            onRefresh: (){
-              return Future.delayed( const Duration(seconds: 1),(){
-                setState(() {
-                  context.read<MessageCubit>().getSentMessages("${user?.email}", 0, 1);
-                });
+        body: RefreshIndicator(
+          color: defaultColor,
+          onRefresh: (){
+            return Future.delayed( const Duration(seconds: 1),(){
+              setState(() {
+                context.read<MessageCubit>().getSentMessages("${user?.email}", 0, 1);
               });
-            },
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  BlocConsumer<MessageCubit, MessageState>(
-                    listener: (context, state) {
-                      if (state is GetSentMessagesSuccessState) {
-                        if (state.getSentMessagesResponse?.code == "Success") {
-                          _getSentMessages =
-                              state.getSentMessagesResponse?.data ?? [];
+            });
+          },
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                BlocConsumer<MessageCubit, MessageState>(
+                  listener: (context, state) {
+                    if (state is GetSentMessagesSuccessState) {
+                      if (state.getSentMessagesResponse?.code == "Success") {
+                        _getSentMessages =
+                            state.getSentMessagesResponse?.data ?? [];
 
-                          print(
-                              "=================================>${_getSentMessages.length}");
-                        }
+                        print(
+                            "=================================>${_getSentMessages.length}");
                       }
-                    },
-                    builder: (context, state) {
-                      switch (state.runtimeType) {
-                        case GetSentMessagesLoadingState:
-                          return  Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              const Center(
-                                child: CircularProgressIndicator(
-                                  color: defaultColor,
-                                ),
+                    }
+                  },
+                  builder: (context, state) {
+                    switch (state.runtimeType) {
+                      case GetSentMessagesLoadingState:
+                        return  Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            const Center(
+                              child: CircularProgressIndicator(
+                                color: defaultColor,
                               ),
-                            ],
-                          );
-                        case GetSentMessagesSuccessState:
-                          return Padding(
-                            padding: const EdgeInsets.all(0.0),
-                            child: Column(children: [
-                              ListView.builder(
-                                  physics: const ScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: _getSentMessages.length,
-                                  itemBuilder: (BuildContext context, index) {
-                                    // _toRecipientUserNameList = _getSentMessages[index].toRecipientUserNameList ?? [];
-                                    final parsedDate = DateTime.parse(
-                                        _getSentMessages[index]
-                                            .creationDate
-                                            .toString());
-                                    final formattedDate =
-                                        DateFormat('dd MMM').format(parsedDate);
-                                    return sendReceivedMessageBox(
-                                        icon: '',
-                                        subject: _getSentMessages[index].subject,
-                                        firstChar: _getSentMessages[index].toRecipientUserNameList?.join(", ").substring(0, 1),
-                                        name: _getSentMessages[index].toRecipientUserNameList?.join(", "),
-                                        date: formattedDate,
-                                        onTap: () {
-                                          appRouter.push(MessageScreenRoute(
-                                              getSentMessages:
-                                                  _getSentMessages[index],
-                                              isSentMessage: true));
-                                        },
-                                        subTitle:
-                                            _getSentMessages[index].messageBody);
-                                  }),
-                            ]),
-                          );
-                        case GetSentMessagesErrorState:
-                          return const Center(
-                            child: Text(
-                              "something went wrong !",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 25),
                             ),
-                          );
-                        default:
-                          return Container();
-                      }
-                    },
-                  ),
-                ],
-              ),
+                          ],
+                        );
+                      case GetSentMessagesSuccessState:
+                        return Padding(
+                          padding: const EdgeInsets.all(0.0),
+                          child: Column(children: [
+                            ListView.builder(
+                                physics: const ScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: _getSentMessages.length,
+                                itemBuilder: (BuildContext context, index) {
+                                  // _toRecipientUserNameList = _getSentMessages[index].toRecipientUserNameList ?? [];
+                                  final parsedDate = DateTime.parse(
+                                      _getSentMessages[index]
+                                          .creationDate
+                                          .toString());
+                                  final formattedDate =
+                                      DateFormat('dd MMM').format(parsedDate);
+                                  return sendReceivedMessageBox(
+                                      icon: '',
+                                      subject: _getSentMessages[index].subject,
+                                      firstChar: _getSentMessages[index].toRecipientUserNameList?.join(", ").substring(0, 1),
+                                      name: _getSentMessages[index].toRecipientUserNameList?.join(", "),
+                                      date: formattedDate,
+                                      onTap: () {
+                                        appRouter.push(MessageScreenRoute(
+                                            getSentMessages:
+                                                _getSentMessages[index],
+                                            isSentMessage: true));
+                                      },
+                                      subTitle:
+                                          _getSentMessages[index].messageBody);
+                                }),
+                          ]),
+                        );
+                      case GetSentMessagesErrorState:
+                        return const Center(
+                          child: Text(
+                            "something went wrong !",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 25),
+                          ),
+                        );
+                      default:
+                        return Container();
+                    }
+                  },
+                ),
+              ],
             ),
           ),
         ),

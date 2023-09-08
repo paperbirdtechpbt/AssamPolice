@@ -567,7 +567,7 @@ class _ApiService implements ApiService {
     final _data = <String, dynamic>{};
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<HttpResponse<AddVdpCommitteeResponse>>(Options(
-      method: 'POST',
+      method: 'DELETE',
       headers: _headers,
       extra: _extra,
     )

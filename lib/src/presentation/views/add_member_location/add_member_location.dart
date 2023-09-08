@@ -89,9 +89,9 @@ SizedBox(
                                 height: 20.0,
                               ),
                               Text(
-                                "Add member",
-                                style: styleIbmPlexSansRegular(
-                                    size: 13, color: grey),
+                                "VDP Committee",
+                                style: styleIbmPlexSansBold(
+                                    size: 15, color: Colors.black),
                               ),
                             ],
                           ),
@@ -100,88 +100,127 @@ SizedBox(
                       const SizedBox(
                         width: 10,
                       ),
-                      Expanded(
-                        child: InkWell(
-                          child: Container(
-                            height: 120,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.3),
-                                  spreadRadius: 1,
-                                  blurRadius: 2,
-                                  offset: const Offset(0, 1),
+                      Expanded(child:  InkWell(
+                        child: Container(
+                                height: 120,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.3),
+                                      spreadRadius: 1,
+                                      blurRadius: 2,
+                                      offset: const Offset(0, 1),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.location_on,
-                                    size: 33, color: defaultColor),
-                                const SizedBox(
-                                  height: 20.0,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.message,
+                                  size: 33, color: defaultColor),
+                              const SizedBox(
+                                height: 10.0,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 20.0, right: 20),
+                                child: Text(
+                                  "Messages",
+
+    style: styleIbmPlexSansBold(
+    size: 15, color: Colors.black),
                                 ),
-                                Text(
-                                  "Add Location of the VDP Committee",
-                                  style: styleIbmPlexSansRegular(
-                                      size: 13, color: grey),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                          onTap: () async {
-                            appRouter.push(AddLocationScreenRoute());
-                          },
                         ),
-                      ),
+                        onTap: () async {
+                          appRouter.push(InBoxScreenRoute());
+                        },
+                      ),)
+                      // Expanded(
+                      //   child: InkWell(
+                      //     child: Container(
+                      //       height: 120,
+                      //       decoration: BoxDecoration(
+                      //         borderRadius: BorderRadius.circular(12),
+                      //         color: Colors.white,
+                      //         boxShadow: [
+                      //           BoxShadow(
+                      //             color: Colors.grey.withOpacity(0.3),
+                      //             spreadRadius: 1,
+                      //             blurRadius: 2,
+                      //             offset: const Offset(0, 1),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //       child: Column(
+                      //         mainAxisAlignment: MainAxisAlignment.center,
+                      //         children: [
+                      //           const Icon(Icons.location_on,
+                      //               size: 33, color: defaultColor),
+                      //           const SizedBox(
+                      //             height: 20.0,
+                      //           ),
+                      //           Text(
+                      //             "Add Location of the VDP Committee",
+                      //             style: styleIbmPlexSansRegular(
+                      //                 size: 13, color: grey),
+                      //             textAlign: TextAlign.center,
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //     onTap: () async {
+                      //       appRouter.push(AddLocationScreenRoute());
+                      //     },
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
                 SizedBox(
                   height: 10,
                 ),
-                InkWell(
-                  child: Container(
-                    height: 80,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.3),
-                          spreadRadius: 1,
-                          blurRadius: 2,
-                          offset: const Offset(0, 1),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.message,
-                            size: 33, color: defaultColor),
-                        const SizedBox(
-                          height: 10.0,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 20.0, right: 20),
-                          child: Text(
-                            "View or send message",
-                            style:
-                                styleIbmPlexSansRegular(size: 13, color: grey),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  onTap: () async {
-                    appRouter.push(InBoxScreenRoute());
-                  },
-                ),
+                // InkWell(
+                //   child: Container(
+                //     height: 80,
+                //     decoration: BoxDecoration(
+                //       borderRadius: BorderRadius.circular(12),
+                //       color: Colors.white,
+                //       boxShadow: [
+                //         BoxShadow(
+                //           color: Colors.grey.withOpacity(0.3),
+                //           spreadRadius: 1,
+                //           blurRadius: 2,
+                //           offset: const Offset(0, 1),
+                //         ),
+                //       ],
+                //     ),
+                //     child: Column(
+                //       mainAxisAlignment: MainAxisAlignment.center,
+                //       children: [
+                //         const Icon(Icons.message,
+                //             size: 33, color: defaultColor),
+                //         const SizedBox(
+                //           height: 10.0,
+                //         ),
+                //         Padding(
+                //           padding: const EdgeInsets.only(left: 20.0, right: 20),
+                //           child: Text(
+                //             "View or send message",
+                //             style:
+                //                 styleIbmPlexSansRegular(size: 13, color: grey),
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                //   onTap: () async {
+                //     appRouter.push(InBoxScreenRoute());
+                //   },
+                // ),
                 // Padding(
                 //   padding: const EdgeInsets.only(top:60.0),
                 //   child: Container(child: Text("Now you can add a member or location",style: styleIbmPlexSansRegular(size: 16, color: defaultColor),),),

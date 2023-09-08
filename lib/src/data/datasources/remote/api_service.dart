@@ -149,9 +149,9 @@ abstract class ApiService {
     @Query("Status") String? status,
   });
 
-  @POST('VDPCommittee/DeleteVDPCommittee')
+  @DELETE('VDPCommittee/DeleteVDPCommittee')
   Future<HttpResponse<AddVdpCommitteeResponse>> deleteVdpCommittee({
-    @Query("id") String? VdpId,
+    @Query("id") int? VdpId,
   });
   @POST('VDPCommittee/UpdateVDPCommittee')
   Future<HttpResponse<UpdateVdpCommitteeResponse>> updateVdpCommittee({

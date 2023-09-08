@@ -9,12 +9,14 @@ abstract class VdpCommitteeState {
   final GetAllVDPCommitteeResponse? getAllVDPCommitteeResponse;
   final AddVdpCommitteeResponse? addVdpCommitteeResponse;
   final UpdateVdpCommitteeResponse? updateVdpCommitteeResponse;
+  final AddVdpCommitteeResponse? deleteResponse;
   final DioError? error;
 
   const VdpCommitteeState({
     this.getAllVDPCommitteeResponse,
     this.addVdpCommitteeResponse,
     this.updateVdpCommitteeResponse,
+    this.deleteResponse,
     this.error,
   });
 
@@ -75,4 +77,16 @@ class UpdateVdpCommitteeSuccessState extends VdpCommitteeState {
 
 class UpdateVdpCommitteeErrorState extends VdpCommitteeState {
   const UpdateVdpCommitteeErrorState({super.error});
+}
+
+class DeleteVdpLoadingState extends VdpCommitteeState {
+  const DeleteVdpLoadingState();
+}
+
+class DeleteVdpSuccessState extends VdpCommitteeState {
+  const DeleteVdpSuccessState({super.deleteResponse});
+}
+
+class DeleteVdpErrorState extends VdpCommitteeState {
+  const DeleteVdpErrorState({super.error});
 }

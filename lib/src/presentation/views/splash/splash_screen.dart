@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../config/router/app_router.dart';
+import '../../../locator.dart';
 import '../../../utils/constants/assets.dart';
 import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/strings.dart';
@@ -44,6 +45,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    initializeSize(context);
+
     return Scaffold(
         backgroundColor: white,
         body: Stack(

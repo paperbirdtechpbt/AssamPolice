@@ -45,6 +45,7 @@ class _VdpMembersListViewState extends State<VdpMembersListView> {
 
   String selectedDistrict = "";
   String? selectedDistrictId;
+
   String selectedPoliceStation = "";
   String? selectedPoliceStationId;
   late var cubit;
@@ -81,7 +82,7 @@ class _VdpMembersListViewState extends State<VdpMembersListView> {
                 Icons.arrow_back_ios_new,
                 size: 15,
               )),
-          title: const Text("VDP Members"),
+          title: const Text("VDP Details"),
         ),
         body: Stack(
           alignment: Alignment.bottomCenter,
@@ -99,7 +100,7 @@ class _VdpMembersListViewState extends State<VdpMembersListView> {
                         decoration: BoxDecoration(
                             color: Colors.grey[200],
                             borderRadius:
-                                BorderRadius.all(Radius.circular(20))),
+                                const BorderRadius.all(Radius.circular(20))),
                         height: 140,
                         width: double.infinity,
                         child: Card(
@@ -132,18 +133,31 @@ class _VdpMembersListViewState extends State<VdpMembersListView> {
                                           foregroundImage:
                                               NetworkImage("enterImageUrl"),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 10,
                                         ),
-                                        Container(
-                                            width:
-                                                SizeConfig.screenWidth * 0.45,
-                                            child: Text(
-                                              overflow: TextOverflow.ellipsis,
-                                              "${getAllVDPCommittee?.vdpName}",
-                                              style: styleIbmPlexSansBold(
-                                                  size: 18, color: grey),
-                                            )),
+
+                                        Column(children: [
+                                          Container(
+                                              width:
+                                                  SizeConfig.screenWidth * 0.60,
+                                              child: Text(
+                                                overflow: TextOverflow.ellipsis,
+                                                "${getAllVDPCommittee?.vdpName}",
+                                                style: styleIbmPlexSansBold(
+                                                    size: 18, color: grey),
+                                              )),
+                                          const SizedBox(height: 5.0),
+                                          Container(
+                                              width:
+                                                  SizeConfig.screenWidth * 0.60,
+                                              child: Text(
+                                                overflow: TextOverflow.ellipsis,
+                                                "(Registered)",
+                                                style: styleIbmPlexSansRegular(
+                                                    size: 15, color: grey),
+                                              )),
+                                        ],)
                                       ],
                                     ),
                                     Padding(
@@ -153,10 +167,43 @@ class _VdpMembersListViewState extends State<VdpMembersListView> {
                                         onTap: () {},
                                         child: InkWell(
                                           onTap: () {
+
+                                            Map? map;
+
                                             appRouter.push(
                                                 UpdateVdpCommitteeViewRoute(
                                                     getAllVDPCommittee:
-                                                        getAllVDPCommittee));
+                                                        getAllVDPCommittee)).then((value) => {
+                                              map = value as Map?,
+                                                    if (map?["refreshData"] != null && map?["refreshData"] == "refresh")
+                                                      {
+
+                                                        setState(() {
+                                                          if (map?["policeStation"] != null)
+                                              getAllVDPCommittee?.policeStation =  map?["policeStation"];
+                                                          if (map?["district"] != null)
+                                            getAllVDPCommittee?.district =  map?["district"];
+                                                          if (map?["vdpName"] != null)
+                                            getAllVDPCommittee?.vdpName =  map?["vdpName"];
+                                                        }),
+
+
+                                                        print(
+                                                            "Google Map Camera Position Location ====>>>> ${map.toString()}"),
+                                                        // geoLocation =
+                                                        //     GeoLocation(
+                                                        //       photo: selectedFile,
+                                                        //       lat: location
+                                                        //           .latitude
+                                                        //           .toString(),
+                                                        //       long: location
+                                                        //           .longitude
+                                                        //           .toString(),
+                                                        //       isFileUpload: false,
+                                                        //       fileStatus: 0,
+                                                        //     ),
+                                                      }
+                                            });
                                           },
                                           child: Row(
                                             children: [
@@ -188,21 +235,9 @@ class _VdpMembersListViewState extends State<VdpMembersListView> {
                                 padding: const EdgeInsets.only(left: 10.0),
                                 child: Column(
                                   children: [
-                                    Row(
-                                      children: [
-                                        Container(
-                                          child: Text("PoliceStation :"),
-                                        ),
-                                        Container(
-                                          width: SizeConfig.screenWidth * 0.40,
-                                          child: Text(
-                                              "${getAllVDPCommittee?.policeStation}"),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
+
+
+
                                     Row(
                                       children: [
                                         Container(
@@ -215,6 +250,22 @@ class _VdpMembersListViewState extends State<VdpMembersListView> {
                                         ),
                                       ],
                                     ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          child: const Text("PoliceStation :"),
+                                        ),
+                                        Container(
+                                          width: SizeConfig.screenWidth * 0.40,
+                                          child: Text(
+                                              "${getAllVDPCommittee?.policeStation}"),
+                                        ),
+                                      ],
+                                    ),
+
                                   ],
                                 ),
                               )

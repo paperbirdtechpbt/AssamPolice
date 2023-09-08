@@ -218,11 +218,12 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                                      icon: '',
                                      subTitle: "VDP",
                                      firstChar: getAllVdpCommittee![index].vdpName?.substring(0, 1),
+                                       id : getAllVdpCommittee[index].vdpId,
                                      name: getAllVdpCommittee![index].vdpName,
                                        onTap: (){
-                                         appRouter
-                                             .push(VdpMembersListViewRoute(getAllVDPCommittee: getAllVdpCommittee[index]));
+                                         appRouter.push(VdpMembersListViewRoute(getAllVDPCommittee: getAllVdpCommittee[index]));
                                        }
+
                                    );
                                  }),),
                                ),
@@ -233,10 +234,10 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                                  return VdpCommitteeView(
                                    icon: '',
                                    subTitle: "VDP",
-                                   firstChar: getAllVdpCommittee![index].vdpName?.substring(0, 1).toUpperCase(),
-                                   name: getAllVdpCommittee![index].vdpName,
-
-                                     policeStation: getAllVdpCommittee![index].policeStation,
+                                   firstChar: getAllVdpCommittee[index].vdpName?.substring(0, 1).toUpperCase(),
+                                   name: getAllVdpCommittee[index].vdpName,
+                                     id: getAllVdpCommittee[index].vdpId,
+                                     policeStation: getAllVdpCommittee[index].policeStation,
                                    onTap: (){
                                      appRouter
                                          .push(VdpMembersListViewRoute(getAllVDPCommittee: getAllVdpCommittee[index]));
@@ -275,6 +276,7 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
     Icon? flutterIcon,
     String? icon,
     String? name,
+    int? id,
     Function? onTap()?,
     Function? onEdit()?,
     String? subTitle,
@@ -316,54 +318,54 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(child: Text(name ?? '',style: styleIbmPlexSansBold(size: 16, color: grey),),),
-                          SizedBox(height: 5,),
-                          Container(child: Text(policeStation ?? '',style: styleIbmPlexSansRegular(size: 16, color: grey),),),
+                          Container(child: Text(name ?? '',style: styleIbmPlexSansBold(size: 16, color: Colors.black),),),
+                          const SizedBox(height: 5,),
+                          Container(child: Text(policeStation ?? '',style: styleIbmPlexSansRegular(size: 14, color: grey),),),
                         ],),
                     ),
 
                   ],),
-                MaterialButton(
-                  minWidth: 30,
-                  height: 25,
-
-                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
-                  onPressed: () async {
-
-                      final shouldPop = await showDialog<bool>(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Delete'),
-                            content: const Text('Are you sure ?'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context, false);
-                                },
-                                child: const Text(
-                                  'No',
-
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  appRouter.pop();
-                                },
-                                child: const Text('Yes',style: TextStyle(color: Colors.red),),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-
-
-                  },child: Row(
-                    children: [
-                      const Icon(Icons.delete,color: defaultColor,size:20 ,),
-                      Text("Delete",style: styleIbmPlexSansRegular(size: 13, color: defaultColor),),
-                    ],
-                  ),)
+                // MaterialButton(
+                //   minWidth: 30,
+                //   height: 25,
+                //
+                //   shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
+                //   onPressed: () async {
+                //
+                //       // final shouldPop = await showDialog<bool>(
+                //       //   context: context,
+                //       //   builder: (context) {
+                //       //     return AlertDialog(
+                //       //       title: const Text('Delete'),
+                //       //       content: const Text('Are you sure ?'),
+                //       //       actions: [
+                //       //         TextButton(
+                //       //           onPressed: () {
+                //       //             Navigator.pop(context, false);
+                //       //           },
+                //       //           child: const Text(
+                //       //             'No',
+                //       //
+                //       //           ),
+                //       //         ),
+                //       //         TextButton(
+                //       //           onPressed: () {
+                //       //             context.read<VdpCommitteeCubit>().deleteVdp(id);
+                //       //           },
+                //       //           child: const Text('Yes',style: TextStyle(color: Colors.red),),
+                //       //         ),
+                //       //       ],
+                //       //     );
+                //       //   },
+                //       // );
+                //
+                //
+                //   },child: Row(
+                //     children: [
+                //       // const Icon(Icons.delete,color: defaultColor,size:20 ,),
+                //       Text("Registered",style: styleIbmPlexSansRegular(size: 13, color: Colors.black),),
+                //     ],
+                //   ),)
               ],
             ),
           )

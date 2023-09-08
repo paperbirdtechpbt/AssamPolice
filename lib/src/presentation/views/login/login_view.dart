@@ -122,7 +122,7 @@ class _LoginViewState extends State<LoginView> {
                               ButtonThemeLarge(
                                   context: context,
                                   color: defaultColor,
-                                  label: next,
+                                  label: "Login",
                                   onClick: () {
                                     if (userNameController.text.isEmpty) {
                                       snackBar(context, validatorUserName);

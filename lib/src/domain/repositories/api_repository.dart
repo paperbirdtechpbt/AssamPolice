@@ -4,6 +4,7 @@ import '../models/requests/add_geo_location_request.dart';
 import '../models/requests/add_vdp_committee_request.dart';
 import '../models/requests/add_vdp_member_request.dart';
 import '../models/requests/auth_request.dart';
+import '../models/requests/delete_vdp_request.dart';
 import '../models/requests/get_body_message.dart';
 import '../models/requests/get_district_police_station_request.dart';
 import '../models/requests/get_receive_message_request.dart';
@@ -114,4 +115,10 @@ abstract class ApiRepository {
   Future<DataState<UpdateVdpMemberResponse>> updateVdpMember({
     required UpdateVdpMemberRequest request,
   });
+
+    Future<DataState<AddVdpCommitteeResponse>> deleteVdp({
+    required DeleteVdpRequest request,
+  });
+
+
 }

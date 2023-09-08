@@ -433,7 +433,14 @@ class _UpdateVdpCommitteeViewState extends State<UpdateVdpCommitteeView> {
                               if (state.updateVdpCommitteeResponse?.code ==
                                   "Success") {
                                 snackBar(context, "${state.updateVdpCommitteeResponse?.message}");
-                                appRouter.pop();
+
+                                    appRouter.pop({
+                                       "refreshData": "refresh" ,
+                                       "vdpName": _nameController.text,
+                                       "policeStation": selectedPoliceStation,
+                                       "district": selectedDistrict
+                                    });
+
                               } else {
                                 snackBar(context, "something went wrong !");
                               }
