@@ -287,8 +287,8 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
                               cameraPosition
                                   .target
                                   .longitude),
-                          if (distance < 1000)
-                            {
+                          // if (distance < 1000)
+                          //   {
                               // appRouter.pop({
                               //   "refreshData":
                               //   "refresh",
@@ -325,12 +325,12 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
                                     district: getAllVDPCommittee?.district,
                                     status: getAllVDPCommittee?.status),
                               }
-                            }
-                          else
-                            {
-                              snackBar(context,
-                                  "Please select location under 1 km"),
-                            }
+                            // }
+                          // else
+                          //   {
+                          //     snackBar(context,
+                          //         "Please select location under 1 km"),
+                          //   }
                         }
                       else
                         {
@@ -596,8 +596,8 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
                               cameraPosition
                                   .target
                                   .longitude),
-                          if (distance < 1000)
-                            {
+                          // if (distance < 1000)
+                          //   {
                               // appRouter.pop({
                               //   "refreshData":
                               //   "refresh",
@@ -632,12 +632,12 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
                                     district: getAllVDPCommittee?.district,
                                     status: getAllVDPCommittee?.status),
                               }
-                            }
-                          else
-                            {
-                              snackBar(context,
-                                  "Please select location under 1 km"),
-                            }
+                            // }
+                          // else
+                          //   {
+                          //     snackBar(context,
+                          //         "Please select location under 1 km"),
+                          //   }
                         }
                       else
                         {
@@ -902,8 +902,8 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
                               cameraPosition
                                   .target
                                   .longitude),
-                          if (distance < 1000)
-                            {
+                          // if (distance < 1000)
+                          //   {
                               // appRouter.pop({
                               //   "refreshData":
                               //   "refresh",
@@ -938,12 +938,12 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
                                     district: getAllVDPCommittee?.district,
                                     status: getAllVDPCommittee?.status),
                               }
-                            }
-                          else
-                            {
-                              snackBar(context,
-                                  "Please select location under 1 km"),
-                            }
+                            // }
+                          // else
+                          //   {
+                          //     snackBar(context,
+                          //         "Please select location under 1 km"),
+                          //   }
                         }
                       else
                         {

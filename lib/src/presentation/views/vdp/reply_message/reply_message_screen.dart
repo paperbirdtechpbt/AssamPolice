@@ -126,13 +126,6 @@ class _ReplyMessageScreenState extends State<ReplyMessageScreen> {
 
 
 
-                  context.read<MessageCubit>().sendMessage(
-                      "${user?.email}",
-                      selectedMembers,
-                      selectedCcMembers,
-                      messageBody?.subject??"",
-                      _bodyController.text,
-                       messageId);
 
               },
             ),
@@ -536,7 +529,43 @@ class _ReplyMessageScreenState extends State<ReplyMessageScreen> {
                     //   ),
                     // ),
                   ],
+                ), Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: InkWell(
+                    onTap: () {
+                      if(selectedMembers.isEmpty){
+                        snackBar(context, "Please add one in to message.");
+                      }else if(_bodyController.text.isEmpty){
+                        snackBar(context, "Please enter message.");
+                      }else {
+                        context.read<MessageCubit>().sendMessage(
+                            "${user?.email}",
+                            selectedMembers,
+                            selectedCcMembers,
+                            messageBody?.subject??"",
+                            _bodyController.text,
+                            messageId);
+
+                      }
+                    },
+                    child: Container(
+                        decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(14.0)),
+                            color: defaultColor),
+                        padding: const EdgeInsets.fromLTRB(17.0, 17.0, 17, 17.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Send",
+                              style: styleIbmPlexSansBold(size: 15, color: white),
+                            )
+                          ],
+                        )),
+                  ),
                 )
+
+
               ],
             ),
           ),

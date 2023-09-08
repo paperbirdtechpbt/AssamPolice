@@ -622,8 +622,6 @@ class _VdpMembersListViewState extends State<VdpMembersListView> {
       }else {
         snackBar(context, "${state.deleteVdpMemberResponse?.message}");
       }
-    }else {
-      snackBar(context, "something went wrong!");
     }
   },
   builder: (context, state) {
@@ -641,8 +639,6 @@ class _VdpMembersListViewState extends State<VdpMembersListView> {
                     }else {
                       snackBar(context, "${state.deleteVdpCommitteeResponse?.message}");
                     }
-                  }else {
-                    snackBar(context, "something went wrong!");
                   }
                 },
                 builder: (context, state) {

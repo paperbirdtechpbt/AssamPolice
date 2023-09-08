@@ -489,8 +489,6 @@ class _EditVdpMemberState extends State<EditVdpMember> {
                             }else {
                               snackBar(context, "${state.updateVdpMemberResponse?.message}");
                             }
-                          }else {
-                            snackBar(context, "something went wrong!");
                           }
                         },
                         builder: (context, state) {

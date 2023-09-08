@@ -199,13 +199,11 @@ class _MessageScreenState extends State<MessageScreen> {
                           context.read<MessageCubit>().getMessageBody(user?.email, getReceivedMessagesWithParentDetails[index].messageId);
                         },
                         child:  receviedReplyMessageBox(
-                          getReceivedMessages?.parentMessagesId ==
-                              getReceivedMessagesWithParentDetails[
-                              index]
-                                  .parentMessagesId
-                              ? getReceivedMessagesWithParentDetails[
+                          // getReceivedMessages?.parentMessagesId == getReceivedMessagesWithParentDetails[index].parentMessagesId ?
+                          getReceivedMessagesWithParentDetails[
                           index]
-                              : getReceivedMessagesWithParentDetails2,
+                          //     :
+                          // getReceivedMessagesWithParentDetails2,
                         ),);
                     }),
               ),),

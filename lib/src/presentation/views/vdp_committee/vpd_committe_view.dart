@@ -237,8 +237,8 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                              case VdpCommitteeSuccessState :    return   SingleChildScrollView(
                                child: Column(children: List.generate(getAllVdpCommittee?.length ?? 0, (index) {
                                  return VdpCommitteeView(
-                                     lat: double.parse(getAllVdpCommittee[index].latitude ?? ''),
-                                     long: double.parse(getAllVdpCommittee[index].longitude ?? ''),
+                                     lat: double.parse(getAllVdpCommittee[index].latitude ?? '0.0'),
+                                     long: double.parse(getAllVdpCommittee[index].longitude ?? '0.0'),
                                      policeStation: getAllVdpCommittee[index].policeStation,
 
                                      icon: '',
