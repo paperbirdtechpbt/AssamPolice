@@ -1,0 +1,31 @@
+const String ic_logo = 'assets/images/ic_logo.svg';
+const String ic_user = 'assets/images/ic_user.png';
+const String ic_logo_png = 'assets/images/ic_logo.png';
+const String ic_phone = 'assets/images/ic_phone.svg';
+const String ic_arrow_left = 'assets/images/ic_arrow_left.svg';
+const String ic_user_placeholder = 'assets/images/ic_user_placeholder.svg';
+const String ic_hospital = 'assets/images/ic_hospital.svg';
+const String ic_store = 'assets/images/ic_store.svg';
+const String ic_masjid = 'assets/images/ic_masjid.svg';
+const String ic_temple = 'assets/images/ic_temple.svg';
+const String ic_bank = 'assets/images/ic_bank.svg';
+const String ic_forest = 'assets/images/ic_forest.svg';
+const String ic_theater = 'assets/images/ic_theater.svg';
+const String ic_warehouse = 'assets/images/ic_warehouse.svg';
+const String ic_stadium = 'assets/images/ic_stadium.svg';
+const String ic_restaurant = 'assets/images/ic_restaurant.svg';
+const String ic_gps = 'assets/images/ic_gps.svg';
+const String ic_image_placeholder = 'assets/images/ic_image_placeholder.svg';
+const String ic_account = 'assets/images/ic_account.svg';
+const String ic_lock = 'assets/images/ic_lock.svg';
+const String ic_profile = 'assets/images/ic_profile.svg';
+const load = 'assets/images/load.gif';
+const ic_logout = 'assets/images/ic_logout.svg';
+const ic_compass = 'assets/images/ic_compass.svg';
+const ic_clear = 'assets/images/ic_clear.svg';
+const ic_pin = 'assets/images/ic_pin.svg';
+const ic_location_pin = 'assets/images/ic_location_pin.png';
+const ic_launcher = 'assets/images/ic_launcher.png';
+
+//font's
+const String openSans_normal = 'OpenSans_normal.ttf';
