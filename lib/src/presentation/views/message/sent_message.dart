@@ -82,11 +82,11 @@ class _SentMessageViewState extends State<SentMessageView> {
                     builder: (context, state) {
                       switch (state.runtimeType) {
                         case GetSentMessagesLoadingState:
-                          return   Column(
+                          return const Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             mainAxisSize: MainAxisSize.max,
                             children: [
-                              const Center(
+                              Center(
                                 child: CircularProgressIndicator(
                                   color: defaultColor,
                                 ),

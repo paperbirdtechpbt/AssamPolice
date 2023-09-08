@@ -47,6 +47,7 @@ class _MessageScreenState extends State<MessageScreen> {
   bool isShowMessage2 = false;
   String bodyMessage = '';
   List<String> msgBodyList = [];
+  List<GetMessageBody> getMsgBody = [];
   late User? user = User();
   List<GetReceivedMessagesWithParentDetails>
       getReceivedMessagesWithParentDetails = [];
@@ -68,17 +69,15 @@ class _MessageScreenState extends State<MessageScreen> {
                         ? getSentMessages?.messageId
                         : getReceivedMessages?.messageId)
                 .then((value) {
-         if(isSentMessage == true){
-           context
-               .read<MessageCubit>()
-               .getSentMessagesWithParentDetails(user?.email, 0, 1);
-         }else {
-           context
-               .read<MessageCubit>()
-               .getReceivedMessagesWithParentDetails(user?.email, 0, 1);
-         }
-
-
+              if (isSentMessage == true) {
+                context
+                    .read<MessageCubit>()
+                    .getSentMessagesWithParentDetails(user?.email, 0, 1);
+              } else {
+                context
+                    .read<MessageCubit>()
+                    .getReceivedMessagesWithParentDetails(user?.email, 0, 1);
+              }
             });
           })
         });
@@ -574,6 +573,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
   receviedReplyMessageBox(
     GetReceivedMessagesWithParentDetails? getReceivedMessagesWithParentDetails,
+
   ) {
     if (getReceivedMessagesWithParentDetails != null)
       return Padding(
@@ -599,7 +599,7 @@ class _MessageScreenState extends State<MessageScreen> {
                       child: Text(
                         isSentMessage == true
                             ? "${getSentMessages?.toRecipientUserNameList?.join(", ")?.substring(0, 1) ?? ''} "
-                            : "${getReceivedMessagesWithParentDetails?.toRecipientUserNameList?.join(", ").substring(0, 1) ?? ''}",
+                            : "${getReceivedMessagesWithParentDetails?.senderUserName?.substring(0, 1) ?? ''}",
                         style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
@@ -616,7 +616,7 @@ class _MessageScreenState extends State<MessageScreen> {
                         child: Text(
                           isSentMessage == true
                               ? "${getSentMessages?.toRecipientUserNameList?.join(", ")} "
-                              : "${getReceivedMessagesWithParentDetails?.toRecipientUserNameList?.join(", ")}",
+                              : "${getReceivedMessagesWithParentDetails?.senderUserName}",
                           overflow: TextOverflow.ellipsis,
                           style: styleIbmPlexSansRegular(size: 16, color: grey),
                         )),
@@ -683,8 +683,7 @@ class _MessageScreenState extends State<MessageScreen> {
                   setState(() {
                     msgBodyList.add(
                         state.getMessageBodyResponse?.data?.messageBody ?? '');
-                    bodyMessage =
-                        state.getMessageBodyResponse?.data?.messageBody ?? '';
+                    getMsgBody = state.getMessageBodyResponse.data ?? [];
                   });
                 }
               },
@@ -898,18 +897,21 @@ class _MessageScreenState extends State<MessageScreen> {
                     Padding(
                       padding: const EdgeInsets.only(right: 10.0),
                       child: Container(
-                        child:  InkWell(onTap: (){
-setState(() {
-  getSentMessagesWithParentDetails.isVisible == true ? getSentMessagesWithParentDetails.isVisible = false : getSentMessagesWithParentDetails.isVisible = true;
-
-});
+                          child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            getSentMessagesWithParentDetails.isVisible == true
+                                ? getSentMessagesWithParentDetails.isVisible =
+                                    false
+                                : getSentMessagesWithParentDetails.isVisible =
+                                    true;
+                          });
                         },
-                          child: getSentMessagesWithParentDetails.isVisible
-    ? const Icon(Icons.arrow_drop_up)
-        : const Icon(Icons.arrow_drop_down_outlined),
-                        )),
-                      ),
-
+                        child: getSentMessagesWithParentDetails.isVisible
+                            ? const Icon(Icons.arrow_drop_up)
+                            : const Icon(Icons.arrow_drop_down_outlined),
+                      )),
+                    ),
                     Expanded(
                       child: Container(
                         child: Row(
@@ -927,7 +929,7 @@ setState(() {
                                         isReply: true,
                                         isSentMessage: true,
                                         getSentMessages: getSentMessages));
-                                  } else {
+                                  } else if (isSentMessage == false) {
                                     appRouter.push(ComposeMessageScreenRoute(
                                       getReceivedMessages: getReceivedMessages,
                                       isReply: true,
@@ -962,43 +964,43 @@ setState(() {
                 }
               },
               builder: (context, state) {
-                if(getSentMessagesWithParentDetails.isVisible == true)
-                return Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    children: [
-                      Container(
-                        decoration: const BoxDecoration(
-                            borderRadius: const BorderRadius.all(
-                                const Radius.circular(10.0)),
-                            color: skyBlue),
-                        padding:
-                            const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                        child: Container(
-                            width: double.infinity,
-                            height: MediaQuery.of(context).size.height * 0.25,
-                            child: Text(
-                              getSentMessagesWithParentDetails?.messageBody ??
-                                  '',
-                              style: styleIbmPlexSansRegular(
-                                  size: 13, color: Colors.black),
-                            )),
-                      ),
-                      //                         Padding(
-                      //                           padding: const EdgeInsets.only(top:20.0),
-                      //                           child: Row(
-                      //                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      //                             children: [
-                      //                               buttomButton(const Icon(Icons.reply), "Reply",()
-                      // {
-                      //
-                      //                               }),
-                      //                             ],
-                      //                           ),
-                      //                         )
-                    ],
-                  ),
-                );
+                if (getSentMessagesWithParentDetails.isVisible == true)
+                  return Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      children: [
+                        Container(
+                          decoration: const BoxDecoration(
+                              borderRadius: const BorderRadius.all(
+                                  const Radius.circular(10.0)),
+                              color: skyBlue),
+                          padding:
+                              const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                          child: Container(
+                              width: double.infinity,
+                              height: MediaQuery.of(context).size.height * 0.25,
+                              child: Text(
+                                getSentMessagesWithParentDetails?.messageBody ??
+                                    '',
+                                style: styleIbmPlexSansRegular(
+                                    size: 13, color: Colors.black),
+                              )),
+                        ),
+                        //                         Padding(
+                        //                           padding: const EdgeInsets.only(top:20.0),
+                        //                           child: Row(
+                        //                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        //                             children: [
+                        //                               buttomButton(const Icon(Icons.reply), "Reply",()
+                        // {
+                        //
+                        //                               }),
+                        //                             ],
+                        //                           ),
+                        //                         )
+                      ],
+                    ),
+                  );
                 else {
                   return Container();
                 }

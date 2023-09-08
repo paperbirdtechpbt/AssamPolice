@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import '../../../config/router/app_router.dart';
+import '../../../domain/models/data/get_message_body.dart';
 import '../../../domain/models/data/get_received_message.dart';
 import '../../../domain/models/data/get_sent_message.dart';
 import '../../../domain/models/data/user.dart';
@@ -15,6 +16,7 @@ import '../../widgets/common_widgets.dart';
 class ComposeMessageScreen extends StatefulWidget {
   GetReceivedMessages? getReceivedMessages;
   GetSentMessages? getSentMessages;
+  GetMessageBody? getMessageBody;
   bool? isSentMessage;
   bool? isReply;
   ComposeMessageScreen({
@@ -23,16 +25,18 @@ class ComposeMessageScreen extends StatefulWidget {
     this.getSentMessages,
     this.isSentMessage,
     this.isReply,
+    this.getMessageBody,
   });
 
   @override
   State<ComposeMessageScreen> createState() =>
-      _ComposeMessageScreenState(getReceivedMessages, isReply,getSentMessages,isSentMessage);
+      _ComposeMessageScreenState(getReceivedMessages, isReply,getSentMessages,isSentMessage,getMessageBody);
 }
 
 class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
+  GetMessageBody? getMessageBody;
 
-  _ComposeMessageScreenState(this.getReceivedMessages, this.isReply,this.getSentMessages,this.isSentMessage);
+  _ComposeMessageScreenState(this.getReceivedMessages, this.isReply,this.getSentMessages,this.isSentMessage,this.getMessageBody);
 
   List<String> members = [
     "vdp@assampolice.org",

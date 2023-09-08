@@ -128,6 +128,7 @@ class _$AppRouter extends RootStackRouter {
           getSentMessages: args.getSentMessages,
           isSentMessage: args.isSentMessage,
           isReply: args.isReply,
+          getMessageBody: args.getMessageBody,
         ),
       );
     },
@@ -585,6 +586,7 @@ class ComposeMessageScreenRoute
     GetSentMessages? getSentMessages,
     bool? isSentMessage,
     bool? isReply,
+    GetMessageBody? getMessageBody,
   }) : super(
           ComposeMessageScreenRoute.name,
           path: '/compose-message-screen',
@@ -594,6 +596,7 @@ class ComposeMessageScreenRoute
             getSentMessages: getSentMessages,
             isSentMessage: isSentMessage,
             isReply: isReply,
+            getMessageBody: getMessageBody,
           ),
         );
 
@@ -607,6 +610,7 @@ class ComposeMessageScreenRouteArgs {
     this.getSentMessages,
     this.isSentMessage,
     this.isReply,
+    this.getMessageBody,
   });
 
   final Key? key;
@@ -619,9 +623,11 @@ class ComposeMessageScreenRouteArgs {
 
   final bool? isReply;
 
+  final GetMessageBody? getMessageBody;
+
   @override
   String toString() {
-    return 'ComposeMessageScreenRouteArgs{key: $key, getReceivedMessages: $getReceivedMessages, getSentMessages: $getSentMessages, isSentMessage: $isSentMessage, isReply: $isReply}';
+    return 'ComposeMessageScreenRouteArgs{key: $key, getReceivedMessages: $getReceivedMessages, getSentMessages: $getSentMessages, isSentMessage: $isSentMessage, isReply: $isReply, getMessageBody: $getMessageBody}';
   }
 }
 
