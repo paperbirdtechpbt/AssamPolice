@@ -304,7 +304,7 @@ class _MembersListState extends State<MembersList> {
                     child: Column(children: List.generate(members.length, (index) {
                       return membersList(
                         icon: '',
-subTitle: "VDP",
+                        subTitle: "VDP",
                         firstChar: members[index].substring(0, 1),
                         name: members[index],
                         onTap: () {

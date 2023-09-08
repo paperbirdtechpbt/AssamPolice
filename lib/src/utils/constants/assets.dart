@@ -21,6 +21,7 @@ const String ic_lock = 'assets/images/ic_lock.svg';
 const String ic_profile = 'assets/images/ic_profile.svg';
 const load = 'assets/images/load.gif';
 const ic_logout = 'assets/images/ic_logout.svg';
+const ic_menu_sos = 'assets/images/ic_menu_sos.svg';
 const ic_compass = 'assets/images/ic_compass.svg';
 const ic_clear = 'assets/images/ic_clear.svg';
 const ic_pin = 'assets/images/ic_pin.svg';

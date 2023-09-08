@@ -561,7 +561,53 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
                     //   ),
                     // ),
                   ],
-                )
+                ),
+
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: InkWell(
+                  onTap: () {
+                    if(selectedMembers.isEmpty){
+                      snackBar(context, "Please add one in to message.");
+                    }else if(_bodyController.text.isEmpty){
+                      snackBar(context, "Please enter message.");
+                    }else {
+                      if (isReply != null && isReply == true && isSentMessage == true) {
+                        context.read<MessageCubit>().sendMessage(
+                            "${user?.email}",
+                            selectedMembers,
+                            selectedCcMembers,
+                            _subjectController.text,
+                            _bodyController.text,
+                            getSentMessages?.messageId ?? 0);
+                      } else {
+                        context.read<MessageCubit>().sendMessage(
+                            "${user?.email}",
+                            selectedMembers,
+                            selectedCcMembers,
+                            _subjectController.text,
+                            _bodyController.text,
+                            getReceivedMessages?.messageId ?? 0);
+                      }
+                    }
+                  },
+                  child: Container(
+                      decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(14.0)),
+                          color: defaultColor),
+                      padding: const EdgeInsets.fromLTRB(17.0, 17.0, 17, 17.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Send",
+                            style: styleIbmPlexSansBold(size: 15, color: white),
+                          )
+                        ],
+                      )),
+                ),
+              )
+
               ],
             ),
           ),

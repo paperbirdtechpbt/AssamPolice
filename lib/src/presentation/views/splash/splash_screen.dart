@@ -29,9 +29,9 @@ class _SplashScreenState extends State<SplashScreen> {
                     if (isLogin)
                       {
                         // appRouter.popAndPush(const DashBoardScreenRoute()),
-        appRouter.popAndPush(const AddMemberLocationRoute()),
+                        appRouter.popAndPush(const AddMemberLocationRoute()),
 
-    preferences
+                        preferences
                             .getSignInModel(keySaveSignInModel)
                             .then((data) => {StaticData.loginData = data})
                       }
@@ -45,14 +45,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     initializeSize(context);
 
     return Scaffold(
         backgroundColor: white,
         body: Stack(
           alignment: AlignmentDirectional.bottomCenter,
-
           children: [
             Positioned(
               top: MediaQuery.of(context).size.height * 0.35,
@@ -64,8 +62,9 @@ class _SplashScreenState extends State<SplashScreen> {
                       width: 150,
                       height: 150,
                     ),
-                    SizedBox(height: 20
-                      ,),
+                    SizedBox(
+                      height: 20,
+                    ),
                     Container(
                       width: 350,
                       child: Text(
@@ -74,15 +73,18 @@ class _SplashScreenState extends State<SplashScreen> {
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: Colors.red.shade700,
-                            fontFamily: ibmPlexSansRegular
-                        ),textAlign: TextAlign.center,),
+                            fontFamily: ibmPlexSansRegular),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
-            
-            Positioned(bottom: 10, child: Center(child: Text("version 1.0.2")))
+            const Positioned(
+                bottom: 35, child: Center(child: Text("Develop by Teraclab"))),
+            const Positioned(
+                bottom: 10, child: Center(child: Text("version 1.0.2")))
           ],
         ));
   }

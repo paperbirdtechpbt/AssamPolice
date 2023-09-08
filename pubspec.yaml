@@ -48,6 +48,8 @@ dependencies:
   flutter_typeahead: ^4.6.2
   # convert date formate
   intl: ^0.18.1
+  url_launcher: ^6.1.11
+  flutter_phone_direct_caller: ^2.1.1
 
 dev_dependencies:
   flutter_test:

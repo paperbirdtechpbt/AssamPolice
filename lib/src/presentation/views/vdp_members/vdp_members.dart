@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 import '../../../config/router/app_router.dart';
 import '../../../domain/models/data/arguments.dart';
 import '../../../domain/models/data/category.dart';
@@ -560,97 +561,119 @@ class _VdpMembersListViewState extends State<VdpMembersListView> {
           ),
           child: ListTile(
             subtitle: Container(
+              padding: const EdgeInsets.only(top: 7,bottom: 7),
                 child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: SizeConfig.screenWidth * 0.40,
-                      child: Text(
-                        overflow: TextOverflow.ellipsis,
-                        name ?? '',
-                        style: styleIbmPlexSansBold(size: 16, color: grey),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 5.0,
-                    ),
-                    Container(
-                      width: SizeConfig.screenWidth * 0.40,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
+                        Container(
+                          width: SizeConfig.screenWidth * 0.40,
+                          child: Text(
                             overflow: TextOverflow.ellipsis,
-                            subTitle ?? '',
-                            style:
-                                styleIbmPlexSansRegular(size: 14, color: grey),
+                            name ?? '',
+                            style: styleIbmPlexSansBold(size: 16, color: grey),
                           ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 5.0,
-                    ),
-                    Container(
-                      width: SizeConfig.screenWidth * 0.40,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            overflow: TextOverflow.ellipsis,
-                            number ?? '',
-                            style:
-                            styleIbmPlexSansRegular(size: 14, color: grey),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                MaterialButton(
-                  minWidth: 30,
-                  height: 25,
+                        ),
 
-                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
-                  onPressed: () async {
+                        InkWell(
+                          onTap: (){
+                            UrlLauncher.launch("tel://$number");
+                          },
+                          child: Container(
 
-                    final shouldPop = await showDialog<bool>(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: const Text('Delete'),
-                          content: const Text('Are you sure ?'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context, false);
-                              },
-                              child: const Text(
-                                'No',
-
-                              ),
+                            child: Text(
+                              overflow: TextOverflow.ellipsis,
+                              number ?? '',
+                              style: styleIbmPlexSansBold(size: 16, color: grey),
                             ),
-                            TextButton(
-                              onPressed: () {
-                                appRouter.pop();
-                              },
-                              child: const Text('Yes',style: TextStyle(color: Colors.red),),
+                          ),
+                        ),
+                      ],),
+                      SizedBox(
+                        height: 5.0,
+                      ),
+                      Container(
+                        width: SizeConfig.screenWidth * 0.40,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              overflow: TextOverflow.ellipsis,
+                              subTitle ?? '',
+                              style:
+                                  styleIbmPlexSansRegular(size: 14, color: grey),
                             ),
                           ],
-                        );
-                      },
-                    );
-
-
-                  },child: Row(
-                  children: [
-                    const Icon(Icons.delete,color: defaultColor,size:20 ,),
-                    Text("Delete",style: styleIbmPlexSansRegular(size: 13, color: defaultColor),),
-                  ],
-                ),)
+                        ),
+                      ),
+                      // SizedBox(
+                      //   height: 5.0,
+                      // ),
+                      // Container(
+                      //   width: SizeConfig.screenWidth * 0.40,
+                      //   child: Column(
+                      //     crossAxisAlignment: CrossAxisAlignment.start,
+                      //     children: [
+                      //       Text(
+                      //         overflow: TextOverflow.ellipsis,
+                      //         number ?? '',
+                      //         style:
+                      //         styleIbmPlexSansRegular(size: 14, color: grey),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+                    ],
+                  ),
+                ),
+                // MaterialButton(
+                //   minWidth: 30,
+                //   height: 25,
+                //
+                //   shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
+                //   onPressed: () async {
+                //
+                //     final shouldPop = await showDialog<bool>(
+                //       context: context,
+                //       builder: (context) {
+                //         return AlertDialog(
+                //           title: const Text('Delete'),
+                //           content: const Text('Are you sure ?'),
+                //           actions: [
+                //             TextButton(
+                //               onPressed: () {
+                //                 Navigator.pop(context, false);
+                //               },
+                //               child: const Text(
+                //                 'No',
+                //
+                //               ),
+                //             ),
+                //             TextButton(
+                //               onPressed: () {
+                //                 appRouter.pop();
+                //               },
+                //               child: const Text('Yes',style: TextStyle(color: Colors.red),),
+                //             ),
+                //           ],
+                //         );
+                //       },
+                //     );
+                //
+                //
+                //   },child: Row(
+                //   children: [
+                //     const Icon(Icons.delete,color: defaultColor,size:20 ,),
+                //     Text("Delete",style: styleIbmPlexSansRegular(size: 13, color: defaultColor),),
+                //   ],
+                // ),)
               ],
             )),
             leading: icon!.isEmpty
