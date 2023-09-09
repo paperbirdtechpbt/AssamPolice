@@ -121,10 +121,9 @@ super.initState();
 
           ],
         ),
-        body: Center(
-          child: RefreshIndicator(
-            color: defaultColor,
-            onRefresh: (){
+        body: RefreshIndicator(
+          color: defaultColor,
+          onRefresh: (){
 return Future.delayed( Duration(seconds: 1),(){
 
   setState(() {
@@ -133,33 +132,94 @@ return Future.delayed( Duration(seconds: 1),(){
     print("Refreshed Page ============================>");
   });
 });
-            },
-            child: SingleChildScrollView(
-              child: Container(
-                alignment:Alignment.center,
-                child: BlocConsumer<MessageCubit, MessageState>(
-                  listener: (context, state) {
-                    if(state is GetReceivedMessagesSuccessState){
-                      members = state.getReceivedMessagesResponse?.data ?? [];
+          },
+          child: SingleChildScrollView(
+            child: Container(
+              alignment:Alignment.center,
+              child: BlocConsumer<MessageCubit, MessageState>(
+                listener: (context, state) {
+                  if(state is GetReceivedMessagesSuccessState){
+                    members = state.getReceivedMessagesResponse?.data ?? [];
 
 
-                    }
-                  },
-                  builder: (context, state) {
+                  }
+                },
+                builder: (context, state) {
 
-                    switch(state.runtimeType){
-                      case GetReceivedMessagesInitialState :  return SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: Column(
-                            children: <Widget>[
-                              Column(
+                  switch(state.runtimeType){
+                    case GetReceivedMessagesInitialState :  return SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: Column(
+                          children: <Widget>[
+                            Column(
+                              children: List.generate(members.length, (index) {
+                                final parsedDate = DateTime.parse(members[index].creationDate.toString());
+                                final formattedDate = DateFormat('dd MMM').format(parsedDate);
+                                return sendReceivedMessageBox(
+                                  isSeenMessage: members[index].isSeen,
+                                  icon: '',
+                                    subject: members[index].subject,
+                                    firstChar: members[index].senderUserName?.substring(0, 1),
+                                    name: members[index].senderUserName,
+                                    date: formattedDate,
+                                    onTap: () {
+                                      appRouter
+                                          .push(MessageScreenRoute(getReceivedMessages: members[index]));
+                                    },
+                                    subTitle: members[index].messageBody,
+
+                                );
+                              }),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                    case GetReceivedMessagesLoadingState : return const Center(child: CircularProgressIndicator(color: defaultColor,),);
+                    case GetReceivedMessagesSuccessState :  return SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.all(0.0),
+                              child: Column(
                                 children: List.generate(members.length, (index) {
                                   final parsedDate = DateTime.parse(members[index].creationDate.toString());
                                   final formattedDate = DateFormat('dd MMM').format(parsedDate);
                                   return sendReceivedMessageBox(
                                     isSeenMessage: members[index].isSeen,
-                                    icon: '',
+                                      icon: '',
+                                      subject: members[index].subject,
+                                      firstChar: members[index].senderName?.substring(0, 1),
+                                      name: members[index].senderName,
+                                      date: formattedDate,
+                                      onTap: () {
+                                        appRouter
+                                            .push(MessageScreenRoute(getReceivedMessages: members[index],isSentMessage: false));
+                                      },
+                                      subTitle: members[index].messageBody);
+                                }),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                    default : return  SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.all(0.0),
+                              child: Column(
+                                children: List.generate(members.length, (index) {
+                                  final parsedDate = DateTime.parse(members[index].creationDate.toString());
+                                  final formattedDate = DateFormat('dd MMM').format(parsedDate);
+                                  return sendReceivedMessageBox(
+                                      icon: '',
                                       subject: members[index].subject,
                                       firstChar: members[index].senderUserName?.substring(0, 1),
                                       name: members[index].senderUserName,
@@ -168,79 +228,17 @@ return Future.delayed( Duration(seconds: 1),(){
                                         appRouter
                                             .push(MessageScreenRoute(getReceivedMessages: members[index]));
                                       },
-                                      subTitle: members[index].messageBody,
-
-                                  );
+                                      subTitle: members[index].messageBody);
                                 }),
-                              )
-                            ],
-                          ),
+                              ),
+                            )
+                          ],
                         ),
-                      );
-                      case GetReceivedMessagesLoadingState : return const Center(child: CircularProgressIndicator(color: defaultColor,),);
-                      case GetReceivedMessagesSuccessState :  return SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: Column(
-                            children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.all(0.0),
-                                child: Column(
-                                  children: List.generate(members.length, (index) {
-                                    final parsedDate = DateTime.parse(members[index].creationDate.toString());
-                                    final formattedDate = DateFormat('dd MMM').format(parsedDate);
-                                    return sendReceivedMessageBox(
-                                      isSeenMessage: members[index].isSeen,
-                                        icon: '',
-                                        subject: members[index].subject,
-                                        firstChar: members[index].senderUserName?.substring(0, 1),
-                                        name: members[index].senderUserName,
-                                        date: formattedDate,
-                                        onTap: () {
-                                          appRouter
-                                              .push(MessageScreenRoute(getReceivedMessages: members[index],isSentMessage: false));
-                                        },
-                                        subTitle: members[index].messageBody);
-                                  }),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      );
-                      default : return  SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: Column(
-                            children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.all(0.0),
-                                child: Column(
-                                  children: List.generate(members.length, (index) {
-                                    final parsedDate = DateTime.parse(members[index].creationDate.toString());
-                                    final formattedDate = DateFormat('dd MMM').format(parsedDate);
-                                    return sendReceivedMessageBox(
-                                        icon: '',
-                                        subject: members[index].subject,
-                                        firstChar: members[index].senderUserName?.substring(0, 1),
-                                        name: members[index].senderUserName,
-                                        date: formattedDate,
-                                        onTap: () {
-                                          appRouter
-                                              .push(MessageScreenRoute(getReceivedMessages: members[index]));
-                                        },
-                                        subTitle: members[index].messageBody);
-                                  }),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      );
-                    }
+                      ),
+                    );
+                  }
 
-                  },
-                ),
+                },
               ),
             ),
           ),

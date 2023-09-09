@@ -387,7 +387,7 @@ class _MessageScreenState extends State<MessageScreen> {
                       child: Text(
                         isSentMessage == true
                             ? "${getSentMessages?.toRecipientUserNameList?.join(", ")} "
-                            : "${getReceivedMessages?.toRecipientUserNameList?.join(", ")}",
+                            : "${getReceivedMessages?.senderUserName}",
                         overflow: TextOverflow.ellipsis,
                         style: styleIbmPlexSansRegular(size: 16, color: grey),
                       )),
