@@ -18,30 +18,26 @@ import '../../../utils/constants/strings.dart';
 import '../../cubits/vdp_committee/vdp_committee_cubit.dart';
 import '../../cubits/vdp_committee/vdp_committee_state.dart';
 import '../../widgets/common_widgets.dart';
-
+import 'package:fluttertoast/fluttertoast.dart';
 class AddLocationScreen extends StatefulWidget {
-
-bool? isUpdateLocation;
-GetAllVDPCommittee? getAllVDPCommittee;
-  AddLocationScreen(
-      {Key? key,this.isUpdateLocation,this.getAllVDPCommittee})
+  bool? isUpdateLocation;
+  GetAllVDPCommittee? getAllVDPCommittee;
+  AddLocationScreen({Key? key, this.isUpdateLocation, this.getAllVDPCommittee})
       : super(key: key);
 
   @override
   State<AddLocationScreen> createState() =>
-      _AddLocationScreenState(isUpdateLocation,getAllVDPCommittee);
+      _AddLocationScreenState(isUpdateLocation, getAllVDPCommittee);
 }
 
 class _AddLocationScreenState extends State<AddLocationScreen> {
-  _AddLocationScreenState(this.isUpdateLocation,this.getAllVDPCommittee);
+  _AddLocationScreenState(this.isUpdateLocation, this.getAllVDPCommittee);
   late GoogleMapController _googleMapController;
   bool? isUpdateLocation;
   GetAllVDPCommittee? getAllVDPCommittee;
 
   Position? position;
   Position? currentLocationPosition;
-
-
 
   late CameraPosition cameraPosition;
 
@@ -50,15 +46,16 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
   String selectedText = " ";
   bool hasPermission = true;
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
-
+ bool isLatLongValidate = false ;
   var bitMap;
 
   @override
   void initState() {
     super.initState();
 
-    latLngPosition =
-        LatLng(26.3455527,92.6686367);
+    latLngPosition = LatLng(
+        double.parse(getAllVDPCommittee?.latitude ?? " 26.3455527"),
+        double.parse(getAllVDPCommittee?.longitude ?? "92.6686367"));
 
     fetchLocation();
 
@@ -70,21 +67,21 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
 
   fetchLocation() {
     Geolocator.isLocationServiceEnabled().then((value) => {
-      if (value)
-        {
-          GpsLocation.gpsLocation.getLocation(
+          if (value)
+            {
+              GpsLocation.gpsLocation.getLocation(
                 (position) {
-              this.currentLocationPosition = position;
-            },
-          )
-        }
-      else
-        {
-          // removeLoading(),
-          snackBar(
-              context, "GPS Service is not enabled, turn on GPS location")
-        }
-    });
+                  this.currentLocationPosition = position;
+                },
+              )
+            }
+          else
+            {
+              // removeLoading(),
+              snackBar(
+                  context, "GPS Service is not enabled, turn on GPS location")
+            }
+        });
   }
 
   double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
@@ -94,6 +91,11 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
         cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2;
     return 12742 * asin(sqrt(a));
   }
+
+  bool isLatValidate = false;
+  bool isLongValidate = false;
+  TextEditingController _latController = TextEditingController();
+  TextEditingController _longController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -108,8 +110,6 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            
-            
             Flex(
               direction: Axis.vertical,
               children: [
@@ -120,13 +120,13 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
                     markers: markers.values.toSet(),
                     onCameraIdle: () async {
                       List<Placemark> placeMarks =
-                      await placemarkFromCoordinates(
+                          await placemarkFromCoordinates(
                         cameraPosition.target.latitude,
                         cameraPosition.target.longitude,
                       );
                       setState(() {
                         selectedText =
-                        '${placeMarks.first.name}, ${placeMarks.first.administrativeArea}, ${placeMarks.first.country}';
+                            '${placeMarks.first.name}, ${placeMarks.first.administrativeArea}, ${placeMarks.first.country}';
                       });
                     },
                     onMapCreated: (GoogleMapController controller) {
@@ -146,57 +146,178 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
             ),
             Center(
                 child: Padding(
-                  padding: EdgeInsets.only(bottom: paddingPin),
-                  child: SvgPicture.asset(
-                    ic_pin,
-                    color: defaultColor,
-                    height: 40,
-                    width: 40,
-                  ),
-                )),
+              padding: EdgeInsets.only(bottom: paddingPin),
+              child: SvgPicture.asset(
+                ic_pin,
+                color: defaultColor,
+                height: 40,
+                width: 40,
+              ),
+            )),
             Positioned(
                 top: 80,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    selectedText,
-                    style: styleIbmPlexSansBold(size: 20, color: grey),
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        selectedText,
+                        style: styleIbmPlexSansBold(size: 20, color: grey),
+                      ),
+                    ),
+
+
+                  ],
                 )),
+            Positioned(
+                top: 130,
+                left: 10,
+                child:  Column(
+crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+
+                Container(
+                  width: SizeConfig.screenWidth * 0.45,
+                  child: CoustomTextFieldEditBox(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    border: Border.all(
+                        color: isLatValidate
+                            ? defaultColor
+                            : Colors.transparent),
+                    textInputAction: TextInputAction.next,
+                    context: context,
+                    textInputType: TextInputType.phone,
+                    inputBorder: InputBorder.none,
+                    controller: _latController,
+                    flutterIcon: const Icon(
+                      Icons.gps_fixed,
+                      color: defaultColor,
+                    ),
+                    label: location,
+                    length: null,
+                    validator: (val) {},
+                    onChanged: (value) {
+                      if (value!.length <= 2) {
+                        setState(() {
+                          isLatValidate = true;
+                        });
+                      } else {
+                        setState(() {
+                          isLatValidate = false;
+                        });
+                      }
+                    },
+                    hint: "lat",
+                    icon: '',
+                  ),
+                ),
+SizedBox(height: SizeConfig.screenHeight * 0.01,),
+                Container(
+
+                  width: SizeConfig.screenWidth * 0.93,
+                  child: CoustomTextFieldEditBox(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    border: Border.all(
+                        color: isLongValidate
+                            ? defaultColor
+                            : Colors.transparent),
+                    textInputAction: TextInputAction.done,
+                    context: context,
+                    textInputType: TextInputType.phone,
+                    inputBorder: InputBorder.none,
+                    controller: _longController,
+                    flutterIcon: const Icon(
+                      Icons.gps_fixed,
+                      color: defaultColor,
+                    ),
+                    label: location,
+                    length: null,
+                    validator: (val) {},
+                    onChanged: (value) {
+                      if (value!.length <= 2) {
+                        setState(() {
+                          isLongValidate = true;
+                        });
+                      } else {
+                        setState(() {
+                          isLongValidate = false;
+                        });
+                      }
+                    },
+                    hint: "long",
+                    icon: '',
+                  ),
+                ),
+                MaterialButton(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
+height: 25,
+                    minWidth: 30,
+                    color: defaultColor,
+                    onPressed: (){
+
+                      if (isLocationValid(double.parse(_latController.text), double.parse(_longController.text))) {
+                        setState(() {
+                          isLatLongValidate = true ;
+                        });
+                        _googleMapController.animateCamera(
+                            CameraUpdate.newLatLngZoom(
+                                LatLng(double.parse(_latController.text),
+                                    double.parse(_longController.text)),
+                                20));
+
+                     // setState(() {
+                     //   LatLng       latLngPositionByInput = LatLng(
+                     //       double.parse(_latController.text ?? " 26.3455527"),
+                     //       double.parse(_longController.text ?? "92.6686367"));
+                     //   cameraPosition = CameraPosition(
+                     //     target: latLngPositionByInput,
+                     //     zoom: 20.0,
+                     //   );
+                     // });
+                      } else {
+
+                     snackBar(context, "Invalid latitude or longitude");
+                        print("Invalid latitude or longitude");
+                      }
+
+                    }, child: Text("Verify",style: styleIbmPlexSansRegular(size: 13, color: Colors.white),))
+              ],)),
             Positioned(
                 bottom: 80,
                 right: 10,
                 child: RawMaterialButton(
                   onPressed: () {
+                    print("==============================>");
                     var assamDb;
 
                     Geolocator.isLocationServiceEnabled().then((isGps) async =>
-                    {
-                      assamDb = await $FloorAssamAppDatabase
-                          .databaseBuilder(databaseName)
-                          .build(),
-                      await assamDb.geoLocationDao
-                          .getLastGeoLocation()
-                          .then((location) => {
-                        if (isGps)
-                          {
-                            if (location != null)
-                              {
-                                _googleMapController.animateCamera(
-                                    CameraUpdate.newLatLngZoom(
-                                        LatLng(location.latitude,
-                                            location.longitude),
-                                        20))
-                              }
-                          }
-                        else
-                          {
-                            _requestPermission(),
-                            snackBar(context,
-                                "GPS Service is not enabled, turn on GPS location")
-                          }
-                      })
-                    });
+                        {
+                          assamDb = await $FloorAssamAppDatabase
+                              .databaseBuilder(databaseName)
+                              .build(),
+                          await assamDb.geoLocationDao
+                              .getLastGeoLocation()
+                              .then((location) => {
+                                    if (isGps)
+                                      {
+                                        if (location != null)
+                                          {
+                                            _googleMapController.animateCamera(
+                                                CameraUpdate.newLatLngZoom(
+                                                    LatLng(location.latitude,
+                                                        location.longitude),
+                                                    20))
+                                          }
+                                      }
+                                    else
+                                      {
+                                        _requestPermission(),
+                                        snackBar(context,
+                                            "GPS Service is not enabled, turn on GPS location")
+                                      }
+                                  })
+                        });
 
                     // var preferences = MySharedPreference();
                     // Geolocator.isLocationServiceEnabled()
@@ -237,955 +358,986 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
               bottom: 5,
               child: Center(
                   child: Container(
-                    width: MediaQuery.of(context).size.width * 1,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: BlocConsumer<VdpCommitteeCubit,VdpCommitteeState>(
-  listener: (context, state) {
-    if (state is UpdateVdpCommitteeSuccessState) {
-      if (state.updateVdpCommitteeResponse?.code ==
-          "Success") {
-        snackBar(context, "Location Updated");
+                width: MediaQuery.of(context).size.width * 1,
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: BlocConsumer<VdpCommitteeCubit, VdpCommitteeState>(
+                    listener: (context, state) {
+                      if (state is UpdateVdpCommitteeSuccessState) {
+                        if (state.updateVdpCommitteeResponse?.code ==
+                            "Success") {
+                          snackBar(context, "Location Updated");
 
-        appRouter.pop();
-
-      } else {
-        snackBar(context, "something went wrong !");
-      }
-    }
-  },
-  builder: (context, state) {
-    switch(state.runtimeType){
-      case UpdateVdpCommitteeInitialState : return ButtonThemeLarge(
-          context: context,
-          label: "Add Location",
-          color: defaultColor,
-          onClick: () {
-            var assamDb;
-            var distance = 0.0;
-            if (hasPermission) {
-              Geolocator.isLocationServiceEnabled()
-                  .then((isGps) async => {
-                assamDb = await $FloorAssamAppDatabase
-                    .databaseBuilder(databaseName)
-                    .build(),
-                await assamDb.geoLocationDao
-                    .getLastGeoLocation()
-                    .then((location) => {
-                  if (isGps)
-                    {
-                      if (location != null)
-                        {
-                          distance = Geolocator
-                              .distanceBetween(
-                              location.latitude,
-                              location
-                                  .longitude,
-                              cameraPosition
-                                  .target
-                                  .latitude,
-                              cameraPosition
-                                  .target
-                                  .longitude),
-                          // if (distance < 1000)
-                          //   {
-                              // appRouter.pop({
-                              //   "refreshData":
-                              //   "refresh",
-                              //   "lat":
-                              //   cameraPosition
-                              //       .target
-                              //       .latitude
-                              //       .toString(),
-                              //   "lng":
-                              //   cameraPosition
-                              //       .target
-                              //       .longitude
-                              //       .toString()
-                              // }
-
-                              // ),
-                              if(isUpdateLocation == true){
-                                context
-                                    .read<VdpCommitteeCubit>()
-                                    .updateVdpCommittee(
-                                    vdpId:
-                                    getAllVDPCommittee?.vdpId,
-                                    vdpName: getAllVDPCommittee?.vdpName,
-                                    longitude: cameraPosition
-                                        .target
-                                        .longitude
-                                        .toString(),
-                                    latitude:  cameraPosition
-                                        .target
-                                        .latitude
-                                        .toString(),
-                                    policeStation:
-                                    getAllVDPCommittee?.policeStation,
-                                    district: getAllVDPCommittee?.district,
-                                    status: getAllVDPCommittee?.status),
-                              }
-                            // }
-                          // else
-                          //   {
-                          //     snackBar(context,
-                          //         "Please select location under 1 km"),
-                          //   }
+                          appRouter.pop();
+                        } else {
+                          snackBar(context, "something went wrong !");
                         }
-                      else
-                        {
-                          snackBar(context,
-                              "Location not found"),
-                        }
-                    }
-                  else
-                    {
-                      snackBar(context,
-                          "GPS Service is not enabled, turn on GPS location")
-                    }
-                })
-              });
-            } else {
-              _requestPermission();
-            }
+                      }
+                    },
+                    builder: (context, state) {
+                      switch (state.runtimeType) {
+                        case UpdateVdpCommitteeInitialState:
+                          return ButtonThemeLarge(
+                              context: context,
+                              label: "Add Location",
+                              color: defaultColor,
+                              onClick: () {
+                                var assamDb;
+                                var distance = 0.0;
+                                if (hasPermission) {
+                                  Geolocator.isLocationServiceEnabled()
+                                      .then((isGps) async => {
+                                            assamDb =
+                                                await $FloorAssamAppDatabase
+                                                    .databaseBuilder(
+                                                        databaseName)
+                                                    .build(),
+                                            await assamDb.geoLocationDao
+                                                .getLastGeoLocation()
+                                                .then((location) => {
+                                                      if (isGps)
+                                                        {
+                                                          if (location != null)
+                                                            {
+                                                              distance = Geolocator.distanceBetween(
+                                                                  location
+                                                                      .latitude,
+                                                                  location
+                                                                      .longitude,
+                                                                  cameraPosition
+                                                                      .target
+                                                                      .latitude,
+                                                                  cameraPosition
+                                                                      .target
+                                                                      .longitude),
+                                                              // if (distance < 1000)
+                                                              //   {
+                                                              // appRouter.pop({
+                                                              //   "refreshData":
+                                                              //   "refresh",
+                                                              //   "lat":
+                                                              //   cameraPosition
+                                                              //       .target
+                                                              //       .latitude
+                                                              //       .toString(),
+                                                              //   "lng":
+                                                              //   cameraPosition
+                                                              //       .target
+                                                              //       .longitude
+                                                              //       .toString()
+                                                              // }
 
-            // var preferences = MySharedPreference();
-            // var distance = 0.0;
+                                                              // ),
+                                                              if (isUpdateLocation ==
+                                                                  true)
+                                                                {
+                                                                  // context.read<VdpCommitteeCubit>().updateVdpCommittee(
+                                                                  //     vdpId: getAllVDPCommittee
+                                                                  //         ?.vdpId,
+                                                                  //     vdpName:
+                                                                  //         getAllVDPCommittee
+                                                                  //             ?.vdpName,
+                                                                  //     longitude: cameraPosition
+                                                                  //         .target
+                                                                  //         .longitude
+                                                                  //         .toString(),
+                                                                  //     latitude: cameraPosition
+                                                                  //         .target
+                                                                  //         .latitude
+                                                                  //         .toString(),
+                                                                  //     policeStation:
+                                                                  //         getAllVDPCommittee
+                                                                  //             ?.policeStation,
+                                                                  //     district:
+                                                                  //         getAllVDPCommittee
+                                                                  //             ?.district,
+                                                                  //     status: getAllVDPCommittee
+                                                                  //         ?.status),
+                                                                }
+                                                              // }
+                                                              // else
+                                                              //   {
+                                                              //     snackBar(context,
+                                                              //         "Please select location under 1 km"),
+                                                              //   }
+                                                            }
+                                                          else
+                                                            {
+                                                              snackBar(context,
+                                                                  "Location not found"),
+                                                            }
+                                                        }
+                                                      else
+                                                        {
+                                                          snackBar(context,
+                                                              "GPS Service is not enabled, turn on GPS location")
+                                                        }
+                                                    })
+                                          });
+                                } else {
+                                  _requestPermission();
+                                }
 
-            // Geolocator.isLocationServiceEnabled().then((value) async => {
-            //   await preferences
-            //       .getStringValue(latitude)
-            //       .then((latitude) => {
-            //
-            //         print("Gooogle map get latitude ===>> $latitude"),
-            //     preferences
-            //         .getStringValue(longitude)
-            //         .then((longitude) => {
-            //       print("Gooogle map get longitude ===>> $longitude"),
-            //       if (value)
-            //         {
-            //           print("Gooogle map get longitude is location on ===>> $hasPermission"),
-            //
-            //           if (hasPermission)
-            //             {
-            //
-            //               print("Gooogle map get longitude is hasPermission ===>> $longitude"),
-            //               if (latitude.isNotEmpty &&
-            //                   longitude.isNotEmpty)
-            //                 {
-            //                   distance=  calculateDistance(
-            //                       cameraPosition
-            //                           .target
-            //                           .latitude,
-            //                       cameraPosition
-            //                           .target
-            //                           .longitude,
-            //                       double.parse(
-            //                           latitude),
-            //                       double.parse(
-            //                           longitude)),
-            //                   if (distance <
-            //                       1)
-            //                     {
-            //                       appRouter
-            //                           .pop({
-            //                         "refreshData":
-            //                         "refresh",
-            //                         "lat": cameraPosition
-            //                             .target
-            //                             .latitude
-            //                             .toString(),
-            //                         "lng": cameraPosition
-            //                             .target
-            //                             .longitude
-            //                             .toString()
-            //                       }),
-            //                     }
-            //                   else
-            //                     {
-            //                       snackBar(
-            //                           context,
-            //                           "Please select location under 1 km"),
-            //                     }
-            //                 }  else
-            //                 {
-            //                   snackBar(
-            //                       context,
-            //                       "Location not found")
-            //                 }}else{
-            //             _requestPermission()
-            //           }
-            //
-            //           // if (position != null)
-            //           //   {
-            //           //     appRouter.push(AddLocationScreenRoute(
-            //           //         addressLat: position
-            //           //             ?.latitude
-            //           //             .toString(),
-            //           //         addressLng: position
-            //           //             ?.longitude
-            //           //             .toString())).then((value) => {
-            //           //       map = value
-            //           //       as Map?,
-            //           //       if (map?["refreshData"] !=
-            //           //           null &&
-            //           //           map?["refreshData"] ==
-            //           //               "refresh")
-            //           //         {
-            //           //           geoLocation =
-            //           //               GeoLocation(
-            //           //                 photo:
-            //           //                 null,
-            //           //                 lat: map?[
-            //           //                 "lat"],
-            //           //                 long: map?[
-            //           //                 "lng"],
-            //           //                 isFileUpload:
-            //           //                 false,
-            //           //                 fileStatus:
-            //           //                 0,
-            //           //               ),
-            //           //           setState(
-            //           //                   () {
-            //           //                 listGeoLocation
-            //           //                     .add(geoLocation!);
-            //           //                 geoLocation =
-            //           //                 null;
-            //           //               })
-            //           //         }
-            //           //     })
-            //           //   }
-            //           // else
-            //           //   {
-            //           //     onLoadingWithMessage(context,"Getting Gps Location"),
-            //           //     GpsLocation.gpsLocation
-            //           //         .getLocation(
-            //           //             (gpsLocation) =>
-            //           //         {
-            //           //           removeLoading(),
-            //           //           appRouter
-            //           //               .push(AddLocationScreenRoute(
-            //           //               addressLat: gpsLocation.latitude.toString(),
-            //           //               addressLng: gpsLocation.longitude.toString()))
-            //           //               .then((value) => {
-            //           //             map = value as Map?,
-            //           //             if (map?["refreshData"] != null && map?["refreshData"] == "refresh")
-            //           //               {
-            //           //                 geoLocation = GeoLocation(
-            //           //                   photo: null,
-            //           //                   lat: map?["lat"],
-            //           //                   long: map?["lng"],
-            //           //                   isFileUpload: false,
-            //           //                   fileStatus: 0,
-            //           //                 ),
-            //           //                 setState(() {
-            //           //                   listGeoLocation.add(geoLocation!);
-            //           //                   geoLocation = null;
-            //           //                 })
-            //           //               }
-            //           //           })
-            //           //         })
-            //           //   }
-            //         }
-            //
-            //     })})});
+                                // var preferences = MySharedPreference();
+                                // var distance = 0.0;
 
-            // Geolocator.isLocationServiceEnabled().then((value) async => {
-            //           await preferences
-            //               .getStringValue(latitude)
-            //               .then((latitude) => {
-            //                     preferences
-            //                         .getStringValue(longitude)
-            //                         .then((longitude) => {
-            //                               if (value)
-            //                                 {
-            //                                   if (hasPermission)
-            //                                     {
-            //                                       if (latitude
-            //                                               .isNotEmpty &&
-            //                                           longitude
-            //                                               .isNotEmpty)
-            //                                         {
-            //                                           distance=  calculateDistance(
-            //                                               cameraPosition
-            //                                                   .target
-            //                                                   .latitude,
-            //                                               cameraPosition
-            //                                                   .target
-            //                                                   .longitude,
-            //                                               double.parse(
-            //                                                   latitude),
-            //                                               double.parse(
-            //                                                   longitude)),
-            //                                           if (distance <
-            //                                               1)
-            //                                             {
-            //                                               appRouter
-            //                                                   .pop({
-            //                                                 "refreshData":
-            //                                                     "refresh",
-            //                                                 "lat": cameraPosition
-            //                                                     .target
-            //                                                     .latitude
-            //                                                     .toString(),
-            //                                                 "lng": cameraPosition
-            //                                                     .target
-            //                                                     .longitude
-            //                                                     .toString()
-            //                                               }),
-            //                                             }
-            //                                           else
-            //                                             {
-            //                                               snackBar(
-            //                                                   context,
-            //                                                   "Please select location under 1 km"),
-            //                                             }
-            //                                         }
-            //                                       else
-            //                                         {
-            //                                           snackBar(
-            //                                               context,
-            //                                               "Location not found")
-            //                                         }
-            //                                     }
-            //                                   else
-            //                                     {
-            //                                       _requestPermission()
-            //                                     }
-            //                                 }
-            //                               else
-            //                                 {
-            //                                   snackBar(context,
-            //                                       "GPS Service is not enabled, turn on GPS location")
-            //                                 }
-            //                             })
-            //                   })
-            //         });
+                                // Geolocator.isLocationServiceEnabled().then((value) async => {
+                                //   await preferences
+                                //       .getStringValue(latitude)
+                                //       .then((latitude) => {
+                                //
+                                //         print("Gooogle map get latitude ===>> $latitude"),
+                                //     preferences
+                                //         .getStringValue(longitude)
+                                //         .then((longitude) => {
+                                //       print("Gooogle map get longitude ===>> $longitude"),
+                                //       if (value)
+                                //         {
+                                //           print("Gooogle map get longitude is location on ===>> $hasPermission"),
+                                //
+                                //           if (hasPermission)
+                                //             {
+                                //
+                                //               print("Gooogle map get longitude is hasPermission ===>> $longitude"),
+                                //               if (latitude.isNotEmpty &&
+                                //                   longitude.isNotEmpty)
+                                //                 {
+                                //                   distance=  calculateDistance(
+                                //                       cameraPosition
+                                //                           .target
+                                //                           .latitude,
+                                //                       cameraPosition
+                                //                           .target
+                                //                           .longitude,
+                                //                       double.parse(
+                                //                           latitude),
+                                //                       double.parse(
+                                //                           longitude)),
+                                //                   if (distance <
+                                //                       1)
+                                //                     {
+                                //                       appRouter
+                                //                           .pop({
+                                //                         "refreshData":
+                                //                         "refresh",
+                                //                         "lat": cameraPosition
+                                //                             .target
+                                //                             .latitude
+                                //                             .toString(),
+                                //                         "lng": cameraPosition
+                                //                             .target
+                                //                             .longitude
+                                //                             .toString()
+                                //                       }),
+                                //                     }
+                                //                   else
+                                //                     {
+                                //                       snackBar(
+                                //                           context,
+                                //                           "Please select location under 1 km"),
+                                //                     }
+                                //                 }  else
+                                //                 {
+                                //                   snackBar(
+                                //                       context,
+                                //                       "Location not found")
+                                //                 }}else{
+                                //             _requestPermission()
+                                //           }
+                                //
+                                //           // if (position != null)
+                                //           //   {
+                                //           //     appRouter.push(AddLocationScreenRoute(
+                                //           //         addressLat: position
+                                //           //             ?.latitude
+                                //           //             .toString(),
+                                //           //         addressLng: position
+                                //           //             ?.longitude
+                                //           //             .toString())).then((value) => {
+                                //           //       map = value
+                                //           //       as Map?,
+                                //           //       if (map?["refreshData"] !=
+                                //           //           null &&
+                                //           //           map?["refreshData"] ==
+                                //           //               "refresh")
+                                //           //         {
+                                //           //           geoLocation =
+                                //           //               GeoLocation(
+                                //           //                 photo:
+                                //           //                 null,
+                                //           //                 lat: map?[
+                                //           //                 "lat"],
+                                //           //                 long: map?[
+                                //           //                 "lng"],
+                                //           //                 isFileUpload:
+                                //           //                 false,
+                                //           //                 fileStatus:
+                                //           //                 0,
+                                //           //               ),
+                                //           //           setState(
+                                //           //                   () {
+                                //           //                 listGeoLocation
+                                //           //                     .add(geoLocation!);
+                                //           //                 geoLocation =
+                                //           //                 null;
+                                //           //               })
+                                //           //         }
+                                //           //     })
+                                //           //   }
+                                //           // else
+                                //           //   {
+                                //           //     onLoadingWithMessage(context,"Getting Gps Location"),
+                                //           //     GpsLocation.gpsLocation
+                                //           //         .getLocation(
+                                //           //             (gpsLocation) =>
+                                //           //         {
+                                //           //           removeLoading(),
+                                //           //           appRouter
+                                //           //               .push(AddLocationScreenRoute(
+                                //           //               addressLat: gpsLocation.latitude.toString(),
+                                //           //               addressLng: gpsLocation.longitude.toString()))
+                                //           //               .then((value) => {
+                                //           //             map = value as Map?,
+                                //           //             if (map?["refreshData"] != null && map?["refreshData"] == "refresh")
+                                //           //               {
+                                //           //                 geoLocation = GeoLocation(
+                                //           //                   photo: null,
+                                //           //                   lat: map?["lat"],
+                                //           //                   long: map?["lng"],
+                                //           //                   isFileUpload: false,
+                                //           //                   fileStatus: 0,
+                                //           //                 ),
+                                //           //                 setState(() {
+                                //           //                   listGeoLocation.add(geoLocation!);
+                                //           //                   geoLocation = null;
+                                //           //                 })
+                                //           //               }
+                                //           //           })
+                                //           //         })
+                                //           //   }
+                                //         }
+                                //
+                                //     })})});
 
-            return null;
-          });
-      case UpdateVdpCommitteeLoadingState :return const Center(child: CircularProgressIndicator(color: defaultColor,),);
-      case UpdateVdpCommitteeSuccessState : return ButtonThemeLarge(
-          context: context,
-          label: "Add Location",
-          color: defaultColor,
-          onClick: () {
-            var assamDb;
-            var distance = 0.0;
-            if (hasPermission) {
-              Geolocator.isLocationServiceEnabled()
-                  .then((isGps) async => {
-                assamDb = await $FloorAssamAppDatabase
-                    .databaseBuilder(databaseName)
-                    .build(),
-                await assamDb.geoLocationDao
-                    .getLastGeoLocation()
-                    .then((location) => {
-                  if (isGps)
-                    {
-                      if (location != null)
-                        {
-                          distance = Geolocator
-                              .distanceBetween(
-                              location.latitude,
-                              location
-                                  .longitude,
-                              cameraPosition
-                                  .target
-                                  .latitude,
-                              cameraPosition
-                                  .target
-                                  .longitude),
-                          // if (distance < 1000)
-                          //   {
-                              // appRouter.pop({
-                              //   "refreshData":
-                              //   "refresh",
-                              //   "lat":
-                              //   cameraPosition
-                              //       .target
-                              //       .latitude
-                              //       .toString(),
-                              //   "lng":
-                              //   cameraPosition
-                              //       .target
-                              //       .longitude
-                              //       .toString()
-                              // }),
-                              if(isUpdateLocation == true){
-                                context
-                                    .read<VdpCommitteeCubit>()
-                                    .updateVdpCommittee(
-                                    vdpId:
-                                    getAllVDPCommittee?.vdpId,
-                                    vdpName: getAllVDPCommittee?.vdpName,
-                                    longitude: cameraPosition
-                                        .target
-                                        .longitude
-                                        .toString(),
-                                    latitude:  cameraPosition
-                                        .target
-                                        .latitude
-                                        .toString(),
-                                    policeStation:
-                                    getAllVDPCommittee?.policeStation,
-                                    district: getAllVDPCommittee?.district,
-                                    status: getAllVDPCommittee?.status),
-                              }
-                            // }
-                          // else
-                          //   {
-                          //     snackBar(context,
-                          //         "Please select location under 1 km"),
-                          //   }
-                        }
-                      else
-                        {
-                          snackBar(context,
-                              "Location not found"),
-                        }
-                    }
-                  else
-                    {
-                      snackBar(context,
-                          "GPS Service is not enabled, turn on GPS location")
-                    }
-                })
-              });
-            } else {
-              _requestPermission();
-            }
+                                // Geolocator.isLocationServiceEnabled().then((value) async => {
+                                //           await preferences
+                                //               .getStringValue(latitude)
+                                //               .then((latitude) => {
+                                //                     preferences
+                                //                         .getStringValue(longitude)
+                                //                         .then((longitude) => {
+                                //                               if (value)
+                                //                                 {
+                                //                                   if (hasPermission)
+                                //                                     {
+                                //                                       if (latitude
+                                //                                               .isNotEmpty &&
+                                //                                           longitude
+                                //                                               .isNotEmpty)
+                                //                                         {
+                                //                                           distance=  calculateDistance(
+                                //                                               cameraPosition
+                                //                                                   .target
+                                //                                                   .latitude,
+                                //                                               cameraPosition
+                                //                                                   .target
+                                //                                                   .longitude,
+                                //                                               double.parse(
+                                //                                                   latitude),
+                                //                                               double.parse(
+                                //                                                   longitude)),
+                                //                                           if (distance <
+                                //                                               1)
+                                //                                             {
+                                //                                               appRouter
+                                //                                                   .pop({
+                                //                                                 "refreshData":
+                                //                                                     "refresh",
+                                //                                                 "lat": cameraPosition
+                                //                                                     .target
+                                //                                                     .latitude
+                                //                                                     .toString(),
+                                //                                                 "lng": cameraPosition
+                                //                                                     .target
+                                //                                                     .longitude
+                                //                                                     .toString()
+                                //                                               }),
+                                //                                             }
+                                //                                           else
+                                //                                             {
+                                //                                               snackBar(
+                                //                                                   context,
+                                //                                                   "Please select location under 1 km"),
+                                //                                             }
+                                //                                         }
+                                //                                       else
+                                //                                         {
+                                //                                           snackBar(
+                                //                                               context,
+                                //                                               "Location not found")
+                                //                                         }
+                                //                                     }
+                                //                                   else
+                                //                                     {
+                                //                                       _requestPermission()
+                                //                                     }
+                                //                                 }
+                                //                               else
+                                //                                 {
+                                //                                   snackBar(context,
+                                //                                       "GPS Service is not enabled, turn on GPS location")
+                                //                                 }
+                                //                             })
+                                //                   })
+                                //         });
 
-            // var preferences = MySharedPreference();
-            // var distance = 0.0;
+                                return null;
+                              });
+                        case UpdateVdpCommitteeLoadingState:
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              color: defaultColor,
+                            ),
+                          );
+                        case UpdateVdpCommitteeSuccessState:
+                          return ButtonThemeLarge(
+                              context: context,
+                              label: "Add Location",
+                              color: defaultColor,
+                              onClick: () {
+                                var assamDb;
+                                var distance = 0.0;
+                                if (hasPermission) {
+                                  Geolocator.isLocationServiceEnabled()
+                                      .then((isGps) async => {
+                                            assamDb =
+                                                await $FloorAssamAppDatabase
+                                                    .databaseBuilder(
+                                                        databaseName)
+                                                    .build(),
+                                            await assamDb.geoLocationDao
+                                                .getLastGeoLocation()
+                                                .then((location) => {
+                                                      if (isGps)
+                                                        {
+                                                          if (location != null)
+                                                            {
+                                                              distance = Geolocator.distanceBetween(
+                                                                  location
+                                                                      .latitude,
+                                                                  location
+                                                                      .longitude,
+                                                                  cameraPosition
+                                                                      .target
+                                                                      .latitude,
+                                                                  cameraPosition
+                                                                      .target
+                                                                      .longitude),
+                                                              // if (distance < 1000)
+                                                              //   {
+                                                              // appRouter.pop({
+                                                              //   "refreshData":
+                                                              //   "refresh",
+                                                              //   "lat":
+                                                              //   cameraPosition
+                                                              //       .target
+                                                              //       .latitude
+                                                              //       .toString(),
+                                                              //   "lng":
+                                                              //   cameraPosition
+                                                              //       .target
+                                                              //       .longitude
+                                                              //       .toString()
+                                                              // }),
+                                                              if (isUpdateLocation ==
+                                                                  true)
+                                                                {
+                                                                  // context.read<VdpCommitteeCubit>().updateVdpCommittee(
+                                                                  //     vdpId: getAllVDPCommittee
+                                                                  //         ?.vdpId,
+                                                                  //     vdpName:
+                                                                  //         getAllVDPCommittee
+                                                                  //             ?.vdpName,
+                                                                  //     longitude: cameraPosition
+                                                                  //         .target
+                                                                  //         .longitude
+                                                                  //         .toString(),
+                                                                  //     latitude: cameraPosition
+                                                                  //         .target
+                                                                  //         .latitude
+                                                                  //         .toString(),
+                                                                  //     policeStation:
+                                                                  //         getAllVDPCommittee
+                                                                  //             ?.policeStation,
+                                                                  //     district:
+                                                                  //         getAllVDPCommittee
+                                                                  //             ?.district,
+                                                                  //     status: getAllVDPCommittee
+                                                                  //         ?.status),
+                                                                }
+                                                              // }
+                                                              // else
+                                                              //   {
+                                                              //     snackBar(context,
+                                                              //         "Please select location under 1 km"),
+                                                              //   }
+                                                            }
+                                                          else
+                                                            {
+                                                              snackBar(context,
+                                                                  "Location not found"),
+                                                            }
+                                                        }
+                                                      else
+                                                        {
+                                                          snackBar(context,
+                                                              "GPS Service is not enabled, turn on GPS location")
+                                                        }
+                                                    })
+                                          });
+                                } else {
+                                  _requestPermission();
+                                }
 
-            // Geolocator.isLocationServiceEnabled().then((value) async => {
-            //   await preferences
-            //       .getStringValue(latitude)
-            //       .then((latitude) => {
-            //
-            //         print("Gooogle map get latitude ===>> $latitude"),
-            //     preferences
-            //         .getStringValue(longitude)
-            //         .then((longitude) => {
-            //       print("Gooogle map get longitude ===>> $longitude"),
-            //       if (value)
-            //         {
-            //           print("Gooogle map get longitude is location on ===>> $hasPermission"),
-            //
-            //           if (hasPermission)
-            //             {
-            //
-            //               print("Gooogle map get longitude is hasPermission ===>> $longitude"),
-            //               if (latitude.isNotEmpty &&
-            //                   longitude.isNotEmpty)
-            //                 {
-            //                   distance=  calculateDistance(
-            //                       cameraPosition
-            //                           .target
-            //                           .latitude,
-            //                       cameraPosition
-            //                           .target
-            //                           .longitude,
-            //                       double.parse(
-            //                           latitude),
-            //                       double.parse(
-            //                           longitude)),
-            //                   if (distance <
-            //                       1)
-            //                     {
-            //                       appRouter
-            //                           .pop({
-            //                         "refreshData":
-            //                         "refresh",
-            //                         "lat": cameraPosition
-            //                             .target
-            //                             .latitude
-            //                             .toString(),
-            //                         "lng": cameraPosition
-            //                             .target
-            //                             .longitude
-            //                             .toString()
-            //                       }),
-            //                     }
-            //                   else
-            //                     {
-            //                       snackBar(
-            //                           context,
-            //                           "Please select location under 1 km"),
-            //                     }
-            //                 }  else
-            //                 {
-            //                   snackBar(
-            //                       context,
-            //                       "Location not found")
-            //                 }}else{
-            //             _requestPermission()
-            //           }
-            //
-            //           // if (position != null)
-            //           //   {
-            //           //     appRouter.push(AddLocationScreenRoute(
-            //           //         addressLat: position
-            //           //             ?.latitude
-            //           //             .toString(),
-            //           //         addressLng: position
-            //           //             ?.longitude
-            //           //             .toString())).then((value) => {
-            //           //       map = value
-            //           //       as Map?,
-            //           //       if (map?["refreshData"] !=
-            //           //           null &&
-            //           //           map?["refreshData"] ==
-            //           //               "refresh")
-            //           //         {
-            //           //           geoLocation =
-            //           //               GeoLocation(
-            //           //                 photo:
-            //           //                 null,
-            //           //                 lat: map?[
-            //           //                 "lat"],
-            //           //                 long: map?[
-            //           //                 "lng"],
-            //           //                 isFileUpload:
-            //           //                 false,
-            //           //                 fileStatus:
-            //           //                 0,
-            //           //               ),
-            //           //           setState(
-            //           //                   () {
-            //           //                 listGeoLocation
-            //           //                     .add(geoLocation!);
-            //           //                 geoLocation =
-            //           //                 null;
-            //           //               })
-            //           //         }
-            //           //     })
-            //           //   }
-            //           // else
-            //           //   {
-            //           //     onLoadingWithMessage(context,"Getting Gps Location"),
-            //           //     GpsLocation.gpsLocation
-            //           //         .getLocation(
-            //           //             (gpsLocation) =>
-            //           //         {
-            //           //           removeLoading(),
-            //           //           appRouter
-            //           //               .push(AddLocationScreenRoute(
-            //           //               addressLat: gpsLocation.latitude.toString(),
-            //           //               addressLng: gpsLocation.longitude.toString()))
-            //           //               .then((value) => {
-            //           //             map = value as Map?,
-            //           //             if (map?["refreshData"] != null && map?["refreshData"] == "refresh")
-            //           //               {
-            //           //                 geoLocation = GeoLocation(
-            //           //                   photo: null,
-            //           //                   lat: map?["lat"],
-            //           //                   long: map?["lng"],
-            //           //                   isFileUpload: false,
-            //           //                   fileStatus: 0,
-            //           //                 ),
-            //           //                 setState(() {
-            //           //                   listGeoLocation.add(geoLocation!);
-            //           //                   geoLocation = null;
-            //           //                 })
-            //           //               }
-            //           //           })
-            //           //         })
-            //           //   }
-            //         }
-            //
-            //     })})});
+                                // var preferences = MySharedPreference();
+                                // var distance = 0.0;
 
-            // Geolocator.isLocationServiceEnabled().then((value) async => {
-            //           await preferences
-            //               .getStringValue(latitude)
-            //               .then((latitude) => {
-            //                     preferences
-            //                         .getStringValue(longitude)
-            //                         .then((longitude) => {
-            //                               if (value)
-            //                                 {
-            //                                   if (hasPermission)
-            //                                     {
-            //                                       if (latitude
-            //                                               .isNotEmpty &&
-            //                                           longitude
-            //                                               .isNotEmpty)
-            //                                         {
-            //                                           distance=  calculateDistance(
-            //                                               cameraPosition
-            //                                                   .target
-            //                                                   .latitude,
-            //                                               cameraPosition
-            //                                                   .target
-            //                                                   .longitude,
-            //                                               double.parse(
-            //                                                   latitude),
-            //                                               double.parse(
-            //                                                   longitude)),
-            //                                           if (distance <
-            //                                               1)
-            //                                             {
-            //                                               appRouter
-            //                                                   .pop({
-            //                                                 "refreshData":
-            //                                                     "refresh",
-            //                                                 "lat": cameraPosition
-            //                                                     .target
-            //                                                     .latitude
-            //                                                     .toString(),
-            //                                                 "lng": cameraPosition
-            //                                                     .target
-            //                                                     .longitude
-            //                                                     .toString()
-            //                                               }),
-            //                                             }
-            //                                           else
-            //                                             {
-            //                                               snackBar(
-            //                                                   context,
-            //                                                   "Please select location under 1 km"),
-            //                                             }
-            //                                         }
-            //                                       else
-            //                                         {
-            //                                           snackBar(
-            //                                               context,
-            //                                               "Location not found")
-            //                                         }
-            //                                     }
-            //                                   else
-            //                                     {
-            //                                       _requestPermission()
-            //                                     }
-            //                                 }
-            //                               else
-            //                                 {
-            //                                   snackBar(context,
-            //                                       "GPS Service is not enabled, turn on GPS location")
-            //                                 }
-            //                             })
-            //                   })
-            //         });
+                                // Geolocator.isLocationServiceEnabled().then((value) async => {
+                                //   await preferences
+                                //       .getStringValue(latitude)
+                                //       .then((latitude) => {
+                                //
+                                //         print("Gooogle map get latitude ===>> $latitude"),
+                                //     preferences
+                                //         .getStringValue(longitude)
+                                //         .then((longitude) => {
+                                //       print("Gooogle map get longitude ===>> $longitude"),
+                                //       if (value)
+                                //         {
+                                //           print("Gooogle map get longitude is location on ===>> $hasPermission"),
+                                //
+                                //           if (hasPermission)
+                                //             {
+                                //
+                                //               print("Gooogle map get longitude is hasPermission ===>> $longitude"),
+                                //               if (latitude.isNotEmpty &&
+                                //                   longitude.isNotEmpty)
+                                //                 {
+                                //                   distance=  calculateDistance(
+                                //                       cameraPosition
+                                //                           .target
+                                //                           .latitude,
+                                //                       cameraPosition
+                                //                           .target
+                                //                           .longitude,
+                                //                       double.parse(
+                                //                           latitude),
+                                //                       double.parse(
+                                //                           longitude)),
+                                //                   if (distance <
+                                //                       1)
+                                //                     {
+                                //                       appRouter
+                                //                           .pop({
+                                //                         "refreshData":
+                                //                         "refresh",
+                                //                         "lat": cameraPosition
+                                //                             .target
+                                //                             .latitude
+                                //                             .toString(),
+                                //                         "lng": cameraPosition
+                                //                             .target
+                                //                             .longitude
+                                //                             .toString()
+                                //                       }),
+                                //                     }
+                                //                   else
+                                //                     {
+                                //                       snackBar(
+                                //                           context,
+                                //                           "Please select location under 1 km"),
+                                //                     }
+                                //                 }  else
+                                //                 {
+                                //                   snackBar(
+                                //                       context,
+                                //                       "Location not found")
+                                //                 }}else{
+                                //             _requestPermission()
+                                //           }
+                                //
+                                //           // if (position != null)
+                                //           //   {
+                                //           //     appRouter.push(AddLocationScreenRoute(
+                                //           //         addressLat: position
+                                //           //             ?.latitude
+                                //           //             .toString(),
+                                //           //         addressLng: position
+                                //           //             ?.longitude
+                                //           //             .toString())).then((value) => {
+                                //           //       map = value
+                                //           //       as Map?,
+                                //           //       if (map?["refreshData"] !=
+                                //           //           null &&
+                                //           //           map?["refreshData"] ==
+                                //           //               "refresh")
+                                //           //         {
+                                //           //           geoLocation =
+                                //           //               GeoLocation(
+                                //           //                 photo:
+                                //           //                 null,
+                                //           //                 lat: map?[
+                                //           //                 "lat"],
+                                //           //                 long: map?[
+                                //           //                 "lng"],
+                                //           //                 isFileUpload:
+                                //           //                 false,
+                                //           //                 fileStatus:
+                                //           //                 0,
+                                //           //               ),
+                                //           //           setState(
+                                //           //                   () {
+                                //           //                 listGeoLocation
+                                //           //                     .add(geoLocation!);
+                                //           //                 geoLocation =
+                                //           //                 null;
+                                //           //               })
+                                //           //         }
+                                //           //     })
+                                //           //   }
+                                //           // else
+                                //           //   {
+                                //           //     onLoadingWithMessage(context,"Getting Gps Location"),
+                                //           //     GpsLocation.gpsLocation
+                                //           //         .getLocation(
+                                //           //             (gpsLocation) =>
+                                //           //         {
+                                //           //           removeLoading(),
+                                //           //           appRouter
+                                //           //               .push(AddLocationScreenRoute(
+                                //           //               addressLat: gpsLocation.latitude.toString(),
+                                //           //               addressLng: gpsLocation.longitude.toString()))
+                                //           //               .then((value) => {
+                                //           //             map = value as Map?,
+                                //           //             if (map?["refreshData"] != null && map?["refreshData"] == "refresh")
+                                //           //               {
+                                //           //                 geoLocation = GeoLocation(
+                                //           //                   photo: null,
+                                //           //                   lat: map?["lat"],
+                                //           //                   long: map?["lng"],
+                                //           //                   isFileUpload: false,
+                                //           //                   fileStatus: 0,
+                                //           //                 ),
+                                //           //                 setState(() {
+                                //           //                   listGeoLocation.add(geoLocation!);
+                                //           //                   geoLocation = null;
+                                //           //                 })
+                                //           //               }
+                                //           //           })
+                                //           //         })
+                                //           //   }
+                                //         }
+                                //
+                                //     })})});
 
-            return null;
-          });
-      default : return ButtonThemeLarge(
-          context: context,
-          label: "Add Location",
-          color: defaultColor,
-          onClick: () {
-            var assamDb;
-            var distance = 0.0;
-            if (hasPermission) {
-              Geolocator.isLocationServiceEnabled()
-                  .then((isGps) async => {
-                assamDb = await $FloorAssamAppDatabase
-                    .databaseBuilder(databaseName)
-                    .build(),
-                await assamDb.geoLocationDao
-                    .getLastGeoLocation()
-                    .then((location) => {
-                  if (isGps)
-                    {
-                      if (location != null)
-                        {
-                          distance = Geolocator
-                              .distanceBetween(
-                              location.latitude,
-                              location
-                                  .longitude,
-                              cameraPosition
-                                  .target
-                                  .latitude,
-                              cameraPosition
-                                  .target
-                                  .longitude),
-                          // if (distance < 1000)
-                          //   {
-                              // appRouter.pop({
-                              //   "refreshData":
-                              //   "refresh",
-                              //   "lat":
-                              //   cameraPosition
-                              //       .target
-                              //       .latitude
-                              //       .toString(),
-                              //   "lng":
-                              //   cameraPosition
-                              //       .target
-                              //       .longitude
-                              //       .toString()
-                              // }),
-                              if(isUpdateLocation == true){
-                                context
-                                    .read<VdpCommitteeCubit>()
-                                    .updateVdpCommittee(
-                                    vdpId:
-                                    getAllVDPCommittee?.vdpId,
-                                    vdpName: getAllVDPCommittee?.vdpName,
-                                    longitude: cameraPosition
-                                        .target
-                                        .longitude
-                                        .toString(),
-                                    latitude:  cameraPosition
-                                        .target
-                                        .latitude
-                                        .toString(),
-                                    policeStation:
-                                    getAllVDPCommittee?.policeStation,
-                                    district: getAllVDPCommittee?.district,
-                                    status: getAllVDPCommittee?.status),
-                              }
-                            // }
-                          // else
-                          //   {
-                          //     snackBar(context,
-                          //         "Please select location under 1 km"),
-                          //   }
-                        }
-                      else
-                        {
-                          snackBar(context,
-                              "Location not found"),
-                        }
-                    }
-                  else
-                    {
-                      snackBar(context,
-                          "GPS Service is not enabled, turn on GPS location")
-                    }
-                })
-              });
-            } else {
-              _requestPermission();
-            }
+                                // Geolocator.isLocationServiceEnabled().then((value) async => {
+                                //           await preferences
+                                //               .getStringValue(latitude)
+                                //               .then((latitude) => {
+                                //                     preferences
+                                //                         .getStringValue(longitude)
+                                //                         .then((longitude) => {
+                                //                               if (value)
+                                //                                 {
+                                //                                   if (hasPermission)
+                                //                                     {
+                                //                                       if (latitude
+                                //                                               .isNotEmpty &&
+                                //                                           longitude
+                                //                                               .isNotEmpty)
+                                //                                         {
+                                //                                           distance=  calculateDistance(
+                                //                                               cameraPosition
+                                //                                                   .target
+                                //                                                   .latitude,
+                                //                                               cameraPosition
+                                //                                                   .target
+                                //                                                   .longitude,
+                                //                                               double.parse(
+                                //                                                   latitude),
+                                //                                               double.parse(
+                                //                                                   longitude)),
+                                //                                           if (distance <
+                                //                                               1)
+                                //                                             {
+                                //                                               appRouter
+                                //                                                   .pop({
+                                //                                                 "refreshData":
+                                //                                                     "refresh",
+                                //                                                 "lat": cameraPosition
+                                //                                                     .target
+                                //                                                     .latitude
+                                //                                                     .toString(),
+                                //                                                 "lng": cameraPosition
+                                //                                                     .target
+                                //                                                     .longitude
+                                //                                                     .toString()
+                                //                                               }),
+                                //                                             }
+                                //                                           else
+                                //                                             {
+                                //                                               snackBar(
+                                //                                                   context,
+                                //                                                   "Please select location under 1 km"),
+                                //                                             }
+                                //                                         }
+                                //                                       else
+                                //                                         {
+                                //                                           snackBar(
+                                //                                               context,
+                                //                                               "Location not found")
+                                //                                         }
+                                //                                     }
+                                //                                   else
+                                //                                     {
+                                //                                       _requestPermission()
+                                //                                     }
+                                //                                 }
+                                //                               else
+                                //                                 {
+                                //                                   snackBar(context,
+                                //                                       "GPS Service is not enabled, turn on GPS location")
+                                //                                 }
+                                //                             })
+                                //                   })
+                                //         });
 
-            // var preferences = MySharedPreference();
-            // var distance = 0.0;
+                                return null;
+                              });
+                        default:
+                          return ButtonThemeLarge(
+                              context: context,
+                              label: "Add Location",
+                              color: defaultColor,
+                              onClick: () {
+                                var assamDb;
+                                var distance = 0.0;
+                                if (hasPermission) {
+                                  Geolocator.isLocationServiceEnabled()
+                                      .then((isGps) async => {
+                                            assamDb =
+                                                await $FloorAssamAppDatabase
+                                                    .databaseBuilder(
+                                                        databaseName)
+                                                    .build(),
+                                            await assamDb.geoLocationDao
+                                                .getLastGeoLocation()
+                                                .then((location) => {
+                                                      if (isGps)
+                                                        {
+                                                          if (location != null)
+                                                            {
+                                                              distance = Geolocator.distanceBetween(
+                                                                  location
+                                                                      .latitude,
+                                                                  location
+                                                                      .longitude,
+                                                                  cameraPosition
+                                                                      .target
+                                                                      .latitude,
+                                                                  cameraPosition
+                                                                      .target
+                                                                      .longitude),
+                                                              // if (distance < 1000)
+                                                              //   {
+                                                              // appRouter.pop({
+                                                              //   "refreshData":
+                                                              //   "refresh",
+                                                              //   "lat":
+                                                              //   cameraPosition
+                                                              //       .target
+                                                              //       .latitude
+                                                              //       .toString(),
+                                                              //   "lng":
+                                                              //   cameraPosition
+                                                              //       .target
+                                                              //       .longitude
+                                                              //       .toString()
+                                                              // }),
+                                                              if (isUpdateLocation ==
+                                                                  true)
+                                                                {
+                                                                  // context.read<VdpCommitteeCubit>().updateVdpCommittee(
+                                                                  //     vdpId: getAllVDPCommittee
+                                                                  //         ?.vdpId,
+                                                                  //     vdpName:
+                                                                  //         getAllVDPCommittee
+                                                                  //             ?.vdpName,
+                                                                  //     longitude: cameraPosition
+                                                                  //         .target
+                                                                  //         .longitude
+                                                                  //         .toString(),
+                                                                  //     latitude: cameraPosition
+                                                                  //         .target
+                                                                  //         .latitude
+                                                                  //         .toString(),
+                                                                  //     policeStation:
+                                                                  //         getAllVDPCommittee
+                                                                  //             ?.policeStation,
+                                                                  //     district:
+                                                                  //         getAllVDPCommittee
+                                                                  //             ?.district,
+                                                                  //     status: getAllVDPCommittee
+                                                                  //         ?.status),
+                                                                }
+                                                              // }
+                                                              // else
+                                                              //     snackBar(context,
+                                                              //         "Please select loc
+                                                              //   {ation under 1 km"),
+                                                              //   }
+                                                            }
+                                                          else
+                                                            {
+                                                              snackBar(context,
+                                                                  "Location not found"),
+                                                            }
+                                                        }
+                                                      else
+                                                        {
+                                                          snackBar(context,
+                                                              "GPS Service is not enabled, turn on GPS location")
+                                                        }
+                                                    })
+                                          });
+                                } else {
+                                  _requestPermission();
+                                }
 
-            // Geolocator.isLocationServiceEnabled().then((value) async => {
-            //   await preferences
-            //       .getStringValue(latitude)
-            //       .then((latitude) => {
-            //
-            //         print("Gooogle map get latitude ===>> $latitude"),
-            //     preferences
-            //         .getStringValue(longitude)
-            //         .then((longitude) => {
-            //       print("Gooogle map get longitude ===>> $longitude"),
-            //       if (value)
-            //         {
-            //           print("Gooogle map get longitude is location on ===>> $hasPermission"),
-            //
-            //           if (hasPermission)
-            //             {
-            //
-            //               print("Gooogle map get longitude is hasPermission ===>> $longitude"),
-            //               if (latitude.isNotEmpty &&
-            //                   longitude.isNotEmpty)
-            //                 {
-            //                   distance=  calculateDistance(
-            //                       cameraPosition
-            //                           .target
-            //                           .latitude,
-            //                       cameraPosition
-            //                           .target
-            //                           .longitude,
-            //                       double.parse(
-            //                           latitude),
-            //                       double.parse(
-            //                           longitude)),
-            //                   if (distance <
-            //                       1)
-            //                     {
-            //                       appRouter
-            //                           .pop({
-            //                         "refreshData":
-            //                         "refresh",
-            //                         "lat": cameraPosition
-            //                             .target
-            //                             .latitude
-            //                             .toString(),
-            //                         "lng": cameraPosition
-            //                             .target
-            //                             .longitude
-            //                             .toString()
-            //                       }),
-            //                     }
-            //                   else
-            //                     {
-            //                       snackBar(
-            //                           context,
-            //                           "Please select location under 1 km"),
-            //                     }
-            //                 }  else
-            //                 {
-            //                   snackBar(
-            //                       context,
-            //                       "Location not found")
-            //                 }}else{
-            //             _requestPermission()
-            //           }
-            //
-            //           // if (position != null)
-            //           //   {
-            //           //     appRouter.push(AddLocationScreenRoute(
-            //           //         addressLat: position
-            //           //             ?.latitude
-            //           //             .toString(),
-            //           //         addressLng: position
-            //           //             ?.longitude
-            //           //             .toString())).then((value) => {
-            //           //       map = value
-            //           //       as Map?,
-            //           //       if (map?["refreshData"] !=
-            //           //           null &&
-            //           //           map?["refreshData"] ==
-            //           //               "refresh")
-            //           //         {
-            //           //           geoLocation =
-            //           //               GeoLocation(
-            //           //                 photo:
-            //           //                 null,
-            //           //                 lat: map?[
-            //           //                 "lat"],
-            //           //                 long: map?[
-            //           //                 "lng"],
-            //           //                 isFileUpload:
-            //           //                 false,
-            //           //                 fileStatus:
-            //           //                 0,
-            //           //               ),
-            //           //           setState(
-            //           //                   () {
-            //           //                 listGeoLocation
-            //           //                     .add(geoLocation!);
-            //           //                 geoLocation =
-            //           //                 null;
-            //           //               })
-            //           //         }
-            //           //     })
-            //           //   }
-            //           // else
-            //           //   {
-            //           //     onLoadingWithMessage(context,"Getting Gps Location"),
-            //           //     GpsLocation.gpsLocation
-            //           //         .getLocation(
-            //           //             (gpsLocation) =>
-            //           //         {
-            //           //           removeLoading(),
-            //           //           appRouter
-            //           //               .push(AddLocationScreenRoute(
-            //           //               addressLat: gpsLocation.latitude.toString(),
-            //           //               addressLng: gpsLocation.longitude.toString()))
-            //           //               .then((value) => {
-            //           //             map = value as Map?,
-            //           //             if (map?["refreshData"] != null && map?["refreshData"] == "refresh")
-            //           //               {
-            //           //                 geoLocation = GeoLocation(
-            //           //                   photo: null,
-            //           //                   lat: map?["lat"],
-            //           //                   long: map?["lng"],
-            //           //                   isFileUpload: false,
-            //           //                   fileStatus: 0,
-            //           //                 ),
-            //           //                 setState(() {
-            //           //                   listGeoLocation.add(geoLocation!);
-            //           //                   geoLocation = null;
-            //           //                 })
-            //           //               }
-            //           //           })
-            //           //         })
-            //           //   }
-            //         }
-            //
-            //     })})});
+                                // var preferences = MySharedPreference();
+                                // var distance = 0.0;
 
-            // Geolocator.isLocationServiceEnabled().then((value) async => {
-            //           await preferences
-            //               .getStringValue(latitude)
-            //               .then((latitude) => {
-            //                     preferences
-            //                         .getStringValue(longitude)
-            //                         .then((longitude) => {
-            //                               if (value)
-            //                                 {
-            //                                   if (hasPermission)
-            //                                     {
-            //                                       if (latitude
-            //                                               .isNotEmpty &&
-            //                                           longitude
-            //                                               .isNotEmpty)
-            //                                         {
-            //                                           distance=  calculateDistance(
-            //                                               cameraPosition
-            //                                                   .target
-            //                                                   .latitude,
-            //                                               cameraPosition
-            //                                                   .target
-            //                                                   .longitude,
-            //                                               double.parse(
-            //                                                   latitude),
-            //                                               double.parse(
-            //                                                   longitude)),
-            //                                           if (distance <
-            //                                               1)
-            //                                             {
-            //                                               appRouter
-            //                                                   .pop({
-            //                                                 "refreshData":
-            //                                                     "refresh",
-            //                                                 "lat": cameraPosition
-            //                                                     .target
-            //                                                     .latitude
-            //                                                     .toString(),
-            //                                                 "lng": cameraPosition
-            //                                                     .target
-            //                                                     .longitude
-            //                                                     .toString()
-            //                                               }),
-            //                                             }
-            //                                           else
-            //                                             {
-            //                                               snackBar(
-            //                                                   context,
-            //                                                   "Please select location under 1 km"),
-            //                                             }
-            //                                         }
-            //                                       else
-            //                                         {
-            //                                           snackBar(
-            //                                               context,
-            //                                               "Location not found")
-            //                                         }
-            //                                     }
-            //                                   else
-            //                                     {
-            //                                       _requestPermission()
-            //                                     }
-            //                                 }
-            //                               else
-            //                                 {
-            //                                   snackBar(context,
-            //                                       "GPS Service is not enabled, turn on GPS location")
-            //                                 }
-            //                             })
-            //                   })
-            //         });
+                                // Geolocator.isLocationServiceEnabled().then((value) async => {
+                                //   await preferences
+                                //       .getStringValue(latitude)
+                                //       .then((latitude) => {
+                                //
+                                //         print("Gooogle map get latitude ===>> $latitude"),
+                                //     preferences
+                                //         .getStringValue(longitude)
+                                //         .then((longitude) => {
+                                //       print("Gooogle map get longitude ===>> $longitude"),
+                                //       if (value)
+                                //         {
+                                //           print("Gooogle map get longitude is location on ===>> $hasPermission"),
+                                //
+                                //           if (hasPermission)
+                                //             {
+                                //
+                                //               print("Gooogle map get longitude is hasPermission ===>> $longitude"),
+                                //               if (latitude.isNotEmpty &&
+                                //                   longitude.isNotEmpty)
+                                //                 {
+                                //                   distance=  calculateDistance(
+                                //                       cameraPosition
+                                //                           .target
+                                //                           .latitude,
+                                //                       cameraPosition
+                                //                           .target
+                                //                           .longitude,
+                                //                       double.parse(
+                                //                           latitude),
+                                //                       double.parse(
+                                //                           longitude)),
+                                //                   if (distance <
+                                //                       1)
+                                //                     {
+                                //                       appRouter
+                                //                           .pop({
+                                //                         "refreshData":
+                                //                         "refresh",
+                                //                         "lat": cameraPosition
+                                //                             .target
+                                //                             .latitude
+                                //                             .toString(),
+                                //                         "lng": cameraPosition
+                                //                             .target
+                                //                             .longitude
+                                //                             .toString()
+                                //                       }),
+                                //                     }
+                                //                   else
+                                //                     {
+                                //                       snackBar(
+                                //                           context,
+                                //                           "Please select location under 1 km"),
+                                //                     }
+                                //                 }  else
+                                //                 {
+                                //                   snackBar(
+                                //                       context,
+                                //                       "Location not found")
+                                //                 }}else{
+                                //             _requestPermission()
+                                //           }
+                                //
+                                //           // if (position != null)
+                                //           //   {
+                                //           //     appRouter.push(AddLocationScreenRoute(
+                                //           //         addressLat: position
+                                //           //             ?.latitude
+                                //           //             .toString(),
+                                //           //         addressLng: position
+                                //           //             ?.longitude
+                                //           //             .toString())).then((value) => {
+                                //           //       map = value
+                                //           //       as Map?,
+                                //           //       if (map?["refreshData"] !=
+                                //           //           null &&
+                                //           //           map?["refreshData"] ==
+                                //           //               "refresh")
+                                //           //         {
+                                //           //           geoLocation =
+                                //           //               GeoLocation(
+                                //           //                 photo:
+                                //           //                 null,
+                                //           //                 lat: map?[
+                                //           //                 "lat"],
+                                //           //                 long: map?[
+                                //           //                 "lng"],
+                                //           //                 isFileUpload:
+                                //           //                 false,
+                                //           //                 fileStatus:
+                                //           //                 0,
+                                //           //               ),
+                                //           //           setState(
+                                //           //                   () {
+                                //           //                 listGeoLocation
+                                //           //                     .add(geoLocation!);
+                                //           //                 geoLocation =
+                                //           //                 null;
+                                //           //               })
+                                //           //         }
+                                //           //     })
+                                //           //   }
+                                //           // else
+                                //           //   {
+                                //           //     onLoadingWithMessage(context,"Getting Gps Location"),
+                                //           //     GpsLocation.gpsLocation
+                                //           //         .getLocation(
+                                //           //             (gpsLocation) =>
+                                //           //         {
+                                //           //           removeLoading(),
+                                //           //           appRouter
+                                //           //               .push(AddLocationScreenRoute(
+                                //           //               addressLat: gpsLocation.latitude.toString(),
+                                //           //               addressLng: gpsLocation.longitude.toString()))
+                                //           //               .then((value) => {
+                                //           //             map = value as Map?,
+                                //           //             if (map?["refreshData"] != null && map?["refreshData"] == "refresh")
+                                //           //               {
+                                //           //                 geoLocation = GeoLocation(
+                                //           //                   photo: null,
+                                //           //                   lat: map?["lat"],
+                                //           //                   long: map?["lng"],
+                                //           //                   isFileUpload: false,
+                                //           //                   fileStatus: 0,
+                                //           //                 ),
+                                //           //                 setState(() {
+                                //           //                   listGeoLocation.add(geoLocation!);
+                                //           //                   geoLocation = null;
+                                //           //                 })
+                                //           //               }
+                                //           //           })
+                                //           //         })
+                                //           //   }
+                                //         }
+                                //
+                                //     })})});
 
-            return null;
-          });
-    }
-  },
-),
-                    ),
-                  )),
+                                // Geolocator.isLocationServiceEnabled().then((value) async => {
+                                //           await preferences
+                                //               .getStringValue(latitude)
+                                //               .then((latitude) => {
+                                //                     preferences
+                                //                         .getStringValue(longitude)
+                                //                         .then((longitude) => {
+                                //                               if (value)
+                                //                                 {
+                                //                                   if (hasPermission)
+                                //                                     {
+                                //                                       if (latitude
+                                //                                               .isNotEmpty &&
+                                //                                           longitude
+                                //                                               .isNotEmpty)
+                                //                                         {
+                                //                                           distance=  calculateDistance(
+                                //                                               cameraPosition
+                                //                                                   .target
+                                //                                                   .latitude,
+                                //                                               cameraPosition
+                                //                                                   .target
+                                //                                                   .longitude,
+                                //                                               double.parse(
+                                //                                                   latitude),
+                                //                                               double.parse(
+                                //                                                   longitude)),
+                                //                                           if (distance <
+                                //                                               1)
+                                //                                             {
+                                //                                               appRouter
+                                //                                                   .pop({
+                                //                                                 "refreshData":
+                                //                                                     "refresh",
+                                //                                                 "lat": cameraPosition
+                                //                                                     .target
+                                //                                                     .latitude
+                                //                                                     .toString(),
+                                //                                                 "lng": cameraPosition
+                                //                                                     .target
+                                //                                                     .longitude
+                                //                                                     .toString()
+                                //                                               }),
+                                //                                             }
+                                //                                           else
+                                //                                             {
+                                //                                               snackBar(
+                                //                                                   context,
+                                //                                                   "Please select location under 1 km"),
+                                //                                             }
+                                //                                         }
+                                //                                       else
+                                //                                         {
+                                //                                           snackBar(
+                                //                                               context,
+                                //                                               "Location not found")
+                                //                                         }
+                                //                                     }
+                                //                                   else
+                                //                                     {
+                                //                                       _requestPermission()
+                                //                                     }
+                                //                                 }
+                                //                               else
+                                //                                 {
+                                //                                   snackBar(context,
+                                //                                       "GPS Service is not enabled, turn on GPS location")
+                                //                                 }
+                                //                             })
+                                //                   })
+                                //         });
+
+                                return null;
+                              });
+                      }
+                    },
+                  ),
+                ),
+              )),
             ),
             Positioned(
               right: 0,
-              top: 40,
+              top: 60,
               child: RawMaterialButton(
                 onPressed: () {
                   appRouter.pop();
@@ -1197,7 +1349,7 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
                 padding: const EdgeInsets.all(12.0),
                 shape: const CircleBorder(),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -1214,4 +1366,20 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
       openAppSettings();
     }
   }
+
+  bool isLocationValid(double latitude, double longitude) {
+    // Check if latitude is within valid range (-90 to 90 degrees).
+    if (latitude < -90.0 || latitude > 90.0) {
+      return false;
+    }
+
+    // Check if longitude is within valid range (-180 to 180 degrees).
+    if (longitude < -180.0 || longitude > 180.0) {
+      return false;
+    }
+
+    // If both latitude and longitude pass the range checks, consider them valid.
+    return true;
+  }
+
 }

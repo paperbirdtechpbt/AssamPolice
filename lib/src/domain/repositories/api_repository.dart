@@ -6,6 +6,8 @@ import '../models/requests/add_vdp_member_request.dart';
 import '../models/requests/auth_request.dart';
 import '../models/requests/delete_vdp_member_request.dart';
 import '../models/requests/delete_vdp_request.dart';
+import '../models/requests/get_all_vdp_committee_request.dart';
+import '../models/requests/get_all_vdp_member_request.dart';
 import '../models/requests/get_body_message.dart';
 import '../models/requests/get_district_police_station_request.dart';
 import '../models/requests/get_receive_message_request.dart';
@@ -93,7 +95,9 @@ abstract class ApiRepository {
 // vdpCommittee
 
 
-  Future<DataState<GetAllVDPCommitteeResponse>> getAllVdpCommittee();
+  Future<DataState<GetAllVDPCommitteeResponse>> getAllVdpCommittee({
+    required GetAllVdpCommitteeRequest request,
+});
 
   Future<DataState<AddVdpCommitteeResponse>> addVdpCommittee({
     required AddVdpCommitteeRequest request,
@@ -110,7 +114,9 @@ abstract class ApiRepository {
   //vdpMember
   //response set pending
 
-  Future<DataState<GetAllVdpMemberResponse>> getAllVdpMember();
+  Future<DataState<GetAllVdpMemberResponse>> getAllVdpMember({
+    required GetAllVdpMemberRequest request,
+});
 
 
   Future<DataState<GetAllVdpRolesResponse>> getAllVdpRoles();

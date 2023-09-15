@@ -5,6 +5,7 @@ class AddVdpMemberRequest {
   String? mobileNumber;
   String? emailId;
  bool? status;
+ String? createdBy;
 
  AddVdpMemberRequest(
       {this.vdpCommitteeId,
@@ -12,5 +13,5 @@ class AddVdpMemberRequest {
       this.name,
       this.mobileNumber,
       this.emailId,
-      this.status});
+      this.status,this.createdBy});
 }

@@ -138,20 +138,25 @@ abstract class ApiService {
 
   //VdpCommittee
 
-  @GET('VDPCommittee/GetAllVDPCommittee')
-  Future<HttpResponse<GetAllVDPCommitteeResponse>> getAllVdpCommittee();
+  @GET('VDPCommittee/GetAllVDPCommitteeByDP')
+  Future<HttpResponse<GetAllVDPCommitteeResponse>> getAllVdpCommittee({
+    @Query("DistrictId") String? districtId,
+    @Query("PoliceStationId") String? policeStationId,
+
+});
 
   @POST('VDPCommittee/AddVDPCommittee')
   Future<HttpResponse<AddVdpCommitteeResponse>> addVdpCommittee({
     @Query("VDPName") String? vdpName,
     @Query("Latitude") String? latitude,
     @Query("Longitude") String? longitude,
-    @Query("PoliceStation") String? policeStation,
-    @Query("District") String? district,
+    @Query("PoliceStationId") int? policeStationId,
+    @Query("DistrictId") int? districtId,
     @Query("Status") String? status,
+    @Query("CreatedBy") String? createdBy,
   });
 
-  @DELETE('VDPCommittee/DeleteVDPCommittee')
+  @POST('VDPCommittee/DeleteVDPCommittee')
   Future<HttpResponse<DeleteVdpCommitteeResponse>> deleteVdpCommittee({
     @Query("id") int? VdpId,
   });
@@ -161,9 +166,11 @@ abstract class ApiService {
     @Query("VDPName") String? vdpName,
     @Query("Latitude") String? latitude,
     @Query("Longitude") String? longitude,
-    @Query("PoliceStation") String? policeStation,
-    @Query("District") String? district,
+    @Query("PoliceStationId") int? policeStationId,
+    @Query("DistrictId") int? districtId,
     @Query("Status") String? status,
+    @Query("CreatedBy") String? createdBy,
+
   });
 
   //VDPMember/
@@ -172,8 +179,10 @@ abstract class ApiService {
   Future<HttpResponse<GetAllVdpRolesResponse>> getAllVdpRoles();
 
 
-  @GET('VDPMember/GetAllVDPMember')
-  Future<HttpResponse<GetAllVdpMemberResponse>> getAllVdpMember();
+  @GET('VDPMember/GetAllVDPCommitteeMember')
+  Future<HttpResponse<GetAllVdpMemberResponse>> getAllVdpMember({
+    @Query("VDPCommitteeId") int? vdpCommitteeId,
+});
 
   @POST('VDPMember/AddVDPMember')
   Future<HttpResponse<AddVdpMemberResponse>> addVdpMember({
@@ -183,6 +192,7 @@ abstract class ApiService {
     @Query("MobileNumber") String? mobileNumber,
     @Query("EmailId") String? emailId,
     @Query("Status") bool? status,
+    @Query("CreatedBy") String? createdBy,
   });
 
   @POST('VDPMember/UpdateVDPMember')
@@ -194,6 +204,7 @@ abstract class ApiService {
     @Query("MobileNumber") String? mobileNumber,
     @Query("EmailId") String? emailId,
     @Query("Status") bool? status,
+    @Query("CreatedBy") String? createdBy,
   });
 
   @POST('VDPMember/DeleteVDPMember')

@@ -1,28 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 import '../../../config/router/app_router.dart';
-import '../../../domain/models/data/arguments.dart';
 import '../../../domain/models/data/category.dart';
 import '../../../domain/models/data/district.dart';
 import '../../../domain/models/data/get_all_vdp_committee.dart';
 import '../../../domain/models/data/get_all_vdp_member.dart';
 import '../../../domain/models/data/user.dart';
-import '../../../domain/models/responses/update_vdp_committee_response.dart';
-import '../../../utils/constants/assets.dart';
 import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/strings.dart';
 import '../../../utils/reference/my_shared_reference.dart';
 import '../../cubits/home/home_cubit.dart';
-import '../../cubits/home/home_state.dart';
 import '../../cubits/vdp_committee/vdp_committee_cubit.dart';
 import '../../cubits/vdp_committee/vdp_committee_state.dart';
 import '../../cubits/vdp_member/vdp_member_cubit.dart';
 import '../../cubits/vdp_member/vdp_member_state.dart';
 import '../../widgets/common_widgets.dart';
-import '../../widgets/custom_dropdown.dart';
 
 class VdpMembersListView extends StatefulWidget {
   VdpMembersListView({Key? key, this.getAllVDPCommittee}) : super(key: key);
@@ -53,11 +46,13 @@ class _VdpMembersListViewState extends State<VdpMembersListView> {
   String? selectedPoliceStationId;
   late var cubit;
   late User? user = User();
+  var latitude ;
 
   @override
   void initState() {
     super.initState();
     cubit = context.read<HomeCubit>();
+    latitude = getAllVDPCommittee?.latitude;
     getUser();
   }
 
@@ -67,7 +62,7 @@ class _VdpMembersListViewState extends State<VdpMembersListView> {
           setState(() {
             user = data?.user;
             // cubit.getDistrict(user?.email);
-            context.read<VdpMemberCubit>().getAllVdpMember();
+            context.read<VdpMemberCubit>().getAllVdpMember(vdpCommitteeId: getAllVDPCommittee?.vdpId);
           })
         });
   }
@@ -76,7 +71,7 @@ class _VdpMembersListViewState extends State<VdpMembersListView> {
 
 
   Future<bool> onWillPop() {
-    context.read<VdpCommitteeCubit>().getAllVdpCommittee();
+  // appRouter.replace(VdpCommitteeViewRoute());
     return Future.value(true);
   }
   @override
@@ -107,24 +102,27 @@ class _VdpMembersListViewState extends State<VdpMembersListView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+
                         Container(
                           decoration: BoxDecoration(
                               color: Colors.grey[200],
                               borderRadius:
                                   const BorderRadius.all(Radius.circular(20))),
-                          height: 140,
                           width: double.infinity,
                           child: Card(
                             elevation: 2,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+
+                                children: [
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
+
                                       Row(
                                         children: [
                                           const CircleAvatar(
@@ -144,222 +142,232 @@ class _VdpMembersListViewState extends State<VdpMembersListView> {
                                             foregroundImage:
                                                 NetworkImage("enterImageUrl"),
                                           ),
-                                          const SizedBox(
-                                            width: 10,
+                                           SizedBox(
+                                            width: SizeConfig.screenWidth * 0.020,
                                           ),
 
                                           Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
-
                                             children: [
                                             Row(
                                               children: [
                                                 Container(
                                                     width:
-                                                        SizeConfig.screenWidth * 0.60,
+                                                        SizeConfig.screenWidth * 0.40,
                                                     child: Text(
                                                       overflow: TextOverflow.ellipsis,
                                                       "${getAllVDPCommittee?.vdpName}",
                                                       style: styleIbmPlexSansBold(
                                                           size: 18, color: grey),
                                                     )),
-                                                Padding(
-                                                  padding:
-                                                  const EdgeInsets.only(right: 5),
-                                                  child: InkWell(
-                                                    onTap: () {},
-                                                    child: InkWell(
-                                                      onTap: () {
 
-                                                        Map? map;
-
-                                                        appRouter.push(
-                                                            UpdateVdpCommitteeViewRoute(
-                                                                getAllVDPCommittee:
-                                                                getAllVDPCommittee)).then((value) => {
-                                                          map = value as Map?,
-                                                          if (map?["refreshData"] != null && map?["refreshData"] == "refresh")
-                                                            {
-
-                                                              setState(() {
-                                                                if (map?["policeStation"] != null)
-                                                                  getAllVDPCommittee?.policeStation =  map?["policeStation"];
-                                                                if (map?["district"] != null)
-                                                                  getAllVDPCommittee?.district =  map?["district"];
-                                                                if (map?["vdpName"] != null)
-                                                                  getAllVDPCommittee?.vdpName =  map?["vdpName"];
-                                                              }),
-
-
-                                                              print(
-                                                                  "Google Map Camera Position Location ====>>>> ${map.toString()}"),
-                                                              // geoLocation =
-                                                              //     GeoLocation(
-                                                              //       photo: selectedFile,
-                                                              //       lat: location
-                                                              //           .latitude
-                                                              //           .toString(),
-                                                              //       long: location
-                                                              //           .longitude
-                                                              //           .toString(),
-                                                              //       isFileUpload: false,
-                                                              //       fileStatus: 0,
-                                                              //     ),
-                                                            }
-                                                        });
-                                                      },
-                                                      child: Row(
-                                                        children: [
-                                                          Text(
-                                                            "Edit",
-                                                            style: styleIbmPlexSansRegular(
-                                                                size: 16,
-                                                                color: defaultColor),
-                                                          ),
-                                                          const SizedBox(
-                                                            width: 5,
-                                                          ),
-                                                          const Icon(
-                                                            Icons.edit,
-                                                            color: defaultColor,
-                                                          ),
-
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                )
                                               ],
                                             ),
-                                            const SizedBox(height: 5.0),
-                                            Container(
-                                                width:
-                                                    SizeConfig.screenWidth * 0.60,
-                                                child: Text(
-                                                  overflow: TextOverflow.ellipsis,
-                                                  "(Registered)",
-                                                  style: styleIbmPlexSansRegular(
-                                                      size: 15, color: grey),
-                                                )),
+                                              const SizedBox(height: 5.0),
+                                              Container(
+                                                  width:
+                                                  SizeConfig.screenWidth * 0.40,
+                                                  child: Text(
+                                                    overflow: TextOverflow.ellipsis,
+                                                    "(Registered)",
+                                                    style: styleIbmPlexSansRegular(
+                                                        size: 15, color: grey),
+                                                  )),
                                           ],)
-                                        ],
-                                      ),
-
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 10.0),
-                                  child: Column(
-                                    children: [
-
-
-
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Container(
-                                                child: const Text("District :"),
-                                              ),
-                                              Container(
-                                                width: SizeConfig.screenWidth * 0.40,
-                                                child: Text(
-                                                    "${getAllVDPCommittee?.district}"),
-                                              ),
-                                            ],
-                                          ),
-
-                                          Padding(
-                                            padding: const EdgeInsets.only(right: 10.0),
-                                            child: InkWell(
-                                              onTap: () async {
-                                                final shouldPop = await showDialog<bool>(
-                                                  context: context,
-                                                  builder: (context) {
-                                                    return AlertDialog(
-                                                      title: const Text('Delete'),
-                                                      content: const Text('Are you sure ?'),
-                                                      actions: [
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            Navigator.pop(context, false);
-                                                          },
-                                                          child: const Text(
-                                                            'No',
-
-                                                          ),
-                                                        ),
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            context.read<VdpCommitteeCubit>().deleteVdp(getAllVDPCommittee?.vdpId);
-                                                          },
-                                                          child: const Text('Yes',style: TextStyle(color: Colors.red),),
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                              child: Row(
-                                                children: [
-
-                                                  Text("Delete",style: styleIbmPlexSansRegular(size: 16, color: defaultColor),),
-                                                  const Icon(Icons.delete,color: defaultColor,size:20 ,),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-
                                         ],
                                       ),
                                       const SizedBox(
                                         height: 15,
                                       ),
-                                      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      Row(
                                         children: [
-
-                                          Row(
-                                            children: [
-                                              Container(
-                                                child: const Text("PoliceStation :"),
-                                              ),
-                                              Container(
-                                                width: SizeConfig.screenWidth * 0.40,
-                                                child: Text(
-                                                    "${getAllVDPCommittee?.policeStation}"),
-                                              ),
-                                            ],
+                                          Container(
+                                            child: const Text("District: "),
                                           ),
-
-                                          InkWell(
-                                            onTap: (){
-                                              appRouter.push(AddLocationScreenRoute(isUpdateLocation: true,getAllVDPCommittee: getAllVDPCommittee));
-                                            },
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(right: 8.0),
-                                              child: Row(children: [
-                                                Text("Update",style: styleIbmPlexSansRegular(size: 16, color: defaultColor),),
-
-                                           const SizedBox(width: 3,),
-                                                const Icon(Icons.gps_fixed,color: defaultColor,size: 15,)
-                                              ],),
-                                            ),
+                                          Container(
+                                            width: SizeConfig.screenWidth * 0.40,
+                                            child: Text(
+                                                "${getAllVDPCommittee?.districtName}"),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            child: const Text("Police Station: "),
+                                          ),
+                                          Container(
+                                            width: SizeConfig.screenWidth * 0.40,
+                                            child: Text(
+                                                "${getAllVDPCommittee?.policeStationName}"),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            child: const Text("Latitude & Longitude: "),
+                                          ),
+                                          Container(
+                                            width: SizeConfig.screenWidth * 0.40,
+                                            child: Text(
+                                                "${double.parse(getAllVDPCommittee?.latitude ?? '0').toStringAsFixed(4)},${double.parse(getAllVDPCommittee?.longitude ?? '0').toStringAsFixed(4)}"),
                                           ),
                                         ],
                                       ),
 
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      // Row(
+                                      //   children: [
+                                      //     Container(
+                                      //       child: const Text("longitude : "),
+                                      //     ),
+                                      //     Container(
+                                      //       width: SizeConfig.screenWidth * 0.40,
+                                      //       child: Text(
+                                      //           "${double.parse(getAllVDPCommittee?.longitude ?? '0').toStringAsFixed(4)}"),
+                                      //     ),
+                                      //
+                                      //   ],
+                                      // ),
+                                      // const SizedBox(
+                                      //   height: 15,
+                                      // ),
+
                                     ],
                                   ),
-                                )
-                              ],
+                                  Column(
+
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                    InkWell(
+                                      onTap: () {},
+                                      child: InkWell(
+                                        onTap: () {
+
+                                          Map? map;
+
+                                          appRouter.push(
+                                              UpdateVdpCommitteeViewRoute(
+                                                  getAllVDPCommittee:
+                                                  getAllVDPCommittee)).then((value) => {
+
+
+                                              map = value as Map?,
+                                            if (map?["refreshData"] != null && map?["refreshData"] == "refresh")
+                                              {
+
+                                                setState(() {
+                                                  if (map?["policeStation"] != null)
+                                                    getAllVDPCommittee?.policeStationName =  map?["policeStation"];
+                                                  if (map?["district"] != null)
+                                                    getAllVDPCommittee?.districtName =  map?["district"];
+                                                  if (map?["vdpName"] != null)
+                                                    getAllVDPCommittee?.vdpName =  map?["vdpName"];
+                                                  if (map?["latitude"] != null)
+                                                    getAllVDPCommittee?.latitude =  map?["latitude"];
+                                                  if (map?["longitude"] != null)
+                                                    getAllVDPCommittee?.longitude =  map?["longitude"];
+                                                }),
+
+
+                                                print(
+                                                    "Google Map Camera Position Location ====>>>> ${map.toString()}"),
+                                                // geoLocation =
+                                                //     GeoLocation(
+                                                //       photo: selectedFile,
+                                                //       lat: location
+                                                //           .latitude
+                                                //           .toString(),
+                                                //       long: location
+                                                //           .longitude
+                                                //           .toString(),
+                                                //       isFileUpload: false,
+                                                //       fileStatus: 0,
+                                                //     ),
+                                              }
+                                          });
+                                        },
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              "Edit",
+                                              style: styleIbmPlexSansRegular(
+                                                  size: 16,
+                                                  color: defaultColor),
+                                            ),
+                                             SizedBox(
+                                              width: SizeConfig.screenWidth * 0.005,
+                                            ),
+                                            const Icon(
+                                              Icons.edit,
+                                              color: defaultColor,
+                                            ),
+
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                    InkWell(
+                                      onTap: () async {
+                                        final shouldPop = await showDialog<bool>(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: const Text('Delete'),
+                                              content: const Text('Are you sure ?'),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context, false);
+                                                  },
+                                                  child: const Text(
+                                                    'No',
+
+                                                  ),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    context.read<VdpCommitteeCubit>().deleteVdp(getAllVDPCommittee?.vdpId);
+                                                  },
+                                                  child: const Text('Yes',style: TextStyle(color: Colors.red),),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: Row(
+                                        children: [
+
+                                          Text("Delete",style: styleIbmPlexSansRegular(size: 16, color: defaultColor),),
+                                          const Icon(Icons.delete,color: defaultColor,size:20 ,),
+                                        ],
+                                      ),
+                                    ),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+
+
+                                  ],),
+
+                                ],
+                              ),
                             ),
                           ),
-                        )
+                        ),
                         // sizeHeightBox(),
                         // BlocConsumer<HomeCubit, HomeState>(
                         //   listener: (context, state) {
@@ -555,10 +563,17 @@ class _VdpMembersListViewState extends State<VdpMembersListView> {
                                     icon: '',
                                     subTitle: member[index].role,
                                     firstChar:
-                                        member[index].name?.substring(0, 1),
+                                        member[index].name?.substring(0, 1).toUpperCase(),
                                     name: member[index].name,
                                     onTap: () {
-                                      appRouter.push(EditVdpMemberRoute(getAllVdpMember: member[index]));
+                                      // appRouter.push(EditVdpMemberRoute(getAllVdpMember: member[index])).then((value) {
+                                      //   context.read<VdpMemberCubit>().getAllVdpMember(vdpCommitteeId: getAllVDPCommittee?.vdpId);
+                                      //
+                                      // });
+                                      appRouter.push( VdpMemberDetailViewRoute(getAllVdpMember: member[index])).then((value) {
+                                        context.read<VdpMemberCubit>().getAllVdpMember(vdpCommitteeId: getAllVDPCommittee?.vdpId);
+                                      });
+                                      return null;
                                     },
                                   );
                                 }),
@@ -578,10 +593,17 @@ class _VdpMembersListViewState extends State<VdpMembersListView> {
                                     icon: '',
                                     subTitle: member[index].role,
                                     firstChar:
-                                        member[index].name?.substring(0, 1),
+                                        member[index].name?.substring(0, 1).toUpperCase(),
                                     name: member[index].name,
                                     onTap: () {
-                                      appRouter.push(EditVdpMemberRoute(getAllVdpMember: member[index]));
+                                      // appRouter.push(EditVdpMemberRoute(getAllVdpMember: member[index])).then((value) {
+                                      //   context.read<VdpMemberCubit>().getAllVdpMember(vdpCommitteeId: getAllVDPCommittee?.vdpId);
+                                      //
+                                      // });
+                                      appRouter.push( VdpMemberDetailViewRoute(getAllVdpMember: member[index])).then((value) {
+                                        context.read<VdpMemberCubit>().getAllVdpMember(vdpCommitteeId: getAllVDPCommittee?.vdpId);
+                                      });
+                                      return null;
                                     },
                                   );
                                 }),
@@ -596,10 +618,16 @@ class _VdpMembersListViewState extends State<VdpMembersListView> {
                                     icon: '',
                                     subTitle: member[index].role,
                                     firstChar:
-                                        member[index].name?.substring(0, 1),
+                                        member[index].name?.substring(0, 1).toUpperCase(),
                                     name: member[index].name,
                                     onTap: () {
-                                      appRouter.push(EditVdpMemberRoute(getAllVdpMember: member[index]));
+                                      // appRouter.push(EditVdpMemberRoute(getAllVdpMember: member[index])).then((value) {
+                                      //   context.read<VdpMemberCubit>().getAllVdpMember(vdpCommitteeId: getAllVDPCommittee?.vdpId);
+                                      // });
+                                      appRouter.push( VdpMemberDetailViewRoute(getAllVdpMember: member[index])).then((value) {
+                                        context.read<VdpMemberCubit>().getAllVdpMember(vdpCommitteeId: getAllVDPCommittee?.vdpId);
+                                      });
+                                      return null;
                                     },
                                   );
                                 }),
@@ -611,30 +639,14 @@ class _VdpMembersListViewState extends State<VdpMembersListView> {
                   )
                 ],
               ),
-              BlocConsumer<VdpMemberCubit, VdpMemberState>(
-  listener: (context, state) {
-    if(state is DeleteVdpMemberSuccessState){
-      if(state.deleteVdpMemberResponse?.code == "Success"){
-        appRouter.pop();
-        snackBar(context, "${state.deleteVdpMemberResponse?.message}");
-        context.read<VdpMemberCubit>().getAllVdpMember();
 
-      }else {
-        snackBar(context, "${state.deleteVdpMemberResponse?.message}");
-      }
-    }
-  },
-  builder: (context, state) {
-    return Container();
-  },
-),
               BlocConsumer<VdpCommitteeCubit, VdpCommitteeState>(
                 listener: (context, state) {
                   if(state is DeleteVdpSuccessState){
                     if(state.deleteVdpCommitteeResponse?.code == "Success"){
-                      appRouter.pop();
+                      Navigator.of(context)..pop()..pop();
+
                       snackBar(context, "${state.deleteVdpCommitteeResponse?.message}");
-                      context.read<VdpMemberCubit>().getAllVdpMember();
 
                     }else {
                       snackBar(context, "${state.deleteVdpCommitteeResponse?.message}");
@@ -651,7 +663,9 @@ class _VdpMembersListViewState extends State<VdpMembersListView> {
             backgroundColor: defaultColor,
             foregroundColor: Colors.white,
             onPressed: () {
-              appRouter.push(const AddVdpMemberRoute());
+              appRouter.push( AddVdpMemberRoute(getAllVDPCommittee: getAllVDPCommittee)).then((value) {
+                context.read<VdpMemberCubit>().getAllVdpMember(vdpCommitteeId: getAllVDPCommittee?.vdpId);
+              });
             },
             label: const Text('Add'),
             icon: const Icon(Icons.add),

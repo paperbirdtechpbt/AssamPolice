@@ -2,15 +2,16 @@ class AddVdpCommitteeRequest{
   String? vdpName;
   String? latitude;
   String? longitude;
-  String? policeStation;
-  String? district;
+  int? policeStationId;
+  int? districtId;
   String? status;
+  String? createdBy;
 
   AddVdpCommitteeRequest(
       {this.vdpName,
       this.latitude,
       this.longitude,
-      this.policeStation,
-      this.district,
-      this.status});
+      this.policeStationId,
+      this.districtId,
+      this.status,this.createdBy});
 }

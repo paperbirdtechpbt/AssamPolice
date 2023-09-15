@@ -80,7 +80,69 @@ keyboardType: textInputType,
     ),
   );
 }
+CoustomLatLongTextFieldEditBox({
+  required BuildContext context,
+  required String label,
+  required String icon,
+  required TextEditingController controller,
+  required String hint,
+  Icon? flutterIcon,
+  InputBorder? inputBorder,
+  Border? border,
+  required int? length,
+  String? Function(String?)? onChanged,
+  required String? Function(String?)? validator,
+  required TextInputAction textInputAction,
+  required TextInputType textInputType,
+  AutovalidateMode? autovalidateMode,
+}) {
+  return Container(
+    height: 60,
+    decoration: BoxDecoration(
+        border: Border.all(color: Colors.black45),
+        borderRadius: const BorderRadius.all(const Radius.circular(10.0)),
+        color: Colors.transparent),
+    padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 5.0),
+    child: Row(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(left: 10.0),
+          child: Container(
+              child: icon.isEmpty
+                  ? flutterIcon
+                  : SvgPicture.asset(icon, height: 25.0, color: defaultColor)),
+        ),
+        const SizedBox(width: 15),
+        Flexible(
+            child: TextFormField(
+              keyboardType: textInputType,
+              controller: controller,
+              decoration: InputDecoration(
 
+                  border: inputBorder,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  hintText: hint,
+                  focusedErrorBorder: const OutlineInputBorder(
+
+                    borderRadius: BorderRadius.all(Radius.circular(0)),
+                    borderSide: BorderSide(
+                      width: 0,
+                      color: Colors.transparent,
+                    ),
+                  )),
+              onChanged: onChanged,
+              validator: validator,
+              textInputAction: textInputAction,
+
+              autovalidateMode: autovalidateMode,
+              inputFormatters:
+              length != null ? [LengthLimitingTextInputFormatter(10)] : [],
+            )),
+      ],
+    ),
+  );
+}
 TextFieldEditBox({
   required BuildContext context,
   required String label,

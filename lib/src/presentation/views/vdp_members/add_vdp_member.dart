@@ -2,23 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../config/router/app_router.dart';
+import '../../../domain/models/data/get_all_vdp_committee.dart';
 import '../../../domain/models/data/get_all_vdp_roles.dart';
+import '../../../domain/models/data/user.dart';
 import '../../../utils/constants/assets.dart';
 import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/strings.dart';
+import '../../../utils/reference/my_shared_reference.dart';
 import '../../cubits/vdp_member/vdp_member_cubit.dart';
 import '../../cubits/vdp_member/vdp_member_state.dart';
 import '../../widgets/common_widgets.dart';
 import '../../widgets/custom_dropdown.dart';
 
 class AddVdpMember extends StatefulWidget {
-  const AddVdpMember({super.key});
+   AddVdpMember({super.key, this.getAllVDPCommittee});
+  GetAllVDPCommittee? getAllVDPCommittee;
 
   @override
-  State<AddVdpMember> createState() => _AddVdpMemberState();
+  State<AddVdpMember> createState() => _AddVdpMemberState(getAllVDPCommittee);
 }
 
 class _AddVdpMemberState extends State<AddVdpMember> {
+  _AddVdpMemberState(this.getAllVDPCommittee);
+  GetAllVDPCommittee? getAllVDPCommittee;
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   TextEditingController _nameController = TextEditingController();
@@ -45,8 +52,19 @@ class _AddVdpMemberState extends State<AddVdpMember> {
   @override
   void initState() {
 
-context.read<VdpMemberCubit>().getVdpMemberRoles();
+    getUser();
     super.initState();
+  }
+  late User? user = User();
+  getUser() async {
+    var preferences = MySharedPreference();
+    await preferences.getSignInModel(keySaveSignInModel).then((data) =>
+    {
+      setState(() {
+        user = data?.user;
+      })
+    });
+    context.read<VdpMemberCubit>().getVdpMemberRoles();
   }
   @override
   Widget build(BuildContext context) {
@@ -473,7 +491,7 @@ context.read<VdpMemberCubit>().getVdpMemberRoles();
                          if(state.addVdpMemberResponse?.code == "Success"){
                            appRouter.pop();
                            snackBar(context, "${state.addVdpMemberResponse?.message}");
-                           context.read<VdpMemberCubit>().getAllVdpMember();
+
                          }else {
                            snackBar(context, "${state.addVdpMemberResponse?.message}");
                          }
@@ -502,7 +520,7 @@ context.read<VdpMemberCubit>().getVdpMemberRoles();
                                        isEmailValidate = true;
                                      });
                                    }else {
-                                     context.read<VdpMemberCubit>().addVdpMember(vdpCommitteeId: 2,vdpRoleId: selectedRoleId,mobileNumber: _mobileController.text,emailId: _emailController.text,name: _nameController.text,status: true);
+                                     context.read<VdpMemberCubit>().addVdpMember(vdpCommitteeId: getAllVDPCommittee?.vdpId,vdpRoleId: selectedRoleId,mobileNumber: _mobileController.text,emailId: _emailController.text,name: _nameController.text,status: true,createdBy: user?.email);
                                    }
                                  }
                                  // if (userNameController.text.isEmpty) {
@@ -539,7 +557,7 @@ context.read<VdpMemberCubit>().getVdpMemberRoles();
                                        isEmailValidate = true;
                                      });
                                    }else {
-                                     context.read<VdpMemberCubit>().addVdpMember(vdpCommitteeId: 2,vdpRoleId: selectedRoleId,mobileNumber: _mobileController.text,emailId: _emailController.text,name: _nameController.text,status: true);
+                                     context.read<VdpMemberCubit>().addVdpMember(vdpCommitteeId: getAllVDPCommittee?.vdpId,vdpRoleId: selectedRoleId,mobileNumber: _mobileController.text,emailId: _emailController.text,name: _nameController.text,status: true,createdBy: user?.email);
                                    }
                                  }
                                  // if (userNameController.text.isEmpty) {
@@ -574,7 +592,7 @@ context.read<VdpMemberCubit>().getVdpMemberRoles();
                                        isEmailValidate = true;
                                      });
                                    }else {
-                                     context.read<VdpMemberCubit>().addVdpMember(vdpCommitteeId: 2,vdpRoleId: selectedRoleId,mobileNumber: _mobileController.text,emailId: _emailController.text,name: _nameController.text,status: true);
+                                     context.read<VdpMemberCubit>().addVdpMember(vdpCommitteeId: getAllVDPCommittee?.vdpId,vdpRoleId: selectedRoleId,mobileNumber: _mobileController.text,emailId: _emailController.text,name: _nameController.text,status: true,createdBy: user?.email);
                                    }
                                  }
                                  // if (userNameController.text.isEmpty) {

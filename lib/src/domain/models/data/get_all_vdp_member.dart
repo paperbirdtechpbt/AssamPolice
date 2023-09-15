@@ -8,6 +8,7 @@ class GetAllVdpMember {
   String? mobileNumber;
   String? emailId;
   bool? status;
+  String? createdBy;
 
   GetAllVdpMember(
       {this.vdpMemberId,
@@ -18,7 +19,9 @@ class GetAllVdpMember {
         this.name,
         this.mobileNumber,
         this.emailId,
-        this.status});
+        this.status,
+        this.createdBy,
+      });
 
   GetAllVdpMember.fromMap(Map<String, dynamic> json) {
     vdpMemberId = json['vdpMemberId'];
@@ -30,6 +33,7 @@ class GetAllVdpMember {
     mobileNumber = json['mobileNumber'];
     emailId = json['emailId'];
     status = json['status'];
+    createdBy = json['createdBy'];
   }
 
   Map<String, dynamic> toJson() {
@@ -43,6 +47,7 @@ class GetAllVdpMember {
     data['mobileNumber'] = this.mobileNumber;
     data['emailId'] = this.emailId;
     data['status'] = this.status;
+    data['createdBy'] = this.createdBy;
     return data;
   }
 }

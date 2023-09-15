@@ -43,6 +43,10 @@ class _UpdateVdpCommitteeViewState extends State<UpdateVdpCommitteeView> {
   TextEditingController _mobileController = TextEditingController();
   TextEditingController _addressController = TextEditingController();
   TextEditingController _remarkController = TextEditingController();
+  bool isLatValidate = false;
+  bool isLongValidate = false;
+  TextEditingController _latController = TextEditingController();
+  TextEditingController _longController = TextEditingController();
 
 // validator var
   bool isNameValidate = false;
@@ -84,12 +88,16 @@ class _UpdateVdpCommitteeViewState extends State<UpdateVdpCommitteeView> {
   void initState() {
     super.initState();
 
-    selectedDistrictId = mapDistrict[selectedDistrict];
+
 
     setState(() {
       _nameController.text = getAllVDPCommittee?.vdpName ?? '';
-      selectedDistrict = getAllVDPCommittee?.district ?? '';
-      selectedPoliceStation = getAllVDPCommittee?.policeStation ?? '';
+      selectedDistrict = getAllVDPCommittee?.districtName ?? '';
+      selectedPoliceStation = getAllVDPCommittee?.policeStationName ?? '';
+      _latController.text =getAllVDPCommittee?.latitude ?? '' ;
+      _longController.text = getAllVDPCommittee?.longitude ?? '';
+      selectedDistrictId = getAllVDPCommittee?.districtId.toString();
+      selectedPoliceStationId = getAllVDPCommittee?.policeStationId.toString();
     });
 
     cubit = context.read<HomeCubit>();
@@ -199,7 +207,7 @@ class _UpdateVdpCommitteeViewState extends State<UpdateVdpCommitteeView> {
   }
 
   Future<bool> onWillPop() {
-    context.read<VdpCommitteeCubit>().getAllVdpCommittee();
+    // context.read<VdpCommitteeCubit>().getAllVdpCommittee();
 
     return Future.value(true);
   }
@@ -255,7 +263,7 @@ class _UpdateVdpCommitteeViewState extends State<UpdateVdpCommitteeView> {
                               });
 
                               listDistrictResponse?.forEach((element) {
-                                if (getAllVDPCommittee?.district ==
+                                if (getAllVDPCommittee?.districtName ==
                                     element.name) {
                                   cubit.getPoliceStation(
                                       int.parse(element.id ?? '0'),
@@ -280,7 +288,7 @@ class _UpdateVdpCommitteeViewState extends State<UpdateVdpCommitteeView> {
                               });
 
                               listPoliceStationResponse?.forEach((element) {
-                                if (getAllVDPCommittee?.policeStation ==
+                                if (getAllVDPCommittee?.policeStationName ==
                                     element.name) {
                                   setState(() {
                                     selectedPoliceStation = element.name ?? '';
@@ -424,6 +432,87 @@ class _UpdateVdpCommitteeViewState extends State<UpdateVdpCommitteeView> {
                         const SizedBox(
                           height: 25,
                         ),
+
+                        // InkWell(
+                        //   onTap: (){
+                        //     appRouter.push(AddLocationScreenRoute(isUpdateLocation: true,getAllVDPCommittee: getAllVDPCommittee));
+                        //   },
+                        //   child: Padding(
+                        //     padding: const EdgeInsets.only(right: 8.0),
+                        //     child: Row(children: [
+                        //       Text("Update",style: styleIbmPlexSansRegular(size: 16, color: defaultColor),),
+                        //
+                        //       const SizedBox(width: 3,),
+                        //       const Icon(Icons.gps_fixed,color: defaultColor,size: 15,)
+                        //     ],),
+                        //   ),
+                        // ),
+
+                        CoustomTextFieldEditBox(
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          border: Border.all(
+                              color: isLatValidate
+                                  ? defaultColor
+                                  : Colors.transparent),
+                          textInputAction: TextInputAction.next,
+                          context: context,
+                          textInputType: TextInputType.phone,
+                          inputBorder: InputBorder.none,
+                          controller: _latController,
+                          flutterIcon: const Icon(
+                            Icons.gps_fixed,
+                            color: defaultColor,
+                          ),
+                          label: "location",
+                          length: null,
+                          validator: (val) {},
+                          onChanged: (value) {
+                            if (value!.length <= 2) {
+                              setState(() {
+                                isLatValidate = true;
+                              });
+                            } else {
+                              setState(() {
+                                isLatValidate = false;
+                              });
+                            }
+                          },
+                          hint: "Latitude",
+                          icon: '',
+                        ),
+                        const SizedBox(height: 25,),
+                        CoustomTextFieldEditBox(
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          border: Border.all(
+                              color: isLongValidate
+                                  ? defaultColor
+                                  : Colors.transparent),
+                          textInputAction: TextInputAction.done,
+                          context: context,
+                          textInputType: TextInputType.phone,
+                          inputBorder: InputBorder.none,
+                          controller: _longController,
+                          flutterIcon: const Icon(
+                            Icons.gps_fixed,
+                            color: defaultColor,
+                          ),
+                          label: "location",
+                          length: null,
+                          validator: (val) {},
+                          onChanged: (value) {
+                            if (value!.length <= 2) {
+                              setState(() {
+                                isLongValidate = true;
+                              });
+                            } else {
+                              setState(() {
+                                isLongValidate = false;
+                              });
+                            }
+                          },
+                          hint: "Longitude",
+                          icon: '',
+                        ),
                         const SizedBox(
                           height: 25,
                         ),
@@ -438,7 +527,9 @@ class _UpdateVdpCommitteeViewState extends State<UpdateVdpCommitteeView> {
                                        "refreshData": "refresh" ,
                                        "vdpName": _nameController.text,
                                        "policeStation": selectedPoliceStation,
-                                       "district": selectedDistrict
+                                       "district": selectedDistrict,
+                                       'latitude' : _latController.text,
+                                       'longitude' : _longController.text,
                                     });
 
                               } else {
@@ -473,18 +564,22 @@ class _UpdateVdpCommitteeViewState extends State<UpdateVdpCommitteeView> {
                                         snackBar(
                                             context, "Select Police station");
                                       } else {
-                                        context
-                                            .read<VdpCommitteeCubit>()
-                                            .updateVdpCommittee(
-                                                vdpId:
-                                                    getAllVDPCommittee?.vdpId,
-                                                vdpName: _nameController.text,
-                                                longitude: long,
-                                                latitude: lat,
-                                                policeStation:
-                                                    selectedPoliceStation,
-                                                district: selectedDistrict,
-                                                status: "true");
+                                        if (isLocationValid(double.parse(_latController.text), double.parse(_longController.text))){
+                                          context
+                                              .read<VdpCommitteeCubit>()
+                                              .updateVdpCommittee(
+                                              vdpName: _nameController.text,
+                                              longitude: long,
+                                              latitude: lat,
+                                              policeStationId: int.parse(
+                                                  selectedPoliceStationId!),
+                                              districtId: int.parse(
+                                                  selectedDistrictId!),
+                                              status: "true",createdBy: user?.email);
+                                        }else {
+                                          snackBar(context, "Invalid latitude or longitude");
+                                          print("Invalid latitude or longitude");
+                                        }
                                       }
                                     });
                               default:
@@ -506,18 +601,23 @@ class _UpdateVdpCommitteeViewState extends State<UpdateVdpCommitteeView> {
                                         snackBar(
                                             context, "Select Police station");
                                       } else {
-                                        context
-                                            .read<VdpCommitteeCubit>()
-                                            .updateVdpCommittee(
-                                                vdpId:
-                                                    getAllVDPCommittee?.vdpId,
-                                                vdpName: _nameController.text,
-                                                longitude: long,
-                                                latitude: lat,
-                                                policeStation:
-                                                    selectedPoliceStation,
-                                                district: selectedDistrict,
-                                                status: "true");
+                                        if (isLocationValid(double.parse(_latController.text), double.parse(_longController.text))){
+                                          context
+                                              .read<VdpCommitteeCubit>()
+                                              .updateVdpCommittee(
+                                              vdpName: _nameController.text,
+                                              longitude: long,
+                                              latitude: lat,
+                                              policeStationId: int.parse(
+                                                  selectedPoliceStationId!),
+                                              districtId: int.parse(
+                                                  selectedDistrictId!),
+                                              status: "true",createdBy: user?.email);
+                                        }else {
+                                          snackBar(context, "Invalid latitude or longitude");
+                                          print("Invalid latitude or longitude");
+                                        }
+
                                       }
                                     });
                             }
@@ -544,5 +644,19 @@ class _UpdateVdpCommitteeViewState extends State<UpdateVdpCommitteeView> {
     } else {
       return false;
     }
+  }
+  bool isLocationValid(double latitude, double longitude) {
+    // Check if latitude is within valid range (-90 to 90 degrees).
+    if (latitude < -90.0 || latitude > 90.0) {
+      return false;
+    }
+
+    // Check if longitude is within valid range (-180 to 180 degrees).
+    if (longitude < -180.0 || longitude > 180.0) {
+      return false;
+    }
+
+    // If both latitude and longitude pass the range checks, consider them valid.
+    return true;
   }
 }

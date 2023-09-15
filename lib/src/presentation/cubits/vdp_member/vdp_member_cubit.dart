@@ -5,6 +5,7 @@ import '../../../domain/models/requests/add_vdp_committee_request.dart';
 import '../../../domain/models/requests/add_vdp_member_request.dart';
 import '../../../domain/models/requests/auth_request.dart';
 import '../../../domain/models/requests/delete_vdp_member_request.dart';
+import '../../../domain/models/requests/get_all_vdp_member_request.dart';
 import '../../../domain/models/requests/update_vdp_committee_request.dart';
 import '../../../domain/models/requests/update_vdp_member_request.dart';
 import '../../../domain/models/responses/login_response.dart';
@@ -18,13 +19,21 @@ class VdpMemberCubit extends BaseCubit<VdpMemberState, LoginResponse> {
   VdpMemberCubit(this._apiRepository)
       : super(const VdpMemberLoadingState(), LoginResponse());
 
-  Future<void> getAllVdpMember() async {
+  Future<void> getAllVdpMember(
+
+  {
+    int? vdpCommitteeId,
+}
+      ) async {
     if (isBusy) return;
 
     await run(() async {
       emit(const VdpMemberLoadingState());
+      final request = GetAllVdpMemberRequest(
+        vdpCommitteeId:       vdpCommitteeId,
 
-      final response = await _apiRepository.getAllVdpMember();
+      );
+      final response = await _apiRepository.getAllVdpMember(request: request);
       if (response is DataSuccess) {
         emit(VdpMemberSuccessState(getAllVdpMemberResponse: response.data));
       } else if (response is DataFailed) {
@@ -42,6 +51,7 @@ class VdpMemberCubit extends BaseCubit<VdpMemberState, LoginResponse> {
         String? mobileNumber,
         String? emailId,
         bool? status,
+      String?  createdBy
       }
       ) async {
     if (isBusy) return;
@@ -54,7 +64,8 @@ class VdpMemberCubit extends BaseCubit<VdpMemberState, LoginResponse> {
           name:          name,
           mobileNumber:       mobileNumber,
           emailId :     emailId,
-          status :     status
+          status :     status,
+        createdBy: createdBy
       );
       final response = await _apiRepository.addVdpMember(request: request);
       if (response is DataSuccess) {
@@ -76,6 +87,7 @@ class VdpMemberCubit extends BaseCubit<VdpMemberState, LoginResponse> {
         String? mobileNumber,
         String? emailId,
         bool? status,
+        String? createdBy
       }
       ) async {
     if (isBusy) return;
@@ -89,7 +101,8 @@ class VdpMemberCubit extends BaseCubit<VdpMemberState, LoginResponse> {
           name:          name,
           mobileNumber:       mobileNumber,
           emailId :     emailId,
-          status :     status
+          status :     status,
+        createdBy:createdBy,
       );
       final response = await _apiRepository.updateVdpMember(request: request);
       if (response is DataSuccess) {

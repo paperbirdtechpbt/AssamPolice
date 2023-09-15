@@ -3,6 +3,7 @@ import 'package:flutter_clean_architecture/src/presentation/cubits/vdp_committee
 import '../../../domain/models/requests/add_vdp_committee_request.dart';
 import '../../../domain/models/requests/auth_request.dart';
 import '../../../domain/models/requests/delete_vdp_request.dart';
+import '../../../domain/models/requests/get_all_vdp_committee_request.dart';
 import '../../../domain/models/requests/update_vdp_committee_request.dart';
 import '../../../domain/models/responses/login_response.dart';
 import '../../../domain/repositories/api_repository.dart';
@@ -15,13 +16,20 @@ class VdpCommitteeCubit extends BaseCubit<VdpCommitteeState, LoginResponse> {
   VdpCommitteeCubit(this._apiRepository)
       : super(const VdpCommitteeLoadingState(), LoginResponse());
 
-  Future<void> getAllVdpCommittee() async {
+  Future<void> getAllVdpCommittee(
+
+      String? districtId,
+      String? policeStation,
+      ) async {
     if (isBusy) return;
 
     await run(() async {
       emit(const VdpCommitteeLoadingState());
-
-      final response = await _apiRepository.getAllVdpCommittee();
+      final request = GetAllVdpCommitteeRequest(
+  districtId: districtId,
+        policeStation: policeStation,
+      );
+      final response = await _apiRepository.getAllVdpCommittee(request: request);
       if (response is DataSuccess) {
         emit(VdpCommitteeSuccessState(getAllVDPCommitteeResponse: response.data));
       } else if (response is DataFailed) {
@@ -36,9 +44,10 @@ class VdpCommitteeCubit extends BaseCubit<VdpCommitteeState, LoginResponse> {
   String?   vdpName,
   String? latitude,
   String? longitude,
-  String? policeStation,
+  int? policeStationId,
   String? status,
-    String? district
+    int? districtId,
+    String? createdBy,
 }
       ) async {
     if (isBusy) return;
@@ -49,9 +58,10 @@ final request = AddVdpCommitteeRequest(
     vdpName: vdpName,
     latitude: latitude,
     longitude: longitude,
-    policeStation: policeStation,
+    policeStationId: policeStationId,
     status: status,
-    district: district
+    districtId: districtId,
+  createdBy: createdBy
 );
       final response = await _apiRepository.addVdpCommittee(request: request);
       if (response is DataSuccess) {
@@ -70,9 +80,10 @@ final request = AddVdpCommitteeRequest(
         String?   vdpName,
         String? latitude,
         String? longitude,
-        String? policeStation,
+        int? policeStationId,
         String? status,
-        String? district
+        int? districtId,
+        String? createdBy,
       }
       ) async {
     if (isBusy) return;
@@ -84,9 +95,10 @@ final request = AddVdpCommitteeRequest(
           vdpName: vdpName,
           latitude: latitude,
           longitude: longitude,
-          policeStation: policeStation,
+          policeStationId: policeStationId,
           status: status,
-          district: district
+          districtId: districtId,
+        createdBy: createdBy
       );
       final response = await _apiRepository.updateVdpCommittee(request: request);
       if (response is DataSuccess) {

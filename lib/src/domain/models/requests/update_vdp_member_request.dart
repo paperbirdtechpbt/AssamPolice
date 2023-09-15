@@ -5,7 +5,9 @@ class UpdateVdpMemberRequest {
   String? name;
   String? mobileNumber;
   String? emailId;
+
   bool? status;
+  String? createdBy;
 
   UpdateVdpMemberRequest(
       {
@@ -15,5 +17,5 @@ class UpdateVdpMemberRequest {
         this.name,
         this.mobileNumber,
         this.emailId,
-        this.status});
+        this.status,this.createdBy});
 }

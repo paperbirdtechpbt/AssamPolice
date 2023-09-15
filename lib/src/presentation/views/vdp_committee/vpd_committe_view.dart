@@ -22,13 +22,16 @@ import 'package:url_launcher/url_launcher.dart';
 
 
 class VdpCommitteeView extends StatefulWidget {
-  const VdpCommitteeView({Key? key}) : super(key: key);
+   VdpCommitteeView({Key? key,this.isDashBoard}) : super(key: key);
+   bool? isDashBoard;
 
   @override
-  State<VdpCommitteeView> createState() => _VdpCommitteeViewState();
+  State<VdpCommitteeView> createState() => _VdpCommitteeViewState(isDashBoard);
 }
 
 class _VdpCommitteeViewState extends State<VdpCommitteeView> {
+  bool? isDashBoard;
+  _VdpCommitteeViewState(this.isDashBoard);
   TextEditingController mobileController = TextEditingController();
 
 
@@ -45,12 +48,10 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
   String? selectedDistrictId;
   String selectedPoliceStation = "";
   String? selectedPoliceStationId;
-  late var cubit;
   late User? user = User();
   @override
   void initState() {
     super.initState();
-    cubit = context.read<VdpCommitteeCubit>();
     getUser();
   }
 
@@ -60,8 +61,7 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
     {
       setState(() {
         user = data?.user;
-       cubit.getAllVdpCommittee();
-       context.read<HomeCubit>().getDistrict(user?.email);
+  context.read<HomeCubit>().getDistrict(user?.email);
       })
     });
   }
@@ -157,9 +157,7 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                               if(value != null){
                                 context.read<HomeCubit>().getPoliceStation(myInt, user?.email ?? '');
                               }
-
                               setState(() {
-
                                 selectedPoliceStation = "";
                               });
                             },
@@ -186,6 +184,7 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                              setState(() {
                                selectedPoliceStation = value!;
                              });
+                             context.read<VdpCommitteeCubit>().getAllVdpCommittee(selectedDistrictId, selectedPoliceStationId);
                             },
                           ),
                         )
@@ -219,14 +218,16 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                                    return VdpCommitteeView(
                                      lat: double.parse(getAllVdpCommittee[index].latitude ?? ''),
                                      long: double.parse(getAllVdpCommittee[index].longitude ?? ''),
-                                     policeStation: getAllVdpCommittee[index].policeStation,
+                                     policeStation: getAllVdpCommittee[index].policeStationName,
                                      icon: '',
                                      subTitle: "VDP",
                                      firstChar: getAllVdpCommittee![index].vdpName?.substring(0, 1),
                                        id : getAllVdpCommittee[index].vdpId,
                                      name: getAllVdpCommittee![index].vdpName,
                                        onTap: (){
-                                         appRouter.push(VdpMembersListViewRoute(getAllVDPCommittee: getAllVdpCommittee[index]));
+                                         appRouter.push(VdpMembersListViewRoute(getAllVDPCommittee: getAllVdpCommittee[index])).then((value) {
+                                           context.read<VdpCommitteeCubit>().getAllVdpCommittee(selectedDistrictId, selectedPoliceStationId);
+                                         });
                                        }
 
                                    );
@@ -239,7 +240,7 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                                  return VdpCommitteeView(
                                      lat: double.parse(getAllVdpCommittee[index].latitude ?? '0.0'),
                                      long: double.parse(getAllVdpCommittee[index].longitude ?? '0.0'),
-                                     policeStation: getAllVdpCommittee[index].policeStation,
+                                     policeStation: getAllVdpCommittee[index].policeStationName,
 
                                      icon: '',
                                      subTitle: "VDP",
@@ -247,13 +248,35 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                                      id : getAllVdpCommittee[index].vdpId,
                                      name: getAllVdpCommittee![index].vdpName,
                                      onTap: (){
-                                       appRouter.push(VdpMembersListViewRoute(getAllVDPCommittee: getAllVdpCommittee[index]));
+                                       appRouter.push(VdpMembersListViewRoute(getAllVDPCommittee: getAllVdpCommittee[index])).then((value) {
+                                         context.read<VdpCommitteeCubit>().getAllVdpCommittee(selectedDistrictId, selectedPoliceStationId);
+                                       });
                                      }
 
                                  );
                                }),),
                              );
-                             default : return Container();
+                             default : return   SingleChildScrollView(
+                               child: Column(children: List.generate(getAllVdpCommittee?.length ?? 0, (index) {
+                                 return VdpCommitteeView(
+                                     lat: double.parse(getAllVdpCommittee[index].latitude ?? '0.0'),
+                                     long: double.parse(getAllVdpCommittee[index].longitude ?? '0.0'),
+                                     policeStation: getAllVdpCommittee[index].policeStationName,
+
+                                     icon: '',
+                                     subTitle: "VDP",
+                                     firstChar: getAllVdpCommittee![index].vdpName?.substring(0, 1),
+                                     id : getAllVdpCommittee[index].vdpId,
+                                     name: getAllVdpCommittee![index].vdpName,
+                                     onTap: (){
+                                       appRouter.push(VdpMembersListViewRoute(getAllVDPCommittee: getAllVdpCommittee[index])).then((value) {
+                                         context.read<VdpCommitteeCubit>().getAllVdpCommittee(selectedDistrictId, selectedPoliceStationId);
+                                       });
+                                     }
+
+                                 );
+                               }),),
+                             );
                            }
                             },
                           ),
@@ -273,7 +296,10 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
           backgroundColor: defaultColor,
           foregroundColor: Colors.white,
           onPressed: () {
-            appRouter.push(const AddVdpCommitteeViewRoute());
+            appRouter.push(const AddVdpCommitteeViewRoute()).then((value) {
+              context.read<VdpCommitteeCubit>().getAllVdpCommittee(selectedDistrictId, selectedPoliceStationId);
+            });
+
           },
           label: const Text('Add'),
           icon: const Icon(Icons.add),

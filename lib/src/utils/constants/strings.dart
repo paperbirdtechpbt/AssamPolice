@@ -42,6 +42,7 @@ const memberHintMobile = "Mobile no";
 const memberHintRemark = "Remark";
 const memberHintAddress = "Address";
 const memberName = "Name";
+const location = "lat&long";
 const memberEmail= "Email";
 const memberMobile = "Mobile NO.";
 const memberAge = "Age";

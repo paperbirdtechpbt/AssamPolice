@@ -64,7 +64,7 @@ class _AddMemberLocationState extends State<AddMemberLocation> {
                           Expanded(
                               child: InkWell(
                             onTap: () {
-                              appRouter.push(VdpCommitteeViewRoute());
+                              appRouter.push(VdpCommitteeViewRoute(isDashBoard: true));
                             },
                             child: Container(
                               height: 120,

@@ -5,6 +5,8 @@ import '../../domain/models/requests/add_vdp_member_request.dart';
 import '../../domain/models/requests/auth_request.dart';
 import '../../domain/models/requests/delete_vdp_member_request.dart';
 import '../../domain/models/requests/delete_vdp_request.dart';
+import '../../domain/models/requests/get_all_vdp_committee_request.dart';
+import '../../domain/models/requests/get_all_vdp_member_request.dart';
 import '../../domain/models/requests/get_body_message.dart';
 import '../../domain/models/requests/get_district_police_station_request.dart';
 import '../../domain/models/requests/get_receive_message_request.dart';
@@ -198,12 +200,7 @@ class ApiRepositoryImpl extends BaseApiRepository implements ApiRepository {
   }
 
   //  VdpCommittee
-  @override
-  Future<DataState<GetAllVDPCommitteeResponse>> getAllVdpCommittee() {
-    return getStateOf<GetAllVDPCommitteeResponse>(
-      request: () => _ApiService.getAllVdpCommittee(),
-    );
-  }
+
 
   @override
   Future<DataState<AddVdpCommitteeResponse>> addVdpCommittee(
@@ -213,9 +210,9 @@ class ApiRepositoryImpl extends BaseApiRepository implements ApiRepository {
           vdpName: request.vdpName,
           latitude: request.latitude,
           longitude: request.longitude,
-          policeStation: request.policeStation,
+          policeStationId: request.policeStationId,
           status: request.status,
-          district: request.district),
+          districtId: request.districtId,createdBy: request.createdBy),
     );
   }
 
@@ -227,9 +224,9 @@ vdpId: request.vdpId,
           vdpName: request.vdpName,
           latitude: request.latitude,
           longitude: request.longitude,
-          policeStation: request.policeStation,
+          policeStationId: request.policeStationId,
           status: request.status,
-          district: request.district),
+          districtId: request.districtId,createdBy: request.createdBy),
     );
   }
 
@@ -245,17 +242,13 @@ vdpId: request.vdpId,
           name:          request.name,
           mobileNumber:       request.mobileNumber,
           emailId :     request.emailId,
-          status :     request.status),
+          status :     request.status,
+        createdBy: request.createdBy,),
     );
 
   }
 
-  @override
-  Future<DataState<GetAllVdpMemberResponse>> getAllVdpMember() {
-    return getStateOf<GetAllVdpMemberResponse>(
-      request: () => _ApiService.getAllVdpMember(),
-    );
-  }
+
 
   @override
   Future<DataState<GetAllVdpRolesResponse>> getAllVdpRoles() {
@@ -274,7 +267,10 @@ vdpId: request.vdpId,
           name:          request.name,
           mobileNumber:       request.mobileNumber,
           emailId :     request.emailId,
-          status :     request.status),
+          status :     request.status,
+        createdBy: request.createdBy,
+
+      ),
     );
 
   }
@@ -295,6 +291,25 @@ vdpId: request.vdpId,
     return getStateOf<DeleteVdpMemberResponse>(
       request: () => _ApiService.deleteVdpMember(
           VdpMemberId: request.memberId
+      ),
+    );
+  }
+
+  @override
+  Future<DataState<GetAllVDPCommitteeResponse>> getAllVdpCommittee({required GetAllVdpCommitteeRequest request}) {
+    return getStateOf<GetAllVDPCommitteeResponse>(
+      request: () => _ApiService.getAllVdpCommittee(
+          districtId:  request.districtId,
+        policeStationId: request.policeStation
+      ),
+    );
+  }
+
+  @override
+  Future<DataState<GetAllVdpMemberResponse>> getAllVdpMember({required GetAllVdpMemberRequest request}) {
+    return getStateOf<GetAllVdpMemberResponse>(
+      request: () => _ApiService.getAllVdpMember(
+        vdpCommitteeId:  request.vdpCommitteeId,
       ),
     );
   }

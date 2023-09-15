@@ -495,9 +495,16 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<HttpResponse<GetAllVDPCommitteeResponse>> getAllVdpCommittee() async {
+  Future<HttpResponse<GetAllVDPCommitteeResponse>> getAllVdpCommittee({
+    districtId,
+    policeStationId,
+  }) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'DistrictId': districtId,
+      r'PoliceStationId': policeStationId,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.fetch<Map<String, dynamic>>(
@@ -508,7 +515,7 @@ class _ApiService implements ApiService {
     )
             .compose(
               _dio.options,
-              'VDPCommittee/GetAllVDPCommittee',
+              'VDPCommittee/GetAllVDPCommitteeByDP',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -523,18 +530,20 @@ class _ApiService implements ApiService {
     vdpName,
     latitude,
     longitude,
-    policeStation,
-    district,
+    policeStationId,
+    districtId,
     status,
+    createdBy,
   }) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'VDPName': vdpName,
       r'Latitude': latitude,
       r'Longitude': longitude,
-      r'PoliceStation': policeStation,
-      r'District': district,
+      r'PoliceStationId': policeStationId,
+      r'DistrictId': districtId,
       r'Status': status,
+      r'CreatedBy': createdBy,
     };
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
@@ -567,7 +576,7 @@ class _ApiService implements ApiService {
     final _data = <String, dynamic>{};
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<HttpResponse<DeleteVdpCommitteeResponse>>(Options(
-      method: 'DELETE',
+      method: 'POST',
       headers: _headers,
       extra: _extra,
     )
@@ -589,9 +598,10 @@ class _ApiService implements ApiService {
     vdpName,
     latitude,
     longitude,
-    policeStation,
-    district,
+    policeStationId,
+    districtId,
     status,
+    createdBy,
   }) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
@@ -599,9 +609,10 @@ class _ApiService implements ApiService {
       r'VDPName': vdpName,
       r'Latitude': latitude,
       r'Longitude': longitude,
-      r'PoliceStation': policeStation,
-      r'District': district,
+      r'PoliceStationId': policeStationId,
+      r'DistrictId': districtId,
       r'Status': status,
+      r'CreatedBy': createdBy,
     };
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
@@ -649,9 +660,13 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<HttpResponse<GetAllVdpMemberResponse>> getAllVdpMember() async {
+  Future<HttpResponse<GetAllVdpMemberResponse>> getAllVdpMember(
+      {vdpCommitteeId}) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'VDPCommitteeId': vdpCommitteeId
+    };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.fetch<Map<String, dynamic>>(
@@ -662,7 +677,7 @@ class _ApiService implements ApiService {
     )
             .compose(
               _dio.options,
-              'VDPMember/GetAllVDPMember',
+              'VDPMember/GetAllVDPCommitteeMember',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -680,6 +695,7 @@ class _ApiService implements ApiService {
     mobileNumber,
     emailId,
     status,
+    createdBy,
   }) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
@@ -689,6 +705,7 @@ class _ApiService implements ApiService {
       r'MobileNumber': mobileNumber,
       r'EmailId': emailId,
       r'Status': status,
+      r'CreatedBy': createdBy,
     };
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
@@ -720,6 +737,7 @@ class _ApiService implements ApiService {
     mobileNumber,
     emailId,
     status,
+    createdBy,
   }) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
@@ -730,6 +748,7 @@ class _ApiService implements ApiService {
       r'MobileNumber': mobileNumber,
       r'EmailId': emailId,
       r'Status': status,
+      r'CreatedBy': createdBy,
     };
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};

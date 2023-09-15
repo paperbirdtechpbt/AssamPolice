@@ -173,9 +173,14 @@ class _$AppRouter extends RootStackRouter {
       );
     },
     VdpCommitteeViewRoute.name: (routeData) {
+      final args = routeData.argsAs<VdpCommitteeViewRouteArgs>(
+          orElse: () => const VdpCommitteeViewRouteArgs());
       return AdaptivePage<dynamic>(
         routeData: routeData,
-        child: const VdpCommitteeView(),
+        child: VdpCommitteeView(
+          key: args.key,
+          isDashBoard: args.isDashBoard,
+        ),
       );
     },
     AddVdpCommitteeViewRoute.name: (routeData) {
@@ -207,15 +212,25 @@ class _$AppRouter extends RootStackRouter {
       );
     },
     VdpMemberDetailViewRoute.name: (routeData) {
+      final args = routeData.argsAs<VdpMemberDetailViewRouteArgs>(
+          orElse: () => const VdpMemberDetailViewRouteArgs());
       return AdaptivePage<dynamic>(
         routeData: routeData,
-        child: const VdpMemberDetailView(),
+        child: VdpMemberDetailView(
+          key: args.key,
+          getAllVdpMember: args.getAllVdpMember,
+        ),
       );
     },
     AddVdpMemberRoute.name: (routeData) {
+      final args = routeData.argsAs<AddVdpMemberRouteArgs>(
+          orElse: () => const AddVdpMemberRouteArgs());
       return AdaptivePage<dynamic>(
         routeData: routeData,
-        child: const AddVdpMember(),
+        child: AddVdpMember(
+          key: args.key,
+          getAllVDPCommittee: args.getAllVDPCommittee,
+        ),
       );
     },
     EditVdpMemberRoute.name: (routeData) {
@@ -360,6 +375,10 @@ class _$AppRouter extends RootStackRouter {
         RouteConfig(
           ReplyMessageScreenRoute.name,
           path: '/reply-message-screen',
+        ),
+        RouteConfig(
+          ReceivedReplyMessageScreenRoute.name,
+          path: '/received-reply-message-screen',
         ),
         RouteConfig(
           ReceivedReplyMessageScreenRoute.name,
@@ -815,14 +834,36 @@ class SentMessageViewRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [VdpCommitteeView]
-class VdpCommitteeViewRoute extends PageRouteInfo<void> {
-  const VdpCommitteeViewRoute()
-      : super(
+class VdpCommitteeViewRoute extends PageRouteInfo<VdpCommitteeViewRouteArgs> {
+  VdpCommitteeViewRoute({
+    Key? key,
+    bool? isDashBoard,
+  }) : super(
           VdpCommitteeViewRoute.name,
           path: '/vdp-committee-view',
+          args: VdpCommitteeViewRouteArgs(
+            key: key,
+            isDashBoard: isDashBoard,
+          ),
         );
 
   static const String name = 'VdpCommitteeViewRoute';
+}
+
+class VdpCommitteeViewRouteArgs {
+  const VdpCommitteeViewRouteArgs({
+    this.key,
+    this.isDashBoard,
+  });
+
+  final Key? key;
+
+  final bool? isDashBoard;
+
+  @override
+  String toString() {
+    return 'VdpCommitteeViewRouteArgs{key: $key, isDashBoard: $isDashBoard}';
+  }
 }
 
 /// generated route for
@@ -909,26 +950,71 @@ class VdpMembersListViewRouteArgs {
 
 /// generated route for
 /// [VdpMemberDetailView]
-class VdpMemberDetailViewRoute extends PageRouteInfo<void> {
-  const VdpMemberDetailViewRoute()
-      : super(
+class VdpMemberDetailViewRoute
+    extends PageRouteInfo<VdpMemberDetailViewRouteArgs> {
+  VdpMemberDetailViewRoute({
+    Key? key,
+    GetAllVdpMember? getAllVdpMember,
+  }) : super(
           VdpMemberDetailViewRoute.name,
           path: '/vdp-member-detail-view',
+          args: VdpMemberDetailViewRouteArgs(
+            key: key,
+            getAllVdpMember: getAllVdpMember,
+          ),
         );
 
   static const String name = 'VdpMemberDetailViewRoute';
 }
 
+class VdpMemberDetailViewRouteArgs {
+  const VdpMemberDetailViewRouteArgs({
+    this.key,
+    this.getAllVdpMember,
+  });
+
+  final Key? key;
+
+  final GetAllVdpMember? getAllVdpMember;
+
+  @override
+  String toString() {
+    return 'VdpMemberDetailViewRouteArgs{key: $key, getAllVdpMember: $getAllVdpMember}';
+  }
+}
+
 /// generated route for
 /// [AddVdpMember]
-class AddVdpMemberRoute extends PageRouteInfo<void> {
-  const AddVdpMemberRoute()
-      : super(
+class AddVdpMemberRoute extends PageRouteInfo<AddVdpMemberRouteArgs> {
+  AddVdpMemberRoute({
+    Key? key,
+    GetAllVDPCommittee? getAllVDPCommittee,
+  }) : super(
           AddVdpMemberRoute.name,
           path: '/add-vdp-member',
+          args: AddVdpMemberRouteArgs(
+            key: key,
+            getAllVDPCommittee: getAllVDPCommittee,
+          ),
         );
 
   static const String name = 'AddVdpMemberRoute';
+}
+
+class AddVdpMemberRouteArgs {
+  const AddVdpMemberRouteArgs({
+    this.key,
+    this.getAllVDPCommittee,
+  });
+
+  final Key? key;
+
+  final GetAllVDPCommittee? getAllVDPCommittee;
+
+  @override
+  String toString() {
+    return 'AddVdpMemberRouteArgs{key: $key, getAllVDPCommittee: $getAllVDPCommittee}';
+  }
 }
 
 /// generated route for
