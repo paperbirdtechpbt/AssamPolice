@@ -313,6 +313,8 @@ class _UpdateVdpCommitteeViewState extends State<UpdateVdpCommitteeView> {
                           },
                         ),
                         CoustomTextFieldEditBox(
+                          textCapitalization: TextCapitalization.words,
+
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           border: Border.all(
                               color: isNameValidate
@@ -449,6 +451,8 @@ class _UpdateVdpCommitteeViewState extends State<UpdateVdpCommitteeView> {
                         // ),
 
                         CoustomTextFieldEditBox(
+                          textCapitalization: TextCapitalization.none,
+
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           border: Border.all(
                               color: isLatValidate
@@ -482,6 +486,8 @@ class _UpdateVdpCommitteeViewState extends State<UpdateVdpCommitteeView> {
                         ),
                         const SizedBox(height: 25,),
                         CoustomTextFieldEditBox(
+                          textCapitalization: TextCapitalization.none,
+
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           border: Border.all(
                               color: isLongValidate

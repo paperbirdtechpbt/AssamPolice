@@ -14,6 +14,8 @@ import '../models/requests/get_receive_message_request.dart';
 import '../models/requests/get_received_messages_with_parent_details_request.dart';
 import '../models/requests/get_sent_message.dart';
 import '../models/requests/get_sent_messages_with_parent_details_request.dart';
+import '../models/requests/get_user_list_tocc_request.dart';
+import '../models/requests/get_user_menu_option_request.dart';
 import '../models/requests/incidence_report_request.dart';
 import '../models/requests/police_station_request.dart';
 import '../models/requests/send_message_request.dart';
@@ -34,6 +36,8 @@ import '../models/responses/get_received_messages_response.dart';
 import '../models/responses/get_received_messages_with_parent_details.dart';
 import '../models/responses/get_sent_message_response.dart';
 import '../models/responses/get_sent_messages_with_parent_details_response.dart';
+import '../models/responses/get_user_list_tocc_response.dart';
+import '../models/responses/get_user_menu_option_response.dart';
 import '../models/responses/login_response.dart';
 import '../models/responses/send_message_response.dart';
 import '../models/responses/update_vdp_committee_response.dart';
@@ -132,6 +136,15 @@ abstract class ApiRepository {
 
     Future<DataState<DeleteVdpMemberResponse>> deleteVdpMember({
     required DeleteVdpMemberRequest request,
+  });
+
+    Future<DataState<GetUserMenuOptionResponse>> getUserMenuOption({
+    required GetUserMenuOptionRequest request,
+  });
+
+
+    Future<DataState<GetUserListTOCCResponse>> getUserListTOCC({
+    required GetUserListTOCCRequest request,
   });
 
 

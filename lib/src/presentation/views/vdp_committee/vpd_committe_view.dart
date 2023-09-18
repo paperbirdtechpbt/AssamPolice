@@ -104,6 +104,7 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                           var response = state.categoryResponse?.data;
                         }
                       } else if (state is GetDistrictSuccessState) {
+                        snackBar(context, "${state.response?.message}");
                         var response = state.response;
                         listDistrictResponse =
                             state.response?.data?.listDistrict;
@@ -115,7 +116,10 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                             mapDistrict[element.name] = element.id;
                           });
                         });
+                      }else if (state is HomeErrorState){
+                        snackBar(context, "something went wrong");
                       } else if (state is GetPoliceStationSuccessState) {
+                        snackBar(context, "${state.response?.message}");
                         var response = state.response;
                         listPoliceStationResponse =
                             state.response?.data?.listDistrict;
@@ -212,36 +216,31 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                             },
                             builder: (context, state) {
                            switch(state.runtimeType){
-                             case VdpCommitteeInitialState :    return   Expanded(
-                               child: SingleChildScrollView(
-                                 child: Column(children: List.generate(getAllVdpCommittee?.length ?? 0, (index) {
-                                   return VdpCommitteeView(
-                                     lat: double.parse(getAllVdpCommittee[index].latitude ?? ''),
-                                     long: double.parse(getAllVdpCommittee[index].longitude ?? ''),
-                                     policeStation: getAllVdpCommittee[index].policeStationName,
-                                     icon: '',
-                                     subTitle: "VDP",
-                                     firstChar: getAllVdpCommittee![index].vdpName?.substring(0, 1),
-                                       id : getAllVdpCommittee[index].vdpId,
-                                     name: getAllVdpCommittee![index].vdpName,
-                                       onTap: (){
-                                         appRouter.push(VdpMembersListViewRoute(getAllVDPCommittee: getAllVdpCommittee[index])).then((value) {
-                                           context.read<VdpCommitteeCubit>().getAllVdpCommittee(selectedDistrictId, selectedPoliceStationId);
-                                         });
-                                       }
+                             case VdpCommitteeInitialState :   if(getAllVdpCommittee.isEmpty)
+                               return  Center(
+                                 child: Padding(
+                                   padding:  EdgeInsets.only(top: SizeConfig.screenHeight * 0.25),
+                                   child: Column(
+                                     children: [
+                                       SvgPicture.asset(ic_not_data,color: defaultColor,
+                                         height: SizeConfig.screenHeight * 0.20,
+                                       ),
+                                       Center(child: Text("No Record Found",style: styleIbmPlexSansBold(size: 20, color: defaultColor),),),
 
-                                   );
-                                 }),),
-                               ),
-                             );
+                                     ],
+                                   ),
+                                 ),);
+                             else
+                                 return Container();
                              case VdpCommitteeLoadingState  :  return const Center(child: CircularProgressIndicator(color: defaultColor,),);
-                             case VdpCommitteeSuccessState :    return   SingleChildScrollView(
+                             case VdpCommitteeSuccessState :
+                               if(getAllVdpCommittee.isNotEmpty)
+                                return   SingleChildScrollView(
                                child: Column(children: List.generate(getAllVdpCommittee?.length ?? 0, (index) {
                                  return VdpCommitteeView(
                                      lat: double.parse(getAllVdpCommittee[index].latitude ?? '0.0'),
                                      long: double.parse(getAllVdpCommittee[index].longitude ?? '0.0'),
                                      policeStation: getAllVdpCommittee[index].policeStationName,
-
                                      icon: '',
                                      subTitle: "VDP",
                                      firstChar: getAllVdpCommittee![index].vdpName?.substring(0, 1),
@@ -249,34 +248,42 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                                      name: getAllVdpCommittee![index].vdpName,
                                      onTap: (){
                                        appRouter.push(VdpMembersListViewRoute(getAllVDPCommittee: getAllVdpCommittee[index])).then((value) {
-                                         context.read<VdpCommitteeCubit>().getAllVdpCommittee(selectedDistrictId, selectedPoliceStationId);
-                                       });
+                                         if(selectedPoliceStationId == null && selectedDistrictId ==null){
+                                         }else {
+                                           context.read<VdpCommitteeCubit>().getAllVdpCommittee(selectedDistrictId, selectedPoliceStationId);
+                                         }                                   });
                                      }
 
                                  );
                                }),),
                              );
-                             default : return   SingleChildScrollView(
-                               child: Column(children: List.generate(getAllVdpCommittee?.length ?? 0, (index) {
-                                 return VdpCommitteeView(
-                                     lat: double.parse(getAllVdpCommittee[index].latitude ?? '0.0'),
-                                     long: double.parse(getAllVdpCommittee[index].longitude ?? '0.0'),
-                                     policeStation: getAllVdpCommittee[index].policeStationName,
+                               else
+                                 return  Center(
+                                   child: Padding(
+                                     padding:  EdgeInsets.only(top: SizeConfig.screenHeight * 0.25),
+                                   child: Column(
+                                       children: [
+                                         SvgPicture.asset(ic_not_data,color: defaultColor,
+                                           height: SizeConfig.screenHeight * 0.20,
+                                         ),
+                                         Center(child: Text("No Record Found",style: styleIbmPlexSansBold(size: 20, color: defaultColor),),),
 
-                                     icon: '',
-                                     subTitle: "VDP",
-                                     firstChar: getAllVdpCommittee![index].vdpName?.substring(0, 1),
-                                     id : getAllVdpCommittee[index].vdpId,
-                                     name: getAllVdpCommittee![index].vdpName,
-                                     onTap: (){
-                                       appRouter.push(VdpMembersListViewRoute(getAllVDPCommittee: getAllVdpCommittee[index])).then((value) {
-                                         context.read<VdpCommitteeCubit>().getAllVdpCommittee(selectedDistrictId, selectedPoliceStationId);
-                                       });
-                                     }
+                                       ],
+                                     ),
+                                   ),);
+                             default : return  Center(
+                               child: Padding(
+                                 padding:  EdgeInsets.only(top: SizeConfig.screenHeight * 0.25),
+                                 child: Column(
+                                   children: [
+                                     SvgPicture.asset(ic_not_data,color: defaultColor,
+                                       height: SizeConfig.screenHeight * 0.20,
+                                     ),
+                                     Center(child: Text("No Record Found",style: styleIbmPlexSansBold(size: 20, color: defaultColor),),),
 
-                                 );
-                               }),),
-                             );
+                                   ],
+                                 ),
+                               ),);
                            }
                             },
                           ),
@@ -297,7 +304,10 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
           foregroundColor: Colors.white,
           onPressed: () {
             appRouter.push(const AddVdpCommitteeViewRoute()).then((value) {
-              context.read<VdpCommitteeCubit>().getAllVdpCommittee(selectedDistrictId, selectedPoliceStationId);
+              if(selectedPoliceStationId == null && selectedDistrictId ==null){
+              }else {
+                context.read<VdpCommitteeCubit>().getAllVdpCommittee(selectedDistrictId, selectedPoliceStationId);
+              }
             });
 
           },

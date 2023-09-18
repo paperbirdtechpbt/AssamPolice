@@ -84,7 +84,7 @@ class _SplashScreenState extends State<SplashScreen> {
             const Positioned(
                 bottom: 35, child: Center(child: Text("Develop by Teraclab"))),
             const Positioned(
-                bottom: 10, child: Center(child: Text("version 1.0.4")))
+                bottom: 10, child: Center(child: Text("version 1.0.5")))
           ],
         ));
   }

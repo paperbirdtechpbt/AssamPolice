@@ -14,7 +14,7 @@ class VdpCommitteeCubit extends BaseCubit<VdpCommitteeState, LoginResponse> {
   final ApiRepository _apiRepository;
 
   VdpCommitteeCubit(this._apiRepository)
-      : super(const VdpCommitteeLoadingState(), LoginResponse());
+      : super(const VdpCommitteeInitialState(), LoginResponse());
 
   Future<void> getAllVdpCommittee(
 

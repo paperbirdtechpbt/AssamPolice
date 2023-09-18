@@ -13,6 +13,7 @@ import 'package:flutter_clean_architecture/src/domain/models/geo_location.dart';
 import 'package:flutter_clean_architecture/src/presentation/cubits/add_geo_location/add_geo_location_cubit.dart';
 import 'package:flutter_clean_architecture/src/presentation/cubits/incedence/incedence_cubit.dart';
 import 'package:flutter_clean_architecture/src/presentation/cubits/message/message_cubit.dart';
+import 'package:flutter_clean_architecture/src/presentation/cubits/user_menu_option/user_menu_option_cubit.dart';
 import 'package:flutter_clean_architecture/src/presentation/cubits/vdp_committee/vdp_committee_cubit.dart';
 import 'package:flutter_clean_architecture/src/presentation/cubits/vdp_member/vdp_member_cubit.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -335,6 +336,11 @@ class MyApp extends StatelessWidget {
             ), BlocProvider(
               create: (context) =>
                   VdpMemberCubit(
+                    locator<ApiRepository>(),
+                  ),
+            ), BlocProvider(
+              create: (context) =>
+                  UserMenuOptionCubit(
                     locator<ApiRepository>(),
                   ),
             ),

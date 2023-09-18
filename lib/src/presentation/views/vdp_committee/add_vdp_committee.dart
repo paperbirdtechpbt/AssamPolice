@@ -262,6 +262,8 @@ class _AddVdpCommitteeViewState extends State<AddVdpCommitteeView> {
                           },
                         ),
                         CoustomTextFieldEditBox(
+                          textCapitalization: TextCapitalization.words,
+
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           border: Border.all(
                               color: isNameValidate
@@ -269,7 +271,9 @@ class _AddVdpCommitteeViewState extends State<AddVdpCommitteeView> {
                                   : Colors.transparent),
                           textInputAction: TextInputAction.next,
                           context: context,
-                          textInputType: TextInputType.text,
+                          textInputType: TextInputType.name
+                          ,
+
                           inputBorder: InputBorder.none,
                           controller: _nameController,
                           flutterIcon: const Icon(
@@ -482,7 +486,8 @@ class _AddVdpCommitteeViewState extends State<AddVdpCommitteeView> {
                                         setState(() {
                                           isNameValidate = true;
                                         });
-                                      } else if (selectedDistrict.isEmpty ==
+                                      }
+                                      else if (selectedDistrict.isEmpty ==
                                           true) {
                                         snackBar(context, "Select District");
                                       } else if (selectedPoliceStation
@@ -529,4 +534,5 @@ class _AddVdpCommitteeViewState extends State<AddVdpCommitteeView> {
       return false;
     }
   }
+
 }

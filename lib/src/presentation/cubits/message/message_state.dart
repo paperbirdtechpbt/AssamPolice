@@ -6,6 +6,8 @@ import '../../../domain/models/responses/get_received_messages_response.dart';
 import '../../../domain/models/responses/get_received_messages_with_parent_details.dart';
 import '../../../domain/models/responses/get_sent_message_response.dart';
 import '../../../domain/models/responses/get_sent_messages_with_parent_details_response.dart';
+import '../../../domain/models/responses/get_user_list_tocc_response.dart';
+import '../../../domain/models/responses/get_user_menu_option_response.dart';
 import '../../../domain/models/responses/login_response.dart';
 import '../../../domain/models/responses/send_message_response.dart';
 
@@ -17,6 +19,7 @@ abstract class MessageState {
   final SendMessageResponse? sendMessageResponse;
   final GetReceivedMessagesWithParentDetailsResponse? getReceivedMessagesWithParentDetailsResponse;
   final GetSentMessagesWithParentDetailsResponse? getSentMessagesWithParentDetailsResponse;
+  final GetUserListTOCCResponse? getUserListTOCCResponse;
   final DioError? error;
 
   const MessageState({
@@ -27,10 +30,11 @@ abstract class MessageState {
     this.sendMessageResponse,
     this.getReceivedMessagesWithParentDetailsResponse,
     this.getSentMessagesWithParentDetailsResponse,
+    this.getUserListTOCCResponse,
     this.error,
   });
 
-  List<Object?> get props => [response, error,getReceivedMessagesResponse,getSentMessagesResponse,getMessageBodyResponse,sendMessageResponse,getReceivedMessagesWithParentDetailsResponse,getSentMessagesWithParentDetailsResponse];
+  List<Object?> get props => [response, getUserListTOCCResponse,error,getReceivedMessagesResponse,getSentMessagesResponse,getMessageBodyResponse,sendMessageResponse,getReceivedMessagesWithParentDetailsResponse,getSentMessagesWithParentDetailsResponse];
 }
 
 class SendMessageInitialState extends MessageState {
@@ -143,3 +147,39 @@ class GetSentMessagesWithParentDetailsErrorState extends MessageState {
 }
 
 
+//GetUserListTO
+
+
+class GetUserListTOCCInitialState extends MessageState {
+  const GetUserListTOCCInitialState();
+}
+
+class GetUserListTOCCLoadingState extends MessageState {
+  const GetUserListTOCCLoadingState();
+}
+
+class GetUserListTOCCSuccessState extends MessageState {
+  const GetUserListTOCCSuccessState({super.getUserListTOCCResponse});
+}
+
+class GetUserListTOCCErrorState extends MessageState {
+  const GetUserListTOCCErrorState({super.error});
+}
+
+//GetUserListCC
+
+class GetUserListCCInitialState extends MessageState {
+  const GetUserListCCInitialState();
+}
+
+class GetUserListCCLoadingState extends MessageState {
+  const GetUserListCCLoadingState();
+}
+
+class GetUserListCCSuccessState extends MessageState {
+  const GetUserListCCSuccessState({super.getUserListTOCCResponse});
+}
+
+class GetUserListCCErrorState extends MessageState {
+  const GetUserListCCErrorState({super.error});
+}

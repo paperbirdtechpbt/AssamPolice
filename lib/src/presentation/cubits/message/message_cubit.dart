@@ -3,6 +3,8 @@ import '../../../domain/models/requests/get_receive_message_request.dart';
 import '../../../domain/models/requests/get_received_messages_with_parent_details_request.dart';
 import '../../../domain/models/requests/get_sent_message.dart';
 import '../../../domain/models/requests/get_sent_messages_with_parent_details_request.dart';
+import '../../../domain/models/requests/get_user_list_tocc_request.dart';
+import '../../../domain/models/requests/get_user_menu_option_request.dart';
 import '../../../domain/models/requests/send_message_request.dart';
 import '../../../domain/models/responses/login_response.dart';
 import '../../../domain/repositories/api_repository.dart';
@@ -16,14 +18,12 @@ class MessageCubit extends BaseCubit<MessageState, LoginResponse> {
   MessageCubit(this._apiRepository)
       : super(const SendMessageInitialState(), LoginResponse());
 
-  Future<void> sendMessage(
-      String? senderUserName,
+  Future<void> sendMessage(String? senderUserName,
       List<String>? toRecipients,
       List<String>? cCRecipients,
       String? messagSubject,
       String? messagBody,
-      int? parentMessagesId,
-      ) async {
+      int? parentMessagesId,) async {
     if (isBusy) return;
 
     await run(() async {
@@ -161,6 +161,54 @@ class MessageCubit extends BaseCubit<MessageState, LoginResponse> {
             getSentMessagesWithParentDetailsResponse: response.data));
       } else if (response is DataFailed) {
         emit(GetSentMessagesWithParentDetailsErrorState(error: response.error));
+      }
+    });
+  }
+
+
+//GetUserListTOCC
+
+  Future<void>getUserListTO(String? userName,
+      int? transactionMode,
+      String? senderType) async {
+    if (isBusy) return;
+    await run(() async {
+      emit(const GetUserListTOCCLoadingState());
+      var request = GetUserListTOCCRequest(
+        userName: userName,
+        transactionMode: transactionMode,
+        senderType: senderType
+      );
+      final response = await _apiRepository.getUserListTOCC(
+          request: request);
+      if (response is DataSuccess) {
+        emit(GetUserListTOCCSuccessState(
+            getUserListTOCCResponse: response.data));
+      } else if (response is DataFailed) {
+        emit(GetUserListTOCCErrorState(error: response.error));
+      }
+    });
+  }
+
+
+  Future<void>getUserListCC(String? userName,
+      int? transactionMode,
+      String? senderType) async {
+    if (isBusy) return;
+    await run(() async {
+      emit(const GetUserListCCLoadingState());
+      var request = GetUserListTOCCRequest(
+          userName: userName,
+          transactionMode: transactionMode,
+          senderType: senderType
+      );
+      final response = await _apiRepository.getUserListTOCC(
+          request: request);
+      if (response is DataSuccess) {
+        emit(GetUserListCCSuccessState(
+            getUserListTOCCResponse: response.data));
+      } else if (response is DataFailed) {
+        emit(GetUserListCCErrorState(error: response.error));
       }
     });
   }

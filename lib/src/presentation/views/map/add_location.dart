@@ -18,7 +18,6 @@ import '../../../utils/constants/strings.dart';
 import '../../cubits/vdp_committee/vdp_committee_cubit.dart';
 import '../../cubits/vdp_committee/vdp_committee_state.dart';
 import '../../widgets/common_widgets.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 class AddLocationScreen extends StatefulWidget {
   bool? isUpdateLocation;
   GetAllVDPCommittee? getAllVDPCommittee;
@@ -180,6 +179,8 @@ crossAxisAlignment: CrossAxisAlignment.end,
                 Container(
                   width: SizeConfig.screenWidth * 0.45,
                   child: CoustomTextFieldEditBox(
+                    textCapitalization: TextCapitalization.words,
+
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     border: Border.all(
                         color: isLatValidate
@@ -196,7 +197,9 @@ crossAxisAlignment: CrossAxisAlignment.end,
                     ),
                     label: location,
                     length: null,
-                    validator: (val) {},
+                    validator: (val) {
+                      return null;
+                    },
                     onChanged: (value) {
                       if (value!.length <= 2) {
                         setState(() {
@@ -207,6 +210,7 @@ crossAxisAlignment: CrossAxisAlignment.end,
                           isLatValidate = false;
                         });
                       }
+                      return null;
                     },
                     hint: "lat",
                     icon: '',
@@ -217,6 +221,7 @@ SizedBox(height: SizeConfig.screenHeight * 0.01,),
 
                   width: SizeConfig.screenWidth * 0.93,
                   child: CoustomTextFieldEditBox(
+                    textCapitalization: TextCapitalization.words,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     border: Border.all(
                         color: isLongValidate
@@ -233,7 +238,9 @@ SizedBox(height: SizeConfig.screenHeight * 0.01,),
                     ),
                     label: location,
                     length: null,
-                    validator: (val) {},
+                    validator: (val) {
+                      return null;
+                    },
                     onChanged: (value) {
                       if (value!.length <= 2) {
                         setState(() {
@@ -244,6 +251,7 @@ SizedBox(height: SizeConfig.screenHeight * 0.01,),
                           isLongValidate = false;
                         });
                       }
+                      return null;
                     },
                     hint: "long",
                     icon: '',

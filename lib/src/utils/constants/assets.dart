@@ -5,6 +5,7 @@ const String ic_phone = 'assets/images/ic_phone.svg';
 const String ic_arrow_left = 'assets/images/ic_arrow_left.svg';
 const String ic_user_placeholder = 'assets/images/ic_user_placeholder.svg';
 const String ic_hospital = 'assets/images/ic_hospital.svg';
+const String ic_not_data = 'assets/images/ic_not_data.svg';
 const String ic_map = 'assets/images/ic_map.svg';
 const String ic_store = 'assets/images/ic_store.svg';
 const String ic_masjid = 'assets/images/ic_masjid.svg';

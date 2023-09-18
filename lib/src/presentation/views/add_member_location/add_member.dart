@@ -56,6 +56,8 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
                   child: Column(
                     children: [
                       CoustomTextFieldEditBox(
+                        textCapitalization: TextCapitalization.words,
+
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         border: Border.all(
                             color: isNameValidate == "false"
@@ -86,6 +88,8 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
                         height: 25,
                       ),
                       CoustomTextFieldEditBox(
+                        textCapitalization: TextCapitalization.characters,
+
                         textInputType: TextInputType.number,
                         textInputAction: TextInputAction.next,
                         context: context,
@@ -107,6 +111,8 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
                         height: 25,
                       ),
                       CoustomTextFieldEditBox(
+                        textCapitalization: TextCapitalization.characters,
+
                         border: Border.all(color: isMobileValidate ? defaultColor : Colors.transparent),
                         textInputType: TextInputType.phone,
                         textInputAction: TextInputAction.next,
@@ -210,6 +216,8 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
                         height: 25,
                       ),
                       CoustomTextFieldEditBox(
+                        textCapitalization: TextCapitalization.characters,
+
                         border: Border.all(color: isRemarkValidate ? defaultColor : Colors.transparent),
                         textInputAction: TextInputAction.done,
                         onChanged: (value){

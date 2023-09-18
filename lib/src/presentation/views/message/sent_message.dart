@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import '../../../config/router/app_router.dart';
 import '../../../domain/models/data/get_sent_message.dart';
 import '../../../domain/models/data/user.dart';
+import '../../../utils/constants/assets.dart';
 import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/strings.dart';
 import '../../../utils/reference/my_shared_reference.dart';
@@ -90,6 +92,7 @@ class _SentMessageViewState extends State<SentMessageView> {
                           ],
                         );
                       case GetSentMessagesSuccessState:
+                        if(_getSentMessages.isNotEmpty)
                         return Padding(
                           padding: const EdgeInsets.all(0.0),
                           child: Column(children: [
@@ -122,6 +125,20 @@ class _SentMessageViewState extends State<SentMessageView> {
                                 }),
                           ]),
                         );
+                        else
+                          return    Center(
+                          child: Padding(
+                            padding:  EdgeInsets.only(top: SizeConfig.screenHeight * 0.30),
+                            child: Column(
+                              children: [
+                                SvgPicture.asset(ic_not_data,color: defaultColor,
+                                  height: SizeConfig.screenHeight * 0.20,
+                                ),
+                                Center(child: Text("No Record Found",style: styleIbmPlexSansBold(size: 20, color: defaultColor),),),
+
+                              ],
+                            ),
+                          ),);
                       case GetSentMessagesErrorState:
                         return const Center(
                           child: Text(

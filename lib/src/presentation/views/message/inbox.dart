@@ -177,7 +177,9 @@ return Future.delayed( Duration(seconds: 1),(){
                       ),
                     );
                     case GetReceivedMessagesLoadingState : return const Center(child: CircularProgressIndicator(color: defaultColor,),);
-                    case GetReceivedMessagesSuccessState :  return SingleChildScrollView(
+                    case GetReceivedMessagesSuccessState :
+                      if(members.isNotEmpty)
+                      return SingleChildScrollView(
                       child: Padding(
                         padding: const EdgeInsets.only(top: 10.0),
                         child: Column(
@@ -207,6 +209,21 @@ return Future.delayed( Duration(seconds: 1),(){
                         ),
                       ),
                     );
+                      else
+                        return  Center(
+                          child: Padding(
+                          padding:  EdgeInsets.only(top: SizeConfig.screenHeight * 0.30),
+                          child: Column(
+                            children: [
+                              SvgPicture.asset(ic_not_data,color: defaultColor,
+                                height: SizeConfig.screenHeight * 0.20,
+                  ),
+                  Center(child: Text("No Record Found",style: styleIbmPlexSansBold(size: 20, color: defaultColor),),),
+
+                  ],
+                          ),
+                        ),);
+
                     default : return  SingleChildScrollView(
                       child: Padding(
                         padding: const EdgeInsets.only(top: 10.0),

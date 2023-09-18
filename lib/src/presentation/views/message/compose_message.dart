@@ -7,6 +7,7 @@ import '../../../domain/models/data/get_received_message.dart';
 import '../../../domain/models/data/get_received_messages_with_parent_details.dart';
 import '../../../domain/models/data/get_sent_message.dart';
 import '../../../domain/models/data/get_sent_messages_with_parent_details.dart';
+import '../../../domain/models/data/get_user_list_tocc.dart';
 import '../../../domain/models/data/user.dart';
 import '../../../domain/models/responses/get_sent_messages_with_parent_details_response.dart';
 import '../../../utils/constants/colors.dart';
@@ -46,12 +47,13 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
   GetSentMessagesWithParentDetails? getSentMessagesWithParentDetails;
   _ComposeMessageScreenState(this.getReceivedMessages, this.isReply,this.getSentMessages,this.isSentMessage,this.getMessageBody,this.getSentMessagesWithParentDetails,this.getReceivedMessagesWithParentDetails);
 
-  List<String> members = [
-    "vdp@assampolice.org",
-    "anil@assampolice.org",
-    "ajit@teraclab.com",
-  ];
-  List<String> selectedMembers = [];
+  List<GetUserListTOCC> ToMembers = [];
+  List<GetUserListTOCC> ToResponseMembers = [];
+  List<GetUserListTOCC> CcMembers = [];
+  List<GetUserListTOCC> CcResponseMembers = [];
+  List<String> menuUserList = [];
+
+  List<String> selectedToMembers = [];
   List<String> selectedCcMembers = [];
   // List<String> selectedBccMembers = [];
   TextEditingController _membersController = TextEditingController();
@@ -70,10 +72,12 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
   getUser() async {
     var preferences = MySharedPreference();
     await preferences.getSignInModel(keySaveSignInModel).then((data) => {
-          setState(() {
-            user = data?.user;
-          })
-        });
+      setState(() {
+        user = data?.user;
+      })
+    });
+    context.read<MessageCubit>().getUserListTO(user?.email, 6,"to").then((value) =>     context.read<MessageCubit>().getUserListCC(user?.email, 6,"cc"),);
+
   }
 
 
@@ -82,38 +86,38 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
     if(isReply != null && isReply == true && isSentMessage == true){
 
       setState(() {
-        selectedMembers = getSentMessages?.toRecipientUserNameList ?? [];
+        selectedToMembers = getSentMessages?.toRecipientUserNameList ?? [];
         selectedCcMembers
-            = getSentMessages?.ccRecipientUserNameList ?? [];
+        = getSentMessages?.ccRecipientUserNameList ?? [];
         _subjectController.text = getSentMessages?.subject ?? '';
         _bodyController.text = getSentMessages?.messageBody ?? '';
       });
     }
-   else if (isReply != null && isReply == true && isSentMessage == false) {
+    else if (isReply != null && isReply == true && isSentMessage == false) {
       setState(() {
-        selectedMembers.add(getReceivedMessages?.senderUserName ?? '');
+        selectedToMembers.add(getReceivedMessages?.senderUserName ?? '');
         selectedCcMembers=
             getReceivedMessages?.ccRecipientUserNameList ?? [];
         _subjectController.text = getReceivedMessages?.subject ?? '';
         _bodyController.text = getReceivedMessages?.messageBody ?? '';
       });
     }
-   for(var i in selectedMembers){
-     if(selectedMembers.contains(i)){
-       members.remove(i);
-     }
-   }
+    for(var i in selectedToMembers){
+      if(selectedToMembers.contains(i)){
+        // members.remove(i);
+      }
+    }
     getUser();
   }
 
   Future<bool> onWillPop() {
     context.read<MessageCubit>().getReceivedMessages(user?.email, 0, 1);
-      context
-          .read<MessageCubit>()
-          .getSentMessagesWithParentDetails(user?.email, 0, 1);
-      context
-          .read<MessageCubit>()
-          .getReceivedMessagesWithParentDetails(user?.email, 0, 1);
+    context
+        .read<MessageCubit>()
+        .getSentMessagesWithParentDetails(user?.email, 0, 1);
+    context
+        .read<MessageCubit>()
+        .getReceivedMessagesWithParentDetails(user?.email, 0, 1);
 
     return Future.value(true);
   }
@@ -145,7 +149,7 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
                 if (isReply != null && isReply == true && isSentMessage == true) {
                   context.read<MessageCubit>().sendMessage(
                       "${user?.email}",
-                      selectedMembers,
+                      selectedToMembers,
                       selectedCcMembers,
                       _subjectController.text,
                       _bodyController.text,
@@ -153,7 +157,7 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
                 } else {
                   context.read<MessageCubit>().sendMessage(
                       "${user?.email}",
-                      selectedMembers,
+                      selectedToMembers,
                       selectedCcMembers,
                       _subjectController.text,
                       _bodyController.text,
@@ -172,16 +176,39 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
             padding: const EdgeInsets.only(top: 3.0),
             child: Column(
               children: <Widget>[
+
                 BlocConsumer<MessageCubit, MessageState>(
                   listener: (context, state) {
                     if (state is SendMessageSuccessState) {
                       if (isReply != null && isReply == true) {
-                        snackBar(context, "message sent");
-                        appRouter.pop();
+                        if(state.getSentMessagesResponse?.code == "Success"){
+                          snackBar(context, "${state.getSentMessagesResponse?.message}");
+                          appRouter.pop();
+                        }else {
+                          snackBar(context, "${state.getSentMessagesResponse?.message}");
+                        }
                       } else {
                         appRouter.pop();
 
-                        snackBar(context, "message sent");
+                        snackBar(context, "${state.getSentMessagesResponse?.message}");
+                      }
+                    }else if(state is SendMessageErrorState){
+                      snackBar(context, "something went wrong!");
+                    }else if (state is GetUserListTOCCSuccessState){
+                      if(state.getUserListTOCCResponse?.code == "Success"){
+                        ToResponseMembers =    state.getUserListTOCCResponse?.data?? [];
+setState(() {
+  ToMembers.addAll(ToResponseMembers);
+});
+
+                      }
+                    }else if(state is GetUserListCCSuccessState){
+                      if(state.getUserListTOCCResponse?.code == "Success"){
+                        CcResponseMembers =    state.getUserListTOCCResponse?.data?? [];
+                        setState(() {
+                          CcMembers.addAll(CcResponseMembers);
+                        });
+
                       }
                     }
                   },
@@ -199,7 +226,7 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
                                 const Radius.circular(10.0)),
                             color: skyBlue),
                         padding:
-                            const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                        const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
                         child: Row(
                           children: [
                             Expanded(
@@ -210,7 +237,7 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
                                   children: <Widget>[
                                     Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                       children: [
                                         Padding(
                                           padding: const EdgeInsets.only(
@@ -234,21 +261,21 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
                                               isShowCc == true
                                                   ? Container()
                                                   : InkWell(
-                                                      onTap: () {
-                                                        ccWidget(
-                                                            ccBcc: "Cc",
-                                                            isCcBcc: 0);
-                                                        setState(() {
-                                                          isShowCc = true;
-                                                        });
-                                                      },
-                                                      child: Text(
-                                                        "CC",
-                                                        style:
-                                                            styleIbmPlexSansRegular(
-                                                                size: 16,
-                                                                color: grey),
-                                                      )),
+                                                  onTap: () {
+                                                    ccWidget(
+                                                        ccBcc: "Cc",
+                                                        isCcBcc: 0);
+                                                    setState(() {
+                                                      isShowCc = true;
+                                                    });
+                                                  },
+                                                  child: Text(
+                                                    "CC",
+                                                    style:
+                                                    styleIbmPlexSansRegular(
+                                                        size: 16,
+                                                        color: grey),
+                                                  )),
                                               const SizedBox(
                                                 width: 8.0,
                                               ),
@@ -276,17 +303,17 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
                                       width: 10,
                                     ),
 
-                                       Wrap(children: selectedMembers.map((item){
-                                         return  Container(
-                                           child:
-                                         selectedMemberWidget(
-                                           item,
-                                           '',
-                                           item
-                                               .substring(0, 1),
-                                         ),);
-                                       }).toList(),
-                                       ),
+                                    Wrap(children: selectedToMembers.map((item){
+                                      return  Container(
+                                        child:
+                                        selectedMemberWidget(
+                                          item,
+                                          '',
+                                          item
+                                              .substring(0, 1).toUpperCase(),
+                                        ),);
+                                    }).toList(),
+                                    ),
                                     Padding(
                                       padding: const EdgeInsets.only(left: 15.0),
                                       child: TypeAheadField(
@@ -303,14 +330,14 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
                                           ),
                                           suggestionsCallback:
                                               (pattern) async {
-                                            return await getMembers(pattern);
+                                            return await getToMembers(pattern);
                                           },
                                           transitionBuilder: (context,
                                               suggestionsBox, controller) {
                                             return suggestionsBox;
                                           },
                                           itemBuilder:
-                                              (context, String suggestion) {
+                                              (context, GetUserListTOCC suggestion) {
                                             String icon = '';
                                             return Padding(
                                               padding:
@@ -319,44 +346,74 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
                                                   top: 10,
                                                   bottom: 5),
                                               child: Container(
-                                                child: Row(
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
-                                                    icon.isEmpty
-                                                        ? CircleAvatar(
-                                                      backgroundColor:
-                                                      defaultColor,
-                                                      child: Text(
-                                                        suggestion.substring(
-                                                            0,
-                                                            1) ??
-                                                            '',
-                                                        style: const TextStyle(
-                                                            fontWeight:
-                                                            FontWeight
-                                                                .bold,
-                                                            fontSize:
-                                                            20,
-                                                            color: Colors
-                                                                .white),
-                                                      ),
-                                                      maxRadius: 15,
-                                                      foregroundImage:
-                                                      NetworkImage(
-                                                          "enterImageUrl"),
-                                                    )
-                                                        : ClipRRect(
-                                                      borderRadius:
-                                                      BorderRadius
-                                                          .circular(
-                                                          10),
-                                                      child:
-                                                      Image.asset(
-                                                          icon),
-                                                    ),
-                                                    const SizedBox(
-                                                      width: 5,
+                                                    Row(
+                                                      children: [
+                                                        icon.isEmpty
+                                                            ? CircleAvatar(
+                                                          backgroundColor:
+                                                          defaultColor,
+                                                          child: Container(
+
+                                                            child: Text(
+                                                              suggestion.userName?.substring(
+                                                                  0,
+                                                                  1).toUpperCase() ??
+                                                                  '',
+                                                              style: const TextStyle(
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                                  fontSize:
+                                                                  20,
+                                                                  color: Colors
+                                                                      .white),
+                                                            ),
+                                                          ),
+                                                          maxRadius: 15,
+                                                          foregroundImage:
+                                                          NetworkImage(
+                                                              "enterImageUrl"),
+                                                        )
+                                                            : ClipRRect(
+                                                          borderRadius:
+                                                          BorderRadius
+                                                              .circular(
+                                                              10),
+                                                          child:
+                                                          Image.asset(
+                                                              icon),
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 5,
+                                                        ),
+                                                        Container(
+                                                          width: SizeConfig.screenWidth * 0.65,
+                                                          color: Colors.white,
+                                                          child: Padding(
+                                                            padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                left: 10.0,
+                                                                top: 10),
+                                                            child: Text(
+                                                              overflow: TextOverflow.ellipsis,
+                                                              suggestion
+                                                                  .userName.toString(),
+                                                              style:
+                                                              styleIbmPlexSansRegular(
+                                                                  size: 18,
+                                                                  color:
+                                                                  grey),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
                                                     Container(
+                                                      width: SizeConfig.screenWidth * 0.65,
                                                       color: Colors.white,
                                                       child: Padding(
                                                         padding:
@@ -365,11 +422,12 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
                                                             left: 10.0,
                                                             top: 10),
                                                         child: Text(
+                                                          overflow: TextOverflow.ellipsis,
                                                           suggestion
-                                                              .toString(),
+                                                              .name.toString(),
                                                           style:
                                                           styleIbmPlexSansRegular(
-                                                              size: 18,
+                                                              size: 16,
                                                               color:
                                                               grey),
                                                         ),
@@ -381,17 +439,17 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
                                             );
                                           },
                                           onSuggestionSelected:
-                                              (String suggestion) {
+                                              (GetUserListTOCC suggestion) {
                                             _membersController.text =
-                                                suggestion.toString();
-                                            selectedMembers.add(
+                                                suggestion.userName.toString();
+                                            selectedToMembers.add(
                                                 _membersController.text);
 
-                                            if (selectedMembers
-                                                .contains(suggestion)) {
-                                              members.remove(suggestion);
+                                            if (selectedToMembers
+                                                .contains(suggestion.userName)) {
+                                              ToMembers.remove(suggestion);
                                             } else {
-                                              selectedMembers.add(
+                                              selectedToMembers.add(
                                                   _membersController.text);
                                             }
                                             _membersController.clear();
@@ -413,7 +471,7 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
                       visible: isShowCc,
                       child: ccWidget(
                           ccBcc: "CC",
-                          selectedMembers: selectedCcMembers,
+                          selectedCCMembers: selectedCcMembers,
                           controller: _ccmembersController),
                     ),
                     // Visibility(
@@ -432,11 +490,13 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
                                 const Radius.circular(10.0)),
                             color: skyBlue),
                         padding:
-                            const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                        const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
                         child: Container(
                             width: double.infinity,
                             height: MediaQuery.of(context).size.height * 0.25,
                             child: TextFormField(
+                              textCapitalization: TextCapitalization.words,
+
                               maxLines: null,
                               enableSuggestions: false,
                               autocorrect: false,
@@ -452,161 +512,53 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
                             )),
                       ),
                     ),
-                    // Container(
-                    //   decoration: BoxDecoration(
-                    //     borderRadius: const BorderRadius.only(
-                    //       topLeft: Radius.circular(10),
-                    //       topRight: Radius.circular(10),
-                    //     ),
-                    //     boxShadow: [
-                    //       // so here your custom shadow goes:
-                    //       BoxShadow(
-                    //         color: Colors.black.withAlpha(4),
-                    //         blurRadius: 0.5,
-                    //         offset: const Offset(0, -1),
-                    //       ),
-                    //     ],
-                    //   ),
-                    //   height: MediaQuery.of(context).size.height / 1.5,
-                    //   width: MediaQuery.of(context).size.width,
-                    //   child: Column(
-                    //     crossAxisAlignment: CrossAxisAlignment.start,
-                    //     children: [
-                    //       Padding(
-                    //         padding: const EdgeInsets.all(10.0),
-                    //         child: Row(
-                    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //           children: [
-                    //             Text(
-                    //               "To ",
-                    //               style: styleIbmPlexSansRegular(
-                    //                   size: 16, color: grey),
-                    //             ),
-                    //             Container(
-                    //               child: Row(children: List.generate(selectedMembers.length, (index) {
-                    //                 return selectedMemberWidget(selectedMembers[index]);
-                    //               }),),),
-                    //             SizedBox(width: 8,),
-                    //             Expanded(
-                    //               child: Container(
-                    //
-                    //                 child: TypeAheadField(
-                    //                                                         textFieldConfiguration: TextFieldConfiguration(
-                    //                   cursorColor: grey,    decoration: const InputDecoration(
-                    //
-                    //                         border: InputBorder.none,
-                    //                       ),
-                    //                       controller: _membersController,
-                    //                     ),
-                    //                     suggestionsCallback: (pattern) async {
-                    //                       return await getMembers(pattern);
-                    //                     },
-                    //                     transitionBuilder:
-                    //                         (context, suggestionsBox, controller) {
-                    //                       return suggestionsBox;
-                    //                     },
-                    //                     itemBuilder: (context, String suggestion) {
-                    //                       return Container(
-                    //                         color: Colors.white,
-                    //                         child: Padding(
-                    //                           padding: const EdgeInsets.only(
-                    //                               top: 10.0, left: 10.0),
-                    //                           child: Text(
-                    //                             suggestion.toString(),
-                    //                             style: styleIbmPlexSansRegular(
-                    //                                 size: 18, color: grey),
-                    //                           ),
-                    //                         ),
-                    //                       );
-                    //                     },
-                    //                     onSuggestionSelected: (String suggestion) {
-                    //                       _membersController.text =
-                    //                           suggestion.toString();
-                    //                       selectedMembers.add(_membersController.text);
-                    //
-                    //
-                    //                     }),
-                    //               ),
-                    //             ),
-                    //             Row(
-                    //               children: [
-                    //                 Text(
-                    //                   "Cc ",
-                    //                   style: styleIbmPlexSansRegular(
-                    //                       size: 16, color: grey),
-                    //                 ),
-                    //                 Text(
-                    //                   "Bcc ",
-                    //                   style: styleIbmPlexSansRegular(
-                    //                       size: 16, color: grey),
-                    //                 ),
-                    //               ],
-                    //             ),
-                    //           ],
-                    //         ),
-                    //       ),
-                    //       const Divider(
-                    //         height: 20,
-                    //         color: Colors.black12,
-                    //         thickness: 1,
-                    //         indent: 10,
-                    //         endIndent: 10,
-                    //       ),
-                    //
-                    //
-                    //       Row(children: [
-                    //         Text("Subject")
-                    //       ],)
-                    //     ],
-                    //   ),
-                    // ),
                   ],
                 ),
 
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: InkWell(
-                  onTap: () {
-                    if(selectedMembers.isEmpty){
-                      snackBar(context, "Please add one in to message.");
-                    }else if(_bodyController.text.isEmpty){
-                      snackBar(context, "Please enter message.");
-                    }else {
-                      if (isReply != null && isReply == true && isSentMessage == true) {
-                        context.read<MessageCubit>().sendMessage(
-                            "${user?.email}",
-                            selectedMembers,
-                            selectedCcMembers,
-                            _subjectController.text,
-                            _bodyController.text,
-                            getSentMessages?.messageId ?? 0);
-                      } else {
-                        context.read<MessageCubit>().sendMessage(
-                            "${user?.email}",
-                            selectedMembers,
-                            selectedCcMembers,
-                            _subjectController.text,
-                            _bodyController.text,
-                            getReceivedMessages?.messageId ?? 0);
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: InkWell(
+                    onTap: () {
+                      if(selectedToMembers.isEmpty){
+                        snackBar(context, "Please add one in to message.");
+                      }else if(_bodyController.text.isEmpty){
+                        snackBar(context, "Please enter message.");
+                      }else {
+                        if (isReply != null && isReply == true && isSentMessage == true) {
+                          context.read<MessageCubit>().sendMessage(
+                              "${user?.email}",
+                              selectedToMembers,
+                              selectedCcMembers,
+                              _subjectController.text,
+                              _bodyController.text,
+                              getSentMessages?.messageId ?? 0);
+                        } else {
+                          context.read<MessageCubit>().sendMessage(
+                              "${user?.email}",
+                              selectedToMembers,
+                              selectedCcMembers,
+                              _subjectController.text,
+                              _bodyController.text,
+                              getReceivedMessages?.messageId ?? 0);
+                        }
                       }
-                    }
-                  },
-                  child: Container(
-                      decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(14.0)),
-                          color: defaultColor),
-                      padding: const EdgeInsets.fromLTRB(17.0, 17.0, 17, 17.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Send",
-                            style: styleIbmPlexSansBold(size: 15, color: white),
-                          )
-                        ],
-                      )),
-                ),
-              )
+                    },
+                    child: Container(
+                        decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(14.0)),
+                            color: defaultColor),
+                        padding: const EdgeInsets.fromLTRB(17.0, 17.0, 17, 17.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Send",
+                              style: styleIbmPlexSansBold(size: 15, color: white),
+                            )
+                          ],
+                        )),
+                  ),
+                )
 
               ],
             ),
@@ -618,9 +570,9 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
 
   ccWidget(
       {String? ccBcc,
-      TextEditingController? controller,
-      List<String>? selectedMembers,
-      int? isCcBcc}) {
+        TextEditingController? controller,
+        List<String>? selectedCCMembers,
+        int? isCcBcc}) {
     return  Padding(
       padding: const EdgeInsets.all(10.0),
       child: Container(
@@ -638,7 +590,7 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Row(
-mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(
@@ -690,14 +642,14 @@ mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           ),
                           suggestionsCallback:
                               (pattern) async {
-                            return await getMembers(pattern);
+                            return await getCcMembers(pattern);
                           },
                           transitionBuilder: (context,
                               suggestionsBox, controller) {
                             return suggestionsBox;
                           },
                           itemBuilder:
-                              (context, String suggestion) {
+                              (context, GetUserListTOCC suggestion) {
                             String icon = '';
                             return Padding(
                               padding:
@@ -713,9 +665,9 @@ mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       backgroundColor:
                                       defaultColor,
                                       child: Text(
-                                        suggestion.substring(
+                                        suggestion.userName?.substring(
                                             0,
-                                            1) ??
+                                            1).toUpperCase() ??
                                             '',
                                         style: const TextStyle(
                                             fontWeight:
@@ -743,24 +695,50 @@ mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     const SizedBox(
                                       width: 5,
                                     ),
-                                    Container(
-                                      color: Colors.white,
-                                      child: Padding(
-                                        padding:
-                                        const EdgeInsets
-                                            .only(
-                                            left: 10.0,
-                                            top: 10),
-                                        child: Text(
-                                          suggestion
-                                              .toString(),
-                                          style:
-                                          styleIbmPlexSansRegular(
-                                              size: 18,
-                                              color:
-                                              grey),
+                                    Column(
+                                      children: [
+                                        Container(
+                                          width: SizeConfig.screenWidth * 0.65,
+                                          color: Colors.white,
+                                          child: Padding(
+                                            padding:
+                                            const EdgeInsets
+                                                .only(
+                                                left: 10.0,
+                                                top: 10),
+                                            child: Text(
+                                              suggestion
+                                                  .userName.toString(),
+                                              style:
+                                              styleIbmPlexSansRegular(
+                                                  size: 18,
+                                                  color:
+                                                  grey),
+                                            ),
+                                          ),
                                         ),
-                                      ),
+                                        Container(
+                                          width: SizeConfig.screenWidth * 0.65,
+                                          color: Colors.white,
+                                          child: Padding(
+                                            padding:
+                                            const EdgeInsets
+                                                .only(
+                                                left: 10.0,
+                                                top: 10),
+                                            child: Text(
+                                              overflow: TextOverflow.ellipsis,
+                                              suggestion
+                                                  .name.toString(),
+                                              style:
+                                              styleIbmPlexSansRegular(
+                                                  size: 16,
+                                                  color:
+                                                  grey),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -768,20 +746,20 @@ mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             );
                           },
                           onSuggestionSelected:
-                              (String suggestion) {
-                                _ccmembersController.text =
-                                suggestion.toString();
-                            selectedCcMembers.add(
+                              (GetUserListTOCC suggestion) {
+                            _ccmembersController.text =
+                                suggestion.userName.toString();
+                            selectedCCMembers?.add(
                                 _ccmembersController.text);
 
-                            if (selectedCcMembers
-                                .contains(suggestion)) {
-                              members.remove(suggestion);
+                            if (selectedCCMembers
+                                !.contains(suggestion.userName)) {
+                              CcMembers.remove(suggestion);
                             } else {
-                              selectedCcMembers.add(
+                              selectedCCMembers.add(
                                   _ccmembersController.text);
                             }
-                                _ccmembersController.clear();
+                            _ccmembersController.clear();
                           }),
                     ),
                     const SizedBox(
@@ -916,10 +894,10 @@ mainAxisAlignment: MainAxisAlignment.spaceBetween,
   // }
 
   selectedMemberWidget(
-    String? name,
-    String? icon,
-    String? firstChar,
-  ) {
+      String? name,
+      String? icon,
+      String? firstChar,
+      ) {
     return Container(
       margin: const EdgeInsets.only(left: 8.0, top: 10),
       decoration: BoxDecoration(
@@ -934,44 +912,48 @@ mainAxisAlignment: MainAxisAlignment.spaceBetween,
         child: Row(
             mainAxisSize:  MainAxisSize.min,
             children: [
-          icon!.isEmpty
-              ? CircleAvatar(
-                  backgroundColor: defaultColor,
-                  child: Text(
-                    firstChar ?? '',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        color: Colors.white),
-                  ),
-                  maxRadius: 15,
-                  foregroundImage: NetworkImage("enterImageUrl"),
-                )
-              : ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.asset(icon),
+              icon!.isEmpty
+                  ? CircleAvatar(
+                backgroundColor: defaultColor,
+                child: Text(
+                  firstChar ?? '',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.white),
                 ),
-          const SizedBox(
-            width: 5,
-          ),
-          Text(name ?? ''),
-          const SizedBox(
-            width: 5,
-          ),
-          InkWell(
-            onTap: () {
-              setState(() {
-                selectedMembers.remove(name);
-                members.add(name ?? '');
-              });
-            },
-            child: const Icon(
-              Icons.clear,
-              size: 15,
-            ),
-          )
-        ]),
+                maxRadius: 15,
+                foregroundImage: NetworkImage("enterImageUrl"),
+              )
+                  : ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.asset(icon),
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+              Text(name ?? ''),
+              const SizedBox(
+                width: 5,
+              ),
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    selectedToMembers.remove(name);
+                ToResponseMembers.forEach((element) {
+                  if(element.userName == name){
+                    ToMembers.insert(0,element);
+                  }
+                });
+                  });
+                },
+                child: const Icon(
+                  Icons.clear,
+                  size: 15,
+                ),
+              )
+            ]),
       ),
     );
   }
@@ -991,50 +973,54 @@ mainAxisAlignment: MainAxisAlignment.spaceBetween,
         child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-          icon!.isEmpty
-              ? CircleAvatar(
-                  backgroundColor: defaultColor,
-                  child: Text(
-                    firstChar ?? '',
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        color: Colors.white),
-                  ),
-                  maxRadius: 15,
-                  foregroundImage: NetworkImage("enterImageUrl"),
-                )
-              : ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.asset(icon),
+              icon!.isEmpty
+                  ? CircleAvatar(
+                backgroundColor: defaultColor,
+                child: Text(
+                  firstChar ?? '',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.white),
                 ),
-          const SizedBox(
-            width: 5,
-          ),
-          Text(name ?? ''),
-          const SizedBox(
-            width: 5,
-          ),
-          InkWell(
-            onTap: () {
-              setState(() {
-                selectedCcMembers.remove(name);
-                members.add(name ?? '');
-              });
-            },
-            child: const Icon(
-              Icons.clear,
-              size: 15,
-            ),
-          )
-        ]),
+                maxRadius: 15,
+                foregroundImage: NetworkImage("enterImageUrl"),
+              )
+                  : ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.asset(icon),
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+              Text(name ?? ''),
+              const SizedBox(
+                width: 5,
+              ),
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    selectedCcMembers.remove(name);
+                    CcResponseMembers.forEach((element) {
+                      if(element.userName == name){
+                        CcMembers.insert(0,element);
+                      }
+                    });
+                  });
+                },
+                child: const Icon(
+                  Icons.clear,
+                  size: 15,
+                ),
+              )
+            ]),
       ),
     );
   }
 
   selectedBccMemberWidget(
-    String? name,
-  ) {
+      String? name,
+      ) {
     return Container(
       decoration: const BoxDecoration(
         color: defaultColor,
@@ -1087,29 +1073,38 @@ mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
                 child: TextFormField(
-              maxLines: null,
-              enableSuggestions: false,
-              autocorrect: false,
-              decoration: InputDecoration(
-                  hintText: "Subject",
-                  hintStyle: styleIbmPlexSansRegular(size: 16, color: grey),
-                  contentPadding: EdgeInsets.zero,
-                  isDense: true,
-                  border: InputBorder.none),
-              controller: controller,
-              cursorColor: grey,
-            )),
+                  textCapitalization: TextCapitalization.words,
+
+                  maxLines: null,
+                  enableSuggestions: false,
+                  autocorrect: false,
+                  decoration: InputDecoration(
+                      hintText: "Subject",
+                      hintStyle: styleIbmPlexSansRegular(size: 16, color: grey),
+                      contentPadding: EdgeInsets.zero,
+                      isDense: true,
+                      border: InputBorder.none),
+                  controller: controller,
+                  cursorColor: grey,
+                )),
           ],
         ),
       ),
     );
   }
 
-  List<String> getMembers(String query) {
-    List<String> matches = [];
-    matches.addAll(members);
+  List<GetUserListTOCC> getToMembers(String query) {
+    List<GetUserListTOCC> matches = [];
+    matches.addAll(ToMembers);
     matches.retainWhere(
-        (s) => s.toString().toLowerCase().contains(query.toLowerCase()));
+            (s) => s.toString().toLowerCase().contains(query.toLowerCase()));
+    return matches;
+  }
+  List<GetUserListTOCC> getCcMembers(String query) {
+    List<GetUserListTOCC> matches = [];
+    matches.addAll(CcMembers);
+    matches.retainWhere(
+            (s) => s.toString().toLowerCase().contains(query.toLowerCase()));
     return matches;
   }
 }

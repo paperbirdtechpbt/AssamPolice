@@ -95,6 +95,8 @@ class _AddVdpMemberState extends State<AddVdpMember> {
                     children: [
                       
                       CoustomTextFieldEditBox(
+                        textCapitalization: TextCapitalization.words,
+
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         border: Border.all(
                             color: isNameValidate
@@ -136,6 +138,8 @@ class _AddVdpMemberState extends State<AddVdpMember> {
                       ),
 
                       CoustomTextFieldEditBox(
+                        textCapitalization: TextCapitalization.none,
+
                         border: Border.all(
                             color: isMobileValidate ? defaultColor : Colors
                                 .transparent),
@@ -177,6 +181,8 @@ class _AddVdpMemberState extends State<AddVdpMember> {
                       ),
 
                       CoustomTextFieldEditBox(
+                        textCapitalization: TextCapitalization.none,
+
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         border: Border.all(
                             color:
@@ -188,7 +194,7 @@ class _AddVdpMemberState extends State<AddVdpMember> {
                         inputBorder: InputBorder.none,
                         controller: _emailController,
                         flutterIcon: const Icon(
-                          Icons.person,
+                          Icons.alternate_email,
                           color: defaultColor,
                         ),
                         label: memberEmail,
@@ -646,7 +652,7 @@ class _AddVdpMemberState extends State<AddVdpMember> {
     if (value.isEmpty) {
       return true;
     }
-    if (value.length <= 2) {
+    if (value.length != 10) {
       return true;
     } else {
       return false;

@@ -23,6 +23,7 @@ CoustomTextFieldEditBox({
   required String icon,
   required TextEditingController controller,
   required String hint,
+  required  TextCapitalization textCapitalization,
   Icon? flutterIcon,
   InputBorder? inputBorder,
   Border? border,
@@ -54,14 +55,15 @@ CoustomTextFieldEditBox({
             child: TextFormField(
 keyboardType: textInputType,
           controller: controller,
-          decoration: InputDecoration(
+              textCapitalization : textCapitalization,
+
+              decoration: InputDecoration(
 
               border: inputBorder,
               enabledBorder: InputBorder.none,
               focusedBorder: InputBorder.none,
               hintText: hint,
               focusedErrorBorder: const OutlineInputBorder(
-
                 borderRadius: BorderRadius.all(Radius.circular(0)),
                 borderSide: BorderSide(
                   width: 0,
@@ -117,6 +119,8 @@ CoustomLatLongTextFieldEditBox({
             child: TextFormField(
               keyboardType: textInputType,
               controller: controller,
+
+
               decoration: InputDecoration(
 
                   border: inputBorder,

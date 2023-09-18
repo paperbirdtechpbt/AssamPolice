@@ -13,6 +13,8 @@ import '../../domain/models/requests/get_receive_message_request.dart';
 import '../../domain/models/requests/get_received_messages_with_parent_details_request.dart';
 import '../../domain/models/requests/get_sent_message.dart';
 import '../../domain/models/requests/get_sent_messages_with_parent_details_request.dart';
+import '../../domain/models/requests/get_user_list_tocc_request.dart';
+import '../../domain/models/requests/get_user_menu_option_request.dart';
 import '../../domain/models/requests/incidence_report_request.dart';
 import '../../domain/models/requests/police_station_request.dart';
 import '../../domain/models/requests/send_message_request.dart';
@@ -33,6 +35,8 @@ import '../../domain/models/responses/get_received_messages_response.dart';
 import '../../domain/models/responses/get_received_messages_with_parent_details.dart';
 import '../../domain/models/responses/get_sent_message_response.dart';
 import '../../domain/models/responses/get_sent_messages_with_parent_details_response.dart';
+import '../../domain/models/responses/get_user_list_tocc_response.dart';
+import '../../domain/models/responses/get_user_menu_option_response.dart';
 import '../../domain/models/responses/login_response.dart';
 import '../../domain/models/responses/send_message_response.dart';
 import '../../domain/models/responses/update_vdp_committee_response.dart';
@@ -310,6 +314,28 @@ vdpId: request.vdpId,
     return getStateOf<GetAllVdpMemberResponse>(
       request: () => _ApiService.getAllVdpMember(
         vdpCommitteeId:  request.vdpCommitteeId,
+      ),
+    );
+  }
+
+  @override
+  Future<DataState<GetUserListTOCCResponse>> getUserListTOCC({required GetUserListTOCCRequest request}) {
+    return getStateOf<GetUserListTOCCResponse>(
+      request: () => _ApiService.getUserListTOCC(
+        userName: request.userName,
+        transactionMode: request.transactionMode,
+        senderType: request.senderType,
+      ),
+    );
+  }
+
+
+  @override
+  Future<DataState<GetUserMenuOptionResponse>> getUserMenuOption({required GetUserMenuOptionRequest request}) {
+    return getStateOf<GetUserMenuOptionResponse>(
+      request: () => _ApiService.getUserMenuOption(
+        userName: request.userName,
+        transactionMode: request.transactionMode,
       ),
     );
   }

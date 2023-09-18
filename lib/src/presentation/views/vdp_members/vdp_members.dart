@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 import '../../../config/router/app_router.dart';
 import '../../../domain/models/data/category.dart';
@@ -7,6 +8,7 @@ import '../../../domain/models/data/district.dart';
 import '../../../domain/models/data/get_all_vdp_committee.dart';
 import '../../../domain/models/data/get_all_vdp_member.dart';
 import '../../../domain/models/data/user.dart';
+import '../../../utils/constants/assets.dart';
 import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/strings.dart';
 import '../../../utils/reference/my_shared_reference.dart';
@@ -585,29 +587,45 @@ class _VdpMembersListViewState extends State<VdpMembersListView> {
                                 ),
                               );
                             case VdpMemberSuccessState:
-                              return Column(
-                                children: List.generate(member.length, (index) {
-                                  return membersList(
-                                    memberId:member[index].vdpMemberId ,
-                                    number: member[index].mobileNumber,
-                                    icon: '',
-                                    subTitle: member[index].role,
-                                    firstChar:
-                                        member[index].name?.substring(0, 1).toUpperCase(),
-                                    name: member[index].name,
-                                    onTap: () {
-                                      // appRouter.push(EditVdpMemberRoute(getAllVdpMember: member[index])).then((value) {
-                                      //   context.read<VdpMemberCubit>().getAllVdpMember(vdpCommitteeId: getAllVDPCommittee?.vdpId);
-                                      //
-                                      // });
-                                      appRouter.push( VdpMemberDetailViewRoute(getAllVdpMember: member[index])).then((value) {
-                                        context.read<VdpMemberCubit>().getAllVdpMember(vdpCommitteeId: getAllVDPCommittee?.vdpId);
-                                      });
-                                      return null;
-                                    },
-                                  );
-                                }),
-                              );
+                              if(member.isNotEmpty){
+                                return Column(
+                                  children: List.generate(member.length, (index) {
+                                    return membersList(
+                                      memberId:member[index].vdpMemberId ,
+                                      number: member[index].mobileNumber,
+                                      icon: '',
+                                      subTitle: member[index].role,
+                                      firstChar:
+                                      member[index].name?.substring(0, 1).toUpperCase(),
+                                      name: member[index].name,
+                                      onTap: () {
+                                        // appRouter.push(EditVdpMemberRoute(getAllVdpMember: member[index])).then((value) {
+                                        //   context.read<VdpMemberCubit>().getAllVdpMember(vdpCommitteeId: getAllVDPCommittee?.vdpId);
+                                        //
+                                        // });
+                                        appRouter.push( VdpMemberDetailViewRoute(getAllVdpMember: member[index])).then((value) {
+                                          context.read<VdpMemberCubit>().getAllVdpMember(vdpCommitteeId: getAllVDPCommittee?.vdpId);
+                                        });
+                                        return null;
+                                      },
+                                    );
+                                  }),
+                                );
+                              }else {
+                                return  Center(
+                                  child: Padding(
+                                    padding:  EdgeInsets.only(top: SizeConfig.screenHeight * 0.20),
+                                    child: Column(
+                                      children: [
+                                        SvgPicture.asset(ic_not_data,color: defaultColor,
+                                          height: SizeConfig.screenHeight * 0.20,
+                                        ),
+                                        Center(child: Text("No Record Found",style: styleIbmPlexSansBold(size: 20, color: defaultColor),),),
+
+                                      ],
+                                    ),
+                                  ),);                              }
+
                             default:
                               return Column(
                                 children: List.generate(member.length, (index) {
