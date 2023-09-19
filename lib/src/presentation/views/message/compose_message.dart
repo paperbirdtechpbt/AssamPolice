@@ -326,7 +326,7 @@ setState(() {
                                             const InputDecoration(
                                               border: InputBorder.none,
                                             ),
-                                            controller: _membersController,
+                                            controller: this._membersController,
                                           ),
                                           suggestionsCallback:
                                               (pattern) async {
@@ -389,50 +389,56 @@ setState(() {
                                                         const SizedBox(
                                                           width: 5,
                                                         ),
-                                                        Container(
-                                                          width: SizeConfig.screenWidth * 0.65,
-                                                          color: Colors.white,
-                                                          child: Padding(
-                                                            padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                                left: 10.0,
-                                                                top: 10),
-                                                            child: Text(
-                                                              overflow: TextOverflow.ellipsis,
-                                                              suggestion
-                                                                  .userName.toString(),
-                                                              style:
-                                                              styleIbmPlexSansRegular(
-                                                                  size: 18,
-                                                                  color:
-                                                                  grey),
+                                                        Column(
+                                                          children: [
+
+                                                            Container(
+                                                              width: SizeConfig.screenWidth * 0.65,
+                                                              color: Colors.white,
+                                                              child: Padding(
+                                                                padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    left: 10.0,
+                                                                    top: 10),
+                                                                child: Text(
+                                                                  overflow: TextOverflow.ellipsis,
+                                                                  suggestion
+                                                                      .userName.toString(),
+                                                                  style:
+                                                                  styleIbmPlexSansRegular(
+                                                                      size: 18,
+                                                                      color:
+                                                                      grey),
+                                                                ),
+                                                              ),
                                                             ),
-                                                          ),
+                                                            Container(
+                                                              width: SizeConfig.screenWidth * 0.65,
+                                                              color: Colors.white,
+                                                              child: Padding(
+                                                                padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    left: 10.0,
+                                                                    top: 10),
+                                                                child: Text(
+                                                                  overflow: TextOverflow.ellipsis,
+                                                                  suggestion
+                                                                      .name.toString(),
+                                                                  style:
+                                                                  styleIbmPlexSansRegular(
+                                                                      size: 16,
+                                                                      color:
+                                                                      grey),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
                                                         ),
                                                       ],
                                                     ),
-                                                    Container(
-                                                      width: SizeConfig.screenWidth * 0.65,
-                                                      color: Colors.white,
-                                                      child: Padding(
-                                                        padding:
-                                                        const EdgeInsets
-                                                            .only(
-                                                            left: 10.0,
-                                                            top: 10),
-                                                        child: Text(
-                                                          overflow: TextOverflow.ellipsis,
-                                                          suggestion
-                                                              .name.toString(),
-                                                          style:
-                                                          styleIbmPlexSansRegular(
-                                                              size: 16,
-                                                              color:
-                                                              grey),
-                                                        ),
-                                                      ),
-                                                    ),
+
                                                   ],
                                                 ),
                                               ),
@@ -440,7 +446,7 @@ setState(() {
                                           },
                                           onSuggestionSelected:
                                               (GetUserListTOCC suggestion) {
-                                            _membersController.text =
+                                                this._membersController.text =
                                                 suggestion.userName.toString();
                                             selectedToMembers.add(
                                                 _membersController.text);
@@ -1097,14 +1103,14 @@ setState(() {
     List<GetUserListTOCC> matches = [];
     matches.addAll(ToMembers);
     matches.retainWhere(
-            (s) => s.toString().toLowerCase().contains(query.toLowerCase()));
+            (s) => s.userName.toString().toLowerCase().contains(query.toLowerCase()));
     return matches;
   }
   List<GetUserListTOCC> getCcMembers(String query) {
     List<GetUserListTOCC> matches = [];
     matches.addAll(CcMembers);
     matches.retainWhere(
-            (s) => s.toString().toLowerCase().contains(query.toLowerCase()));
+            (s) => s.userName.toString().toLowerCase().contains(query.toLowerCase()));
     return matches;
   }
 }

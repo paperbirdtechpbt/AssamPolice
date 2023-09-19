@@ -1,4 +1,4 @@
-package com.example.flutter_clean_architecture
+package com.assam.police
 
 import io.flutter.embedding.android.FlutterActivity
 

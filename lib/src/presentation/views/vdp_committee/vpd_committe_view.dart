@@ -104,7 +104,7 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                           var response = state.categoryResponse?.data;
                         }
                       } else if (state is GetDistrictSuccessState) {
-                        snackBar(context, "${state.response?.message}");
+                        // snackBar(context, "${state.response?.message}");
                         var response = state.response;
                         listDistrictResponse =
                             state.response?.data?.listDistrict;
@@ -119,7 +119,7 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                       }else if (state is HomeErrorState){
                         snackBar(context, "something went wrong");
                       } else if (state is GetPoliceStationSuccessState) {
-                        snackBar(context, "${state.response?.message}");
+                        // snackBar(context, "${state.response?.message}");
                         var response = state.response;
                         listPoliceStationResponse =
                             state.response?.data?.listDistrict;

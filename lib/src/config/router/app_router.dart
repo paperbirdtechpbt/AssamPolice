@@ -17,19 +17,13 @@ import '../../presentation/views/Vdp/reply_message/reply_message_screen.dart';
 import '../../presentation/views/add_member_location/add_member.dart';
 import '../../presentation/views/add_member_location/add_member_location.dart';
 import '../../presentation/views/add_member_location/member_list.dart';
-import '../../presentation/views/address/address_view.dart';
-import '../../presentation/views/dashboard/dashboard.dart';
 import '../../presentation/views/edit_members/edit_members_address.dart';
 import '../../presentation/views/home/home_view.dart';
-import '../../presentation/views/incident_report/incidence_report.dart';
 import '../../presentation/views/login/login_view.dart';
-import '../../presentation/views/map/add_location.dart';
-import '../../presentation/views/map/google_map.dart';
 import '../../presentation/views/message/inbox.dart';
 import '../../presentation/views/message/compose_message.dart';
 import '../../presentation/views/message/message.dart';
 import '../../presentation/views/message/sent_message.dart';
-import '../../presentation/views/photos/add_photo_capture_view.dart';
 import '../../presentation/views/splash/splash_screen.dart';
 import '../../presentation/views/vdp_committee/add_vdp_committee.dart';
 import '../../presentation/views/vdp_committee/update_vdp_committee.dart';
@@ -38,7 +32,6 @@ import '../../presentation/views/vdp_members/add_vdp_member.dart';
 import '../../presentation/views/vdp_members/edit_vdp_member.dart';
 import '../../presentation/views/vdp_members/vdp_member_detail.dart';
 import '../../presentation/views/vdp_members/vdp_members.dart';
-import '../../presentation/views/view_image/photo_view.dart';
 
 
 part 'app_router.gr.dart';
@@ -48,14 +41,7 @@ part 'app_router.gr.dart';
     AutoRoute(page: SplashScreen, initial: true),
     AutoRoute(page: LoginView),
     AutoRoute(page: HomeView),
-    AutoRoute(page: AddressView),
-    AutoRoute(page: AddPhotoCaptureView),
-    AutoRoute(page: GoogleMapPickLocation),
-    AutoRoute(page: ViewImage),
-    AutoRoute(page: IncidenceScreen),
-    AutoRoute(page: DashBoardScreen),
     AutoRoute(page: AddMemberLocation),
-    AutoRoute(page: AddLocationScreen),
     AutoRoute(page: AddMemberScreen),
     AutoRoute(page: InBoxScreen),
     AutoRoute(page: ComposeMessageScreen),

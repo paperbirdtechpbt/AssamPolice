@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../../../main.dart';
 import '../../../config/router/app_router.dart';
@@ -11,7 +10,6 @@ import '../../../domain/models/data/district.dart';
 import '../../../domain/models/data/geo_location.dart';
 import '../../../domain/models/data/get_all_vdp_committee.dart';
 import '../../../domain/models/data/user.dart';
-import '../../../utils/GpsLocation.dart';
 import '../../../utils/constants/assets.dart';
 import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/strings.dart';
@@ -22,7 +20,6 @@ import '../../cubits/vdp_committee/vdp_committee_cubit.dart';
 import '../../cubits/vdp_committee/vdp_committee_state.dart';
 import '../../widgets/common_widgets.dart';
 import '../../widgets/custom_dropdown.dart';
-import 'package:location/location.dart' as GpsLocationEnable;
 
 class UpdateVdpCommitteeView extends StatefulWidget {
   UpdateVdpCommitteeView({super.key, this.getAllVDPCommittee});
@@ -101,100 +98,13 @@ class _UpdateVdpCommitteeViewState extends State<UpdateVdpCommitteeView> {
     });
 
     cubit = context.read<HomeCubit>();
-    checkPermission();
-    location = GpsLocationEnable.Location();
 
-    Timer(const Duration(seconds: 3), () => {checkGpsEnable()});
     getUser();
   }
 
   bool serviceStatus = false;
 
-  checkGpsEnable() async {
-    serviceStatus = await Geolocator.isLocationServiceEnabled();
-    setState(() {
-      serviceStatus;
-    });
-  }
 
-  late LocationPermission permission;
-  checkPermission() async {
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        print('Location permissions are denied');
-      } else if (permission == LocationPermission.deniedForever) {
-        print("'Location permissions are permanently denied");
-      } else {
-        hasPermission = true;
-        fetchLocation();
-      }
-    } else {
-      hasPermission = true;
-      fetchLocation();
-    }
-    setState(() {
-      if (hasPermission) {
-        getLocation();
-        fetchLocation();
-      }
-    });
-  }
-
-  Position? position = null;
-  String long = "", lat = "";
-  late StreamSubscription<Position> positionStream;
-  getLocation() async {
-    position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-
-    long = position!.longitude.toString();
-    lat = position!.latitude.toString();
-
-    setState(() {
-      long = position!.longitude.toString();
-      lat = position!.latitude.toString();
-    });
-
-    LocationSettings locationSettings = const LocationSettings(
-      distanceFilter: 100, //minimum distance (measured in meters) a
-      //device must move horizontally before an update event is generated;
-    );
-
-    Geolocator.getPositionStream(locationSettings: locationSettings)
-        .listen((Position position) {
-      print(position.longitude); //Output: 80.24599079
-      print(position.latitude); //Output: 29.6593457
-
-      long = position.longitude.toString();
-      lat = position.latitude.toString();
-
-      setState(() {
-        long = position.longitude.toString();
-        lat = position.latitude.toString();
-      });
-    });
-  }
-
-  fetchLocation() {
-    Geolocator.isLocationServiceEnabled().then((value) => {
-          if (value)
-            {
-              GpsLocation.gpsLocation.getLocation(
-                (position) {
-                  this.position = position;
-                },
-              )
-            }
-          else
-            {
-              // removeLoading(),
-              snackBar(
-                  context, "GPS Service is not enabled, turn on GPS location")
-            }
-        });
-  }
 
   getUser() async {
     var preferences = MySharedPreference();
@@ -574,9 +484,11 @@ class _UpdateVdpCommitteeViewState extends State<UpdateVdpCommitteeView> {
                                           context
                                               .read<VdpCommitteeCubit>()
                                               .updateVdpCommittee(
+                                              vdpId: getAllVDPCommittee?.vdpId,
+
                                               vdpName: _nameController.text,
-                                              longitude: long,
-                                              latitude: lat,
+                                              longitude: _longController.text,
+                                              latitude: _latController.text,
                                               policeStationId: int.parse(
                                                   selectedPoliceStationId!),
                                               districtId: int.parse(
@@ -611,9 +523,10 @@ class _UpdateVdpCommitteeViewState extends State<UpdateVdpCommitteeView> {
                                           context
                                               .read<VdpCommitteeCubit>()
                                               .updateVdpCommittee(
+                                            vdpId: getAllVDPCommittee?.vdpId,
                                               vdpName: _nameController.text,
-                                              longitude: long,
-                                              latitude: lat,
+                                              longitude: _longController.text,
+                                              latitude: _latController.text,
                                               policeStationId: int.parse(
                                                   selectedPoliceStationId!),
                                               districtId: int.parse(
