@@ -542,6 +542,7 @@ sendReceivedMessageBox({
   String? subject,
   String? date,
   bool? isSeenMessage,
+  int? messageCount,
 }) {
   return InkWell(
     onTap: onTap,
@@ -593,11 +594,18 @@ sendReceivedMessageBox({
               ),
               const SizedBox(height: 3,),
 
-Text(
-                overflow: TextOverflow.ellipsis,
-                subTitle ?? '',
-                style: styleIbmPlexSansRegular(size: 16, color: grey),
-              ),
+Container(
+
+  child:   Text(
+
+                  overflow: TextOverflow.ellipsis,
+maxLines: 1,
+                  subTitle ?? '',
+
+                  style: styleIbmPlexSansRegular(size: 16, color: grey),
+
+                ),
+),
             ],
           )),
           leading: icon!.isEmpty

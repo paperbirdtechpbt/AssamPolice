@@ -134,6 +134,7 @@ class MyApp extends StatelessWidget {
                     locator<ApiRepository>(),
                   ),
             ),
+
           ],
           child: OKToast(
             child: MaterialApp.router(

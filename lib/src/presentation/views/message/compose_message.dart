@@ -76,7 +76,8 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
         user = data?.user;
       })
     });
-    context.read<MessageCubit>().getUserListTO(user?.email, 6,"to").then((value) =>     context.read<MessageCubit>().getUserListCC(user?.email, 6,"cc"),);
+    context.read<MessageCubit>().getUserListTO(user?.email, 6,"to");
+
 
   }
 
@@ -87,8 +88,7 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
 
       setState(() {
         selectedToMembers = getSentMessages?.toRecipientUserNameList ?? [];
-        selectedCcMembers
-        = getSentMessages?.ccRecipientUserNameList ?? [];
+        selectedCcMembers = getSentMessages?.ccRecipientUserNameList ?? [];
         _subjectController.text = getSentMessages?.subject ?? '';
         _bodyController.text = getSentMessages?.messageBody ?? '';
       });
@@ -96,8 +96,7 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
     else if (isReply != null && isReply == true && isSentMessage == false) {
       setState(() {
         selectedToMembers.add(getReceivedMessages?.senderUserName ?? '');
-        selectedCcMembers=
-            getReceivedMessages?.ccRecipientUserNameList ?? [];
+        selectedCcMembers= getReceivedMessages?.ccRecipientUserNameList ?? [];
         _subjectController.text = getReceivedMessages?.subject ?? '';
         _bodyController.text = getReceivedMessages?.messageBody ?? '';
       });
@@ -200,7 +199,7 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
 setState(() {
   ToMembers.addAll(ToResponseMembers);
 });
-
+                        context.read<MessageCubit>().getUserListCC(user?.email, 6,"cc");
                       }
                     }else if(state is GetUserListCCSuccessState){
                       if(state.getUserListTOCCResponse?.code == "Success"){

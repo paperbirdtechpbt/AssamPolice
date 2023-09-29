@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 
 import '../../../domain/models/responses/geo_address_response.dart';
 import '../../../domain/models/responses/get_message_body_response.dart';
+import '../../../domain/models/responses/get_message_by_parent_id_response.dart';
 import '../../../domain/models/responses/get_received_messages_response.dart';
 import '../../../domain/models/responses/get_received_messages_with_parent_details.dart';
 import '../../../domain/models/responses/get_sent_message_response.dart';
@@ -20,6 +21,7 @@ abstract class MessageState {
   final GetReceivedMessagesWithParentDetailsResponse? getReceivedMessagesWithParentDetailsResponse;
   final GetSentMessagesWithParentDetailsResponse? getSentMessagesWithParentDetailsResponse;
   final GetUserListTOCCResponse? getUserListTOCCResponse;
+  final GetMessageByParentIdResponse? getMessageByParentIdResponse;
   final DioError? error;
 
   const MessageState({
@@ -31,10 +33,11 @@ abstract class MessageState {
     this.getReceivedMessagesWithParentDetailsResponse,
     this.getSentMessagesWithParentDetailsResponse,
     this.getUserListTOCCResponse,
+    this.getMessageByParentIdResponse,
     this.error,
   });
 
-  List<Object?> get props => [response, getUserListTOCCResponse,error,getReceivedMessagesResponse,getSentMessagesResponse,getMessageBodyResponse,sendMessageResponse,getReceivedMessagesWithParentDetailsResponse,getSentMessagesWithParentDetailsResponse];
+  List<Object?> get props => [response, getUserListTOCCResponse,error,getReceivedMessagesResponse,getSentMessagesResponse,getMessageBodyResponse,sendMessageResponse,getReceivedMessagesWithParentDetailsResponse,getSentMessagesWithParentDetailsResponse,getMessageByParentIdResponse];
 }
 
 class SendMessageInitialState extends MessageState {
@@ -182,4 +185,23 @@ class GetUserListCCSuccessState extends MessageState {
 
 class GetUserListCCErrorState extends MessageState {
   const GetUserListCCErrorState({super.error});
+}
+
+
+
+//getMessageByParentId
+class GetMessageByParentIdInitialState extends MessageState {
+  const GetMessageByParentIdInitialState();
+}
+
+class GetMessageByParentIdLoadingState extends MessageState {
+  const GetMessageByParentIdLoadingState();
+}
+
+class GetMessageByParentIdSuccessState extends MessageState {
+  const GetMessageByParentIdSuccessState({super.getMessageByParentIdResponse});
+}
+
+class GetMessageByParentIdErrorState extends MessageState {
+  const GetMessageByParentIdErrorState({super.error});
 }

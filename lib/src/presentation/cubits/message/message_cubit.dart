@@ -1,10 +1,10 @@
 import '../../../domain/models/requests/get_body_message.dart';
+import '../../../domain/models/requests/get_message_by_parent_id_request.dart';
 import '../../../domain/models/requests/get_receive_message_request.dart';
 import '../../../domain/models/requests/get_received_messages_with_parent_details_request.dart';
 import '../../../domain/models/requests/get_sent_message.dart';
 import '../../../domain/models/requests/get_sent_messages_with_parent_details_request.dart';
 import '../../../domain/models/requests/get_user_list_tocc_request.dart';
-import '../../../domain/models/requests/get_user_menu_option_request.dart';
 import '../../../domain/models/requests/send_message_request.dart';
 import '../../../domain/models/responses/login_response.dart';
 import '../../../domain/repositories/api_repository.dart';
@@ -21,20 +21,19 @@ class MessageCubit extends BaseCubit<MessageState, LoginResponse> {
   Future<void> sendMessage(String? senderUserName,
       List<String>? toRecipients,
       List<String>? cCRecipients,
-      String? messagSubject,
-      String? messagBody,
+      String? messageSubject,
+      String? messageBody,
       int? parentMessagesId,) async {
     if (isBusy) return;
 
     await run(() async {
       emit(const SendMessageLoadingState());
       var request = SendMessageRequest(
-
           senderUserName: senderUserName,
           toRecipients: toRecipients,
           cCRecipients: cCRecipients,
-          messagSubject: messagSubject,
-          messagBody: messagBody,
+          messagSubject: messageSubject,
+          messagBody: messageBody,
           parentMessagesId: parentMessagesId
 
       );
@@ -50,7 +49,7 @@ class MessageCubit extends BaseCubit<MessageState, LoginResponse> {
 
   Future<void> getReceivedMessages(String? userName,
       int? startIndex,
-      int? numberofMessage) async {
+      int? noOfMessage) async {
     if (isBusy) return;
 
     await run(() async {
@@ -58,7 +57,7 @@ class MessageCubit extends BaseCubit<MessageState, LoginResponse> {
       var request = GetReceivedMessagesRequest(
           userName: userName,
           startIndex: startIndex,
-          numberofMessage: numberofMessage
+          numberofMessage: noOfMessage
       );
       final response = await _apiRepository.getReceivedMessages(
           request: request);
@@ -74,7 +73,7 @@ class MessageCubit extends BaseCubit<MessageState, LoginResponse> {
 
   Future<void> getSentMessages(String? userName,
       int? startIndex,
-      int? numberofMessage) async {
+      int? noOfMessage) async {
     if (isBusy) return;
 
     await run(() async {
@@ -82,7 +81,7 @@ class MessageCubit extends BaseCubit<MessageState, LoginResponse> {
       var request = GetSentMessagesRequest(
           userName: userName,
           startIndex: startIndex,
-          numberofMessage: numberofMessage
+          numberofMessage: noOfMessage
       );
       final response = await _apiRepository.getSentMessages(request: request);
       if (response is DataSuccess) {
@@ -118,7 +117,7 @@ class MessageCubit extends BaseCubit<MessageState, LoginResponse> {
 
   Future<void> getReceivedMessagesWithParentDetails(String? userName,
       int? startIndex,
-      int? numberofMessage) async {
+      int? noOfMessage) async {
     if (isBusy) return;
 
     await run(() async {
@@ -126,7 +125,7 @@ class MessageCubit extends BaseCubit<MessageState, LoginResponse> {
       var request = GetReceivedMessagesWithParentDetailsRequest(
           userName: userName,
           startIndex: startIndex,
-          numberofMessage: numberofMessage
+          numberofMessage: noOfMessage
       );
       final response = await _apiRepository
           .getReceivedMessagesWithParentDetails(request: request);
@@ -144,7 +143,7 @@ class MessageCubit extends BaseCubit<MessageState, LoginResponse> {
 
   Future<void> getSentMessagesWithParentDetails(String? userName,
       int? startIndex,
-      int? numberofMessage) async {
+      int? noOfMessage) async {
     if (isBusy) return;
 
     await run(() async {
@@ -152,7 +151,7 @@ class MessageCubit extends BaseCubit<MessageState, LoginResponse> {
       var request = GetSentMessagesWithParentDetailsRequest(
           userName: userName,
           startIndex: startIndex,
-          numberofMessage: numberofMessage
+          numberofMessage: noOfMessage
       );
       final response = await _apiRepository.getSentMessagesWithParentDetails(
           request: request);
@@ -168,17 +167,17 @@ class MessageCubit extends BaseCubit<MessageState, LoginResponse> {
 
 //GetUserListTOCC
 
-  Future<void>getUserListTO(String? userName,
-      int? transactionMode,
-      String? senderType) async {
-    if (isBusy) return;
-    await run(() async {
-      emit(const GetUserListTOCCLoadingState());
-      var request = GetUserListTOCCRequest(
-        userName: userName,
-        transactionMode: transactionMode,
-        senderType: senderType
-      );
+  Future<void>getUserListTO(
+          String? userName,
+          int? transactionMode,
+          String? senderType) async {
+        await run(() async {
+          emit(const GetUserListTOCCLoadingState());
+          var request = GetUserListTOCCRequest(
+              userName: userName,
+              transactionMode: transactionMode,
+              senderType: senderType
+          );
       final response = await _apiRepository.getUserListTOCC(
           request: request);
       if (response is DataSuccess) {
@@ -209,6 +208,29 @@ class MessageCubit extends BaseCubit<MessageState, LoginResponse> {
             getUserListTOCCResponse: response.data));
       } else if (response is DataFailed) {
         emit(GetUserListCCErrorState(error: response.error));
+      }
+    });
+  }
+
+
+Future<void>getMessageByParentId(
+    String? userName,
+    int? parentMessageId) async {
+    if (isBusy) return;
+    await run(() async {
+      emit(const GetMessageByParentIdLoadingState());
+      var request = GetMessageByParentIdRequest(
+          userName: userName,
+          parentMessageId: parentMessageId,
+
+      );
+      final response = await _apiRepository.getMessageByParentId(
+          request: request);
+      if (response is DataSuccess) {
+        emit(GetMessageByParentIdSuccessState(
+            getMessageByParentIdResponse: response.data));
+      } else if (response is DataFailed) {
+        emit(GetMessageByParentIdErrorState(error: response.error));
       }
     });
   }

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 import '../../../../config/router/app_router.dart';
+import '../../../../domain/models/data/get_message_by_parent_id.dart';
 import '../../../../domain/models/data/get_received_messages_with_parent_details.dart';
 import '../../../../domain/models/data/get_sent_messages_with_parent_details.dart';
 import '../../../../domain/models/data/user.dart';
@@ -16,7 +17,7 @@ import '../../../widgets/common_widgets.dart';
 class ReceivedReplyMessageScreen extends StatefulWidget {
 
   final int? messageId;
-  final GetSentMessagesWithParentDetails? messageBody;
+  final GetMessageByParentId? messageBody;
 
   ReceivedReplyMessageScreen({
     super.key,
@@ -31,7 +32,7 @@ class ReceivedReplyMessageScreen extends StatefulWidget {
 class _ReplyMessageScreenState extends State<ReceivedReplyMessageScreen> {
 
   final int? messageId;
-  GetSentMessagesWithParentDetails? messageBody;
+  GetMessageByParentId? messageBody;
 
   _ReplyMessageScreenState(this.messageId,this.messageBody);
 

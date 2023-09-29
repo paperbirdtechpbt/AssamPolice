@@ -10,6 +10,7 @@ class GetReceivedMessages {
   final String? subject;
   final String? messageBody;
   final String? creationDate;
+  final int? messageCount;
   final bool? isSeen;
 
   GetReceivedMessages({
@@ -24,6 +25,7 @@ class GetReceivedMessages {
     this.subject,
     this.messageBody,
     this.creationDate,
+    this.messageCount,
     this.isSeen,
   });
 
@@ -41,8 +43,11 @@ class GetReceivedMessages {
       messageBody: json['messageBody'],
       creationDate: json['creationDate'],
       isSeen: json['isSeen'],
+      messageCount: json['messageCount'],
     );
   }
+
+
 
   Map<String, dynamic> toJson() {
     return {
@@ -57,6 +62,7 @@ class GetReceivedMessages {
       'subject': subject,
       'messageBody': messageBody,
       'creationDate': creationDate,
+      'messageCount': messageCount,
       'isSeen': isSeen,
     };
   }

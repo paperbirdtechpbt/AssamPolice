@@ -45,7 +45,6 @@ class _SentMessageViewState extends State<SentMessageView> {
   }
   @override
   Widget build(BuildContext context) {
-    print("WorkDarling");
     return WillPopScope(
       onWillPop: onWillPop,
       child: Scaffold(
@@ -72,8 +71,7 @@ class _SentMessageViewState extends State<SentMessageView> {
                         _getSentMessages =
                             state.getSentMessagesResponse?.data ?? [];
 
-                        print(
-                            "=================================>${_getSentMessages.length}");
+                        print("=================================>${_getSentMessages.length}");
                       }
                     }
                   },

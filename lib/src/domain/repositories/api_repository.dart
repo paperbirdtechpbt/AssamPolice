@@ -10,6 +10,7 @@ import '../models/requests/get_all_vdp_committee_request.dart';
 import '../models/requests/get_all_vdp_member_request.dart';
 import '../models/requests/get_body_message.dart';
 import '../models/requests/get_district_police_station_request.dart';
+import '../models/requests/get_message_by_parent_id_request.dart';
 import '../models/requests/get_receive_message_request.dart';
 import '../models/requests/get_received_messages_with_parent_details_request.dart';
 import '../models/requests/get_sent_message.dart';
@@ -32,6 +33,7 @@ import '../models/responses/get_all_vdp_roles_response.dart';
 import '../models/responses/get_category_response.dart';
 import '../models/responses/get_district_response.dart';
 import '../models/responses/get_message_body_response.dart';
+import '../models/responses/get_message_by_parent_id_response.dart';
 import '../models/responses/get_received_messages_response.dart';
 import '../models/responses/get_received_messages_with_parent_details.dart';
 import '../models/responses/get_sent_message_response.dart';
@@ -145,6 +147,10 @@ abstract class ApiRepository {
 
     Future<DataState<GetUserListTOCCResponse>> getUserListTOCC({
     required GetUserListTOCCRequest request,
+  });
+
+    Future<DataState<GetMessageByParentIdResponse>> getMessageByParentId({
+    required GetMessageByParentIdRequest request,
   });
 
 

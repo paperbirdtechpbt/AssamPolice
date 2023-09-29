@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../../checking_internet.dart';
 import '../../../config/router/app_router.dart';
-import '../../../domain/models/data/arguments.dart';
-import '../../../domain/models/data/category.dart';
 import '../../../domain/models/data/district.dart';
 import '../../../domain/models/data/get_all_vdp_committee.dart';
 import '../../../domain/models/data/user.dart';
@@ -66,7 +65,7 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
     });
   }
 
-
+     InternetChecking? internetChecking ;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,7 +100,7 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                         appRouter.pop();
                         if (state.response?.status == "201") {
                         } else {
-                          var response = state.categoryResponse?.data;
+                          // var response = state.categoryResponse?.data;
                         }
                       } else if (state is GetDistrictSuccessState) {
                         // snackBar(context, "${state.response?.message}");
@@ -236,7 +235,7 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
                              case VdpCommitteeSuccessState :
                                if(getAllVdpCommittee.isNotEmpty)
                                 return   SingleChildScrollView(
-                               child: Column(children: List.generate(getAllVdpCommittee?.length ?? 0, (index) {
+                               child: Column(children: List.generate(getAllVdpCommittee.length ?? 0, (index) {
                                  return VdpCommitteeView(
                                      lat: double.parse(getAllVdpCommittee[index].latitude ?? '0.0'),
                                      long: double.parse(getAllVdpCommittee[index].longitude ?? '0.0'),
@@ -302,13 +301,24 @@ class _VdpCommitteeViewState extends State<VdpCommitteeView> {
         floatingActionButton: FloatingActionButton.extended(
           backgroundColor: defaultColor,
           foregroundColor: Colors.white,
-          onPressed: () {
-            appRouter.push(const AddVdpCommitteeViewRoute()).then((value) {
-              if(selectedPoliceStationId == null && selectedDistrictId ==null){
-              }else {
-                context.read<VdpCommitteeCubit>().getAllVdpCommittee(selectedDistrictId, selectedPoliceStationId);
-              }
-            });
+          onPressed: () async {
+            var isConnected =  internetChecking?.checkInternetConnectivity();
+            if (isConnected != null && isConnected == true) {
+              print(isConnected);
+              snackBar(context, "yes");
+            } else {
+              print(isConnected);
+
+
+              snackBar(context, "no");
+            }
+
+            // appRouter.push(const AddVdpCommitteeViewRoute()).then((value) {
+            //   if(selectedPoliceStationId == null && selectedDistrictId ==null){
+            //   }else {
+            //     context.read<VdpCommitteeCubit>().getAllVdpCommittee(selectedDistrictId, selectedPoliceStationId);
+            //   }
+            // });
 
           },
           label: const Text('Add'),

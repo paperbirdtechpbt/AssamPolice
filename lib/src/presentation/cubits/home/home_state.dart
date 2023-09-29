@@ -13,6 +13,7 @@ abstract class HomeState {
     this.response,
     this.categoryResponse,
     this.error,
+
   });
 
   List<Object?> get props => [categoryResponse, response, error];
@@ -40,4 +41,8 @@ class HomeErrorState extends HomeState {
 
 class HomeCategoryErrorState extends HomeState {
   const HomeCategoryErrorState({super.error});
+}
+class NoInternetConnectionState extends HomeState {
+  final String message;
+  const NoInternetConnectionState({this.message = 'No internet connection'});
 }

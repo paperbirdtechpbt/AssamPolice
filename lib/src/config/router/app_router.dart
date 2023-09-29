@@ -7,12 +7,14 @@ import '../../domain/models/data/get_all_vdp_committee.dart';
 import '../../domain/models/data/get_message_body.dart';
 import '../../domain/models/data/get_all_vdp_member.dart';
 import '../../domain/models/data/get_message_body.dart';
+import '../../domain/models/data/get_message_by_parent_id.dart';
 import '../../domain/models/data/get_received_message.dart';
 import '../../domain/models/data/get_received_messages_with_parent_details.dart';
 import '../../domain/models/data/get_sent_message.dart';
 import '../../domain/models/data/get_sent_messages_with_parent_details.dart';
 import '../../domain/models/responses/get_all_vdp_committee_response.dart';
 import '../../presentation/views/Vdp/recived_reply_message/recived_reply_message.dart';
+import '../../presentation/views/Vdp/reply_message/reply_message_parent_screen.dart';
 import '../../presentation/views/Vdp/reply_message/reply_message_screen.dart';
 import '../../presentation/views/add_member_location/add_member.dart';
 import '../../presentation/views/add_member_location/add_member_location.dart';
@@ -59,6 +61,7 @@ part 'app_router.gr.dart';
     AutoRoute(page: ReplyMessageScreen),
     AutoRoute(page: ReceivedReplyMessageScreen),
     AutoRoute(page: ReceivedReplyMessageScreen),
+    AutoRoute(page: ReplyParentMessageScreen),
   ],
 )
 class AppRouter extends _$AppRouter {}

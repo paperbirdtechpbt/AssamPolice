@@ -41,6 +41,7 @@ dependencies:
   intl: ^0.18.1
   url_launcher: ^6.1.11
   flutter_phone_direct_caller: ^2.1.1
+  connectivity_plus: ^4.0.2
 
 dev_dependencies:
   flutter_test:
@@ -60,6 +61,7 @@ dev_dependencies:
   permission_handler: ^10.2.0
   get: ^4.6.5
   get_it: ^7.2.0
+
 
 flutter:
   uses-material-design: true

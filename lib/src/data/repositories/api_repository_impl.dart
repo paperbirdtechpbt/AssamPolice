@@ -9,6 +9,7 @@ import '../../domain/models/requests/get_all_vdp_committee_request.dart';
 import '../../domain/models/requests/get_all_vdp_member_request.dart';
 import '../../domain/models/requests/get_body_message.dart';
 import '../../domain/models/requests/get_district_police_station_request.dart';
+import '../../domain/models/requests/get_message_by_parent_id_request.dart';
 import '../../domain/models/requests/get_receive_message_request.dart';
 import '../../domain/models/requests/get_received_messages_with_parent_details_request.dart';
 import '../../domain/models/requests/get_sent_message.dart';
@@ -31,6 +32,7 @@ import '../../domain/models/responses/get_all_vdp_roles_response.dart';
 import '../../domain/models/responses/get_category_response.dart';
 import '../../domain/models/responses/get_district_response.dart';
 import '../../domain/models/responses/get_message_body_response.dart';
+import '../../domain/models/responses/get_message_by_parent_id_response.dart';
 import '../../domain/models/responses/get_received_messages_response.dart';
 import '../../domain/models/responses/get_received_messages_with_parent_details.dart';
 import '../../domain/models/responses/get_sent_message_response.dart';
@@ -336,6 +338,16 @@ vdpId: request.vdpId,
       request: () => _ApiService.getUserMenuOption(
         userName: request.userName,
         transactionMode: request.transactionMode,
+      ),
+    );
+  }
+
+  @override
+  Future<DataState<GetMessageByParentIdResponse>> getMessageByParentId({required GetMessageByParentIdRequest request}) {
+    return getStateOf<GetMessageByParentIdResponse>(
+      request: () => _ApiService.getMessageByParentId(
+        userName: request.userName,
+        parentMessageId: request.parentMessageId,
       ),
     );
   }

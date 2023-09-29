@@ -15,6 +15,7 @@ import '../../../domain/models/responses/get_category_response.dart';
 import '../../../domain/models/responses/get_city_response.dart';
 import '../../../domain/models/responses/get_district_response.dart';
 import '../../../domain/models/responses/get_message_body_response.dart';
+import '../../../domain/models/responses/get_message_by_parent_id_response.dart';
 import '../../../domain/models/responses/get_received_messages_response.dart';
 import '../../../domain/models/responses/get_received_messages_with_parent_details.dart';
 import '../../../domain/models/responses/get_sent_message_response.dart';
@@ -228,5 +229,10 @@ abstract class ApiService {
     @Query("SenderType") String? senderType,
   });
 
+  @POST('GetMessageByParentID')
+  Future<HttpResponse<GetMessageByParentIdResponse>> getMessageByParentId({
+    @Field("userName") String? userName,
+    @Field("parentMessageId") int? parentMessageId,
+  });
 
 }
