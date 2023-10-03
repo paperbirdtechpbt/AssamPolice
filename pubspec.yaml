@@ -1,7 +1,7 @@
-name: flutter_clean_architecture
-description: Flutter Clean Architecture Series
+name: assam_police_vdp
+description: Assam Police VDP
 publish_to: "none"
-version: 1.0.5+2
+version: 1.0.0+1
 
 environment:
   sdk: '>=2.17.6 <3.0.0'

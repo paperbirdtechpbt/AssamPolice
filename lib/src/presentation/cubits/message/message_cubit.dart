@@ -113,6 +113,26 @@ class MessageCubit extends BaseCubit<MessageState, LoginResponse> {
     });
   }
 
+
+  Future<void> getParentMessageBody(String? userName,
+      int? messageId,) async {
+    if (isBusy) return;
+
+    await run(() async {
+      emit(const GetMessageBodyLoadingState());
+      var request = GetMessageBodyRequest(
+        userName: userName,
+        messageId: messageId,
+      );
+      final response = await _apiRepository.getMessageBody(request: request);
+      if (response is DataSuccess) {
+        emit(GetParentMessageBodySuccessState(getMessageBodyResponse: response.data));
+      } else if (response is DataFailed) {
+        emit(GetMessageBodyErrorState(error: response.error));
+      }
+    });
+  }
+
   //GetReceivedMessagesWithParentDetails
 
   Future<void> getReceivedMessagesWithParentDetails(String? userName,

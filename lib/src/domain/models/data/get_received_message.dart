@@ -1,17 +1,17 @@
 class GetReceivedMessages {
-  final int? parentMessagesIds;
-  final String? parentMessages;
-  final int? messageId;
-  final int? parentMessagesId;
-  final String? senderName;
-  final String? senderUserName;
-  final List<String>? toRecipientUserNameList;
-  final List<String>? ccRecipientUserNameList;
-  final String? subject;
-  final String? messageBody;
-  final String? creationDate;
-  final int? messageCount;
-  final bool? isSeen;
+    int? parentMessagesIds;
+    String? parentMessages;
+    int? messageId;
+    int? parentMessagesId;
+    String? senderName;
+    String? senderUserName;
+    List<String>? toRecipientUserNameList;
+    List<String>? ccRecipientUserNameList;
+    String? subject;
+    String? messageBody;
+    String? creationDate;
+    int? messageCount;
+    bool? isSeen;
 
   GetReceivedMessages({
     this.parentMessagesIds,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_clean_architecture/src/utils/constants/strings.dart';
+import 'package:assam_police_vdp/src/utils/constants/strings.dart';
 
 import 'colors.dart';
 

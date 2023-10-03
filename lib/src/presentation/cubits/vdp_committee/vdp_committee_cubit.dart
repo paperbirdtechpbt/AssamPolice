@@ -1,4 +1,4 @@
-import 'package:flutter_clean_architecture/src/presentation/cubits/vdp_committee/vdp_committee_state.dart';
+import 'package:assam_police_vdp/src/presentation/cubits/vdp_committee/vdp_committee_state.dart';
 
 import '../../../domain/models/requests/add_vdp_committee_request.dart';
 import '../../../domain/models/requests/auth_request.dart';

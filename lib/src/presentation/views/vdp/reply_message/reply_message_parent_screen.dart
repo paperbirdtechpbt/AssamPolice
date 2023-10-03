@@ -37,12 +37,6 @@ class _ReplyParentMessageScreenState extends State<ReplyParentMessageScreen> {
 
   _ReplyParentMessageScreenState(this.messageId,this.messageBody);
 
-  // List<String> members = [
-  //   "vdp@assampolice.org",
-  //   "anil@assampolice.org",
-  //   "ajit@teraclab.com",
-  // ];
-
   List<GetUserListTOCC> ToMembers = [];
   List<GetUserListTOCC> ToResponseMembers = [];
   List<GetUserListTOCC> CcMembers = [];
@@ -69,9 +63,7 @@ class _ReplyParentMessageScreenState extends State<ReplyParentMessageScreen> {
       })
     });
     context.read<MessageCubit>().getUserListTO(user?.email, 6,"to");
-
   }
-
 
   @override
   void initState() {
@@ -79,25 +71,6 @@ class _ReplyParentMessageScreenState extends State<ReplyParentMessageScreen> {
     var sender =  messageBody?.senderUserName??"";
     selectedToMembers =  [sender];
 
-    // if(isReply != null && isReply == true && isSentMessage == true){
-    //
-    //
-
-    // }
-    // else if (isReply != null && isReply == true && isSentMessage == false) {
-    //   setState(() {
-    //     selectedMembers.add(sender);
-    //     selectedCcMembers=
-    //         getReceivedMessages?.ccRecipientUserNameList ?? [];
-    //     _subjectController.text = getReceivedMessages?.subject ?? '';
-    //     _bodyController.text = getReceivedMessages?.messageBody ?? '';
-    //   });
-    // }
-    // for(var i in selectedMembers){
-    //   if(selectedMembers.contains(i)){
-    //     members.remove(i);
-    //   }
-    // }  \hh
     getUser();
   }
 
@@ -120,7 +93,7 @@ class _ReplyParentMessageScreenState extends State<ReplyParentMessageScreen> {
                 Icons.arrow_back_ios_new_outlined,
                 size: 20,
               )),
-          title: Text(
+          title: const Text(
             "Message",
           ),
           actions: [
@@ -142,45 +115,6 @@ class _ReplyParentMessageScreenState extends State<ReplyParentMessageScreen> {
             padding: const EdgeInsets.only(top: 3.0),
             child: Column(
               children: <Widget>[
-                //  BlocConsumer<MessageCubit,MessageState>(
-                //    listener: (context, state) {
-                // if (state is GetUserListTOCCSuccessState){
-                //          if(state.getUserListTOCCResponse?.code == "Success"){
-                //            ToResponseMembers =    state.getUserListTOCCResponse?.data?? [];
-                //            setState(() {
-                //              ToMembers.addAll(ToResponseMembers);
-                //            });
-                //
-                //          }
-                //        }else if(state is GetUserListCCSuccessState){
-                //          if(state.getUserListTOCCResponse?.code == "Success"){
-                //            CcResponseMembers =    state.getUserListTOCCResponse?.data?? [];
-                //            setState(() {
-                //              CcMembers.addAll(CcResponseMembers);
-                //            });
-                //
-                //          }
-                //        }    else   if (state is SendMessageSuccessState) {
-                //   if (isReply != null && isReply == true) {
-                //     snackBar(context, "message sent");
-                //     appRouter.pop();
-                //   }
-                // }
-                //
-                //
-                //
-                //        else {
-                //          appRouter.pop();
-                //
-                //          snackBar(context, "message sent");
-                //        }
-                //      },
-                //
-                //    builder: (context, state) {
-                //      return Container();
-                //    },
-                //  ),
-
                 BlocConsumer<MessageCubit, MessageState>(
                   listener: (context, state) {
                     if (state is SendMessageSuccessState) {
@@ -534,6 +468,7 @@ class _ReplyParentMessageScreenState extends State<ReplyParentMessageScreen> {
                             messageId);
 
                       }
+
                     },
                     child: Container(
                         decoration: const BoxDecoration(

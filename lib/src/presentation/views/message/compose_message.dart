@@ -519,7 +519,6 @@ setState(() {
                     ),
                   ],
                 ),
-
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: InkWell(
@@ -536,7 +535,8 @@ setState(() {
                               selectedCcMembers,
                               _subjectController.text,
                               _bodyController.text,
-                              getSentMessages?.messageId ?? 0);
+                             0
+                              );
                         } else {
                           context.read<MessageCubit>().sendMessage(
                               "${user?.email}",
@@ -544,7 +544,8 @@ setState(() {
                               selectedCcMembers,
                               _subjectController.text,
                               _bodyController.text,
-                              getReceivedMessages?.messageId ?? 0);
+                             0
+                          );
                         }
                       }
                     },

@@ -60,7 +60,6 @@ part 'app_router.gr.dart';
     AutoRoute(page: EditVdpMember),
     AutoRoute(page: ReplyMessageScreen),
     AutoRoute(page: ReceivedReplyMessageScreen),
-    AutoRoute(page: ReceivedReplyMessageScreen),
     AutoRoute(page: ReplyParentMessageScreen),
   ],
 )

@@ -17,7 +17,7 @@ import '../../cubits/message/message_cubit.dart';
 import '../../cubits/message/message_state.dart';
 import '../../widgets/common_widgets.dart';
 
-// ignore: must_be_immutable
+
 class MessageScreen extends StatefulWidget {
   MessageScreen(
       {super.key,
@@ -25,6 +25,7 @@ class MessageScreen extends StatefulWidget {
       this.getSentMessages,
       this.isSentMessage,
       this.isReplyed});
+
   GetReceivedMessages? getReceivedMessages;
   bool? isReplyed;
   GetSentMessages? getSentMessages;
@@ -41,6 +42,7 @@ class _MessageScreenState extends State<MessageScreen> {
   bool? isSentMessage;
 
   bool? isReplyed;
+
   _MessageScreenState(this.getReceivedMessages, this.isReplyed,
       this.getSentMessages, this.isSentMessage);
 
@@ -50,6 +52,9 @@ class _MessageScreenState extends State<MessageScreen> {
   bool isFirstTime = true;
   List<String> msgBodyList = [];
   List<GetMessageBody> getMsgBody = [];
+
+  String messageBodyParent = "";
+
   late User? user = User();
   List<GetMessageByParentId> getReceivedMessagesWithParentDetails = [];
 
@@ -59,35 +64,44 @@ class _MessageScreenState extends State<MessageScreen> {
 
   List<GetMessageByParentId> getSentMessagesWithParentDetails = [];
   GetSentMessagesWithParentDetails? getSentMessagesWithParentDetails2;
+
   getUser() async {
     var preferences = MySharedPreference();
     await preferences.getSignInModel(keySaveSignInModel).then((data) => {
           setState(() {
             user = data?.user;
-            if (isSentMessage == true) {
-              if (getSentMessages?.parentMessagesId == 0) {
-                context
-                    .read<MessageCubit>()
-                    .getMessageBody(user?.email, getSentMessages?.messageId);
-              } else {
-                context.read<MessageCubit>().getMessageByParentId(
-                    user?.email, getSentMessages?.parentMessagesId);
-              }
-            } else {
-              // if (getReceivedMessages?.parentMessagesId == 0) {
-              //   context.read<MessageCubit>().getMessageBody(
-              //       user?.email, getReceivedMessages?.messageId);
-              // } else {
-                context.read<MessageCubit>().getMessageByParentId(
-                    user?.email, getReceivedMessages?.messageId);
 
-              // }
-            }
+            if (isSentMessage == true)
+              context.read<MessageCubit>().getParentMessageBody(
+                  user?.email,
+                  getSentMessages?.parentMessagesId == 0
+                      ? getSentMessages?.messageId
+                      : getSentMessages?.parentMessagesId);
+            else
+              context.read<MessageCubit>().getParentMessageBody(
+                  user?.email,
+                  getReceivedMessages?.parentMessagesId == 0
+                      ? getReceivedMessages?.messageId
+                      : getReceivedMessages?.parentMessagesId);
           })
         });
   }
 
   String? formattedDate;
+
+
+  getMessages(){
+    if (isSentMessage == true) {
+      if (getSentMessages?.parentMessagesId == 0) {
+        context.read<MessageCubit>().getMessageBody(user?.email, getSentMessages?.parentMessagesId == 0 ?  getSentMessages?.messageId :  getSentMessages?.parentMessagesId);
+      } else {
+        context.read<MessageCubit>().getMessageByParentId(user?.email, getSentMessages?.parentMessagesId == 0 ?  getSentMessages?.messageId :  getSentMessages?.parentMessagesId);
+      }
+    } else {
+      context.read<MessageCubit>().getMessageByParentId(user?.email, getReceivedMessages?.parentMessagesId == 0 ? getReceivedMessages?.messageId :  getReceivedMessages?.parentMessagesId);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -142,13 +156,14 @@ class _MessageScreenState extends State<MessageScreen> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              InkWell(onTap: (){
-
-                setState(() {
-                  isShowMessage = !isShowMessage;
-                });
-
-              },child: messageBox(),),
+              InkWell(
+                onTap: () {
+                  // setState(() {
+                  //   isShowMessage = !isShowMessage;
+                  // });
+                },
+                child: messageBox(),
+              ),
               isSentMessage == true
                   ? Container(
                       padding: const EdgeInsets.only(left: 30),
@@ -229,10 +244,6 @@ class _MessageScreenState extends State<MessageScreen> {
                       return Column(
                         children: List.generate(
                             getSentMessagesWithParentDetails.length, (index) {
-                          // context.read<MessageCubit>().getMessageBody(
-                          //     user?.email,
-                          //     GetSentMessagesWithParentDetails[index].messageId
-                          //         );
                           return sentReplyMessageBox(
                             getSentMessagesWithParentDetails[index],
                           );
@@ -262,7 +273,10 @@ class _MessageScreenState extends State<MessageScreen> {
                     });
                   }
                   context.read<MessageCubit>().getMessageBody(
-                      user?.email, getReceivedMessages?.messageId);
+                      user?.email,
+                      getReceivedMessages?.parentMessagesId == 0
+                          ? getReceivedMessages?.messageId
+                          : getReceivedMessages?.parentMessagesId);
                 }
               }, builder: (context, state) {
                 return Container();
@@ -311,6 +325,12 @@ class _MessageScreenState extends State<MessageScreen> {
                   : "${getReceivedMessages?.subject ?? ''}",
               style: styleIbmPlexSansBold(size: 20, color: grey),
             ),
+            // child: Text(
+            //   isSentMessage == true
+            //       ? "${getSentMessages?.subject ?? ''} "
+            //       : "${getReceivedMessages?.subject ?? ''}",
+            //   style: styleIbmPlexSansBold(size: 20, color: grey),
+            // ),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 30.0),
@@ -376,12 +396,39 @@ class _MessageScreenState extends State<MessageScreen> {
                           InkWell(
                               onTap: () {
                                 if (isSentMessage == true) {
+
+                                  GetReceivedMessages mMessage = GetReceivedMessages();
+
+                                  mMessage?.parentMessagesIds = getSentMessages?.parentMessagesIds;
+                                mMessage.parentMessages = getSentMessages?.parentMessages;
+                                mMessage.messageId = getSentMessages?.messageId;
+                                mMessage.parentMessagesId = getSentMessages?.parentMessagesId;
+                                mMessage.senderName = getSentMessages?.senderName;
+                                mMessage.senderUserName = getSentMessages?.senderUserName;
+                                mMessage.toRecipientUserNameList = getSentMessages?.toRecipientUserNameList;
+                                mMessage.ccRecipientUserNameList = getSentMessages?.ccRecipientUserNameList;
+                                mMessage.subject = getSentMessages?.subject;
+                                mMessage.messageBody = getSentMessages?.messageBody;
+                                mMessage.creationDate = getSentMessages?.creationDate;
+
+
                                   appRouter.push(ReplyParentMessageScreenRoute(
-                                      messageId: getReceivedMessages?.messageId,
-                                      messageBody: getReceivedMessages));
+                                      messageId: getSentMessages
+                                                  ?.parentMessagesId ==
+                                              0
+
+                                          ? getSentMessages?.messageId
+                                          : getSentMessages
+                                              ?.parentMessagesId,
+                                      messageBody: mMessage));
                                 } else {
                                   appRouter.push(ReplyParentMessageScreenRoute(
-                                      messageId: getReceivedMessages?.messageId,
+                                      messageId: getReceivedMessages
+                                                  ?.parentMessagesId ==
+                                              0
+                                          ? getReceivedMessages?.messageId
+                                          : getReceivedMessages
+                                              ?.parentMessagesId,
                                       messageBody: getReceivedMessages));
                                 }
                               },
@@ -402,6 +449,14 @@ class _MessageScreenState extends State<MessageScreen> {
           ),
           BlocConsumer<MessageCubit, MessageState>(
             listener: (context, state) {
+              if (state is GetParentMessageBodySuccessState) {
+                getMessages();
+                setState(() {
+                  messageBodyParent =
+                      state.getMessageBodyResponse?.data?.messageBody ?? '';
+                });
+              }
+
               if (state is GetMessageBodySuccessState) {
                 setState(() {
                   if (isFirstTime) {
@@ -451,33 +506,15 @@ class _MessageScreenState extends State<MessageScreen> {
               }
             },
             builder: (context, state) {
-               return Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
-                    child: Container(
-                        width: double.infinity,
-                        child:
-                        isShowMessage ==
-                            false
-                            ? Text(
-                          getReceivedMessages
-                              ?.messageBody ??
-                              '',
-                          style: styleIbmPlexSansRegular(
-                              size: 13, color: Colors.black),
-                        )
-                            : Text(
-                          bodyMessage,
-                          style: styleIbmPlexSansRegular(
-                              size: 13, color: Colors.black),
-                        )),
-                  ),
-                ],
-              );
+              return  SizedBox();
             },
           ),
 
+          Text(
+             messageBodyParent ?? '',
+            style: styleIbmPlexSansRegular(
+                size: 13, color: Colors.black),
+          )
         ],
       ),
     );
@@ -490,13 +527,11 @@ class _MessageScreenState extends State<MessageScreen> {
       return Container(
         decoration: const BoxDecoration(
           border: Border(
-            bottom: BorderSide(
-                color: primaryColor, width: 0.2),
+            bottom: BorderSide(color: primaryColor, width: 0.2),
           ),
         ),
         child: Padding(
-          padding:
-              const EdgeInsets.only(left: 5.0, right: 10, bottom: 10),
+          padding: const EdgeInsets.only(left: 5.0, right: 10, bottom: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -564,20 +599,31 @@ class _MessageScreenState extends State<MessageScreen> {
                                   onTap: () {
                                     if (isSentMessage == true) {
                                       appRouter.push(ReplyMessageScreenRoute(
-                                          messageId:
-                                              getReceivedMessagesWithParentDetails
-                                                  .messageId,
+                                          messageId: getReceivedMessages
+                                                      ?.parentMessagesId ==
+                                                  0
+                                              ? getReceivedMessages?.messageId
+                                              : getReceivedMessages
+                                                  ?.parentMessagesId,
                                           messageBody:
                                               getReceivedMessagesWithParentDetails));
                                     } else {
-                                      appRouter.push(ReplyMessageScreenRoute(
-                                          messageId:
-                                              getReceivedMessages
-                                                  ?.messageId,
-                                          messageBody:
-                                              getReceivedMessagesWithParentDetails)).then((value) {
-                                        context.read<MessageCubit>().getMessageByParentId(
-                                            user?.email, getReceivedMessages?.messageId);
+                                      appRouter
+                                          .push(ReplyMessageScreenRoute(
+                                              messageId: getReceivedMessages
+                                                          ?.parentMessagesId ==
+                                                      0
+                                                  ? getReceivedMessages
+                                                      ?.messageId
+                                                  : getReceivedMessages
+                                                      ?.parentMessagesId,
+                                              messageBody:
+                                                  getReceivedMessagesWithParentDetails))
+                                          .then((value) {
+                                        context
+                                            .read<MessageCubit>()
+                                            .getMessageByParentId(user?.email,
+                                                getReceivedMessages?.messageId);
                                       });
                                     }
                                   },
@@ -598,6 +644,14 @@ class _MessageScreenState extends State<MessageScreen> {
               ),
               BlocConsumer<MessageCubit, MessageState>(
                 listener: (context, state) {
+                  if (state is GetParentMessageBodySuccessState) {
+                    getMessages();
+                    setState(() {
+                      messageBodyParent =
+                          state.getMessageBodyResponse?.data?.messageBody ?? '';
+                    });
+                  }
+
                   if (state is GetMessageBodySuccessState) {
                     // setState(() {
                     //   // msgBodyList.add(
@@ -624,19 +678,17 @@ class _MessageScreenState extends State<MessageScreen> {
                                         size: 13, color: Colors.black),
                                   )
                                 : Text(
-                              getReceivedMessagesWithParentDetails
+                                    getReceivedMessagesWithParentDetails
                                             .messageBody ??
                                         '',
                                     style: styleIbmPlexSansRegular(
                                         size: 13, color: Colors.black),
                                   )),
                       ),
-
                     ],
                   );
                 },
               ),
-
             ],
           ),
         ),
@@ -652,13 +704,11 @@ class _MessageScreenState extends State<MessageScreen> {
       return Container(
         decoration: const BoxDecoration(
           border: Border(
-            bottom: BorderSide(
-                color: primaryColor, width: 0.2),
+            bottom: BorderSide(color: primaryColor, width: 0.2),
           ),
         ),
         child: Padding(
-            padding:
-                const EdgeInsets.only(left: 5.0, right: 10, bottom: 10),
+            padding: const EdgeInsets.only(left: 5.0, right: 10, bottom: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -741,7 +791,7 @@ class _MessageScreenState extends State<MessageScreen> {
                                       appRouter.push(ReceivedReplyMessageScreenRoute(
                                           messageId:
                                               getSentMessagesWithParentDetails
-                                                  .messageId,
+                                                  .parentMessageId,
                                           messageBody:
                                               getSentMessagesWithParentDetails));
                                     },
@@ -762,6 +812,15 @@ class _MessageScreenState extends State<MessageScreen> {
                 ),
                 BlocConsumer<MessageCubit, MessageState>(
                   listener: (context, state) {
+                    if (state is GetParentMessageBodySuccessState) {
+                      getMessages();
+                      setState(() {
+                        messageBodyParent =
+                            state.getMessageBodyResponse?.data?.messageBody ??
+                                '';
+                      });
+                    }
+
                     if (state is GetMessageBodySuccessState) {
                       setState(() {
                         // msgBodyList.add(

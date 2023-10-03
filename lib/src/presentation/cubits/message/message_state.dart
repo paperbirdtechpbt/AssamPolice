@@ -108,6 +108,10 @@ class GetMessageBodySuccessState extends MessageState {
   const GetMessageBodySuccessState({super.getMessageBodyResponse});
 }
 
+class GetParentMessageBodySuccessState extends MessageState {
+  const GetParentMessageBodySuccessState({super.getMessageBodyResponse});
+}
+
 class GetMessageBodyErrorState extends MessageState {
   const GetMessageBodyErrorState({super.error});
 }
